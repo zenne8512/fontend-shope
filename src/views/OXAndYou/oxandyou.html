@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OX and You — Cộng đồng làm đẹp cho nam giới</title>
+<link rel="stylesheet" href="../../assets/css/styles.css">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Montserrat',sans-serif;background:#fff;color:#222}
+a{text-decoration:none;color:inherit}
+
+/* ─ TOPBAR ─ */
+.oay-topbar{background:#0a0a0a;padding:0 40px;display:flex;justify-content:space-between;align-items:center;height:65px;position:sticky;top:0;z-index:100}
+.oay-logo a{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;letter-spacing:4px;background:linear-gradient(90deg,#fff 0%,#EBC351 50%,#fff 100%);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 3s linear infinite}
+.oay-logo span{display:block;font-family:'Montserrat',sans-serif;font-size:8px;letter-spacing:3px;-webkit-text-fill-color:rgba(255,255,255,0.4)}
+.oay-nav{display:flex;gap:30px;align-items:center}
+.oay-nav a{color:rgba(255,255,255,0.6);font-size:13px;font-weight:500;transition:color .3s}
+.oay-nav a:hover{color:#EBC351}
+.oay-nav .back-btn{color:#EBC351;display:flex;align-items:center;gap:6px}
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+
+/* ─ HERO ─ */
+.oay-hero{background:linear-gradient(135deg,#0a0a0a 0%,#1a1a1a 50%,#0d0d0d 100%);min-height:480px;display:flex;align-items:center;justify-content:center;text-align:center;padding:80px 20px;position:relative;overflow:hidden}
+.oay-hero::before{content:'';position:absolute;top:-50%;left:-20%;width:600px;height:600px;background:radial-gradient(circle,rgba(235,195,81,.08) 0%,transparent 65%);pointer-events:none}
+.oay-hero::after{content:'';position:absolute;bottom:-30%;right:-10%;width:500px;height:500px;background:radial-gradient(circle,rgba(235,195,81,.05) 0%,transparent 65%);pointer-events:none}
+.oay-hero-content{position:relative;z-index:1;max-width:700px}
+.oay-hero-tag{display:inline-block;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#EBC351;background:rgba(235,195,81,.1);border:1px solid rgba(235,195,81,.25);padding:6px 18px;border-radius:20px;margin-bottom:24px}
+.oay-hero h1{font-family:'Playfair Display',serif;font-size:52px;font-weight:700;color:#fff;line-height:1.15;margin-bottom:20px}
+.oay-hero h1 em{font-style:italic;color:#EBC351}
+.oay-hero p{font-size:16px;color:rgba(255,255,255,.55);line-height:1.8;max-width:560px;margin:0 auto 36px}
+.oay-hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn-gold{background:linear-gradient(135deg,#EBC351,#D8AD30);color:#000;padding:14px 32px;border-radius:4px;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;transition:all .3s;display:inline-flex;align-items:center;gap:8px}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(235,195,81,.35)}
+.btn-outline-white{border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.8);padding:14px 32px;border-radius:4px;font-size:13px;font-weight:600;letter-spacing:1px;text-transform:uppercase;transition:all .3s}
+.btn-outline-white:hover{border-color:#EBC351;color:#EBC351}
+
+/* ─ SECTION COMMON ─ */
+.section{padding:80px 20px}
+.container-md{max-width:1100px;margin:0 auto}
+.sec-tag{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#EBC351;font-weight:600;margin-bottom:10px;display:block}
+.sec-title{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:#111;line-height:1.2;margin-bottom:16px}
+.sec-desc{color:#666;font-size:15px;line-height:1.8;max-width:560px}
+
+/* ─ ABOUT STRIP ─ */
+.about-strip{background:#f8f5f0;padding:60px 20px}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.about-stats{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:32px}
+.stat-item{background:#fff;padding:24px;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.06);text-align:center}
+.stat-num{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:#EBC351;margin-bottom:4px}
+.stat-label{font-size:12px;color:#888;text-transform:uppercase;letter-spacing:1px}
+.about-visual{background:linear-gradient(135deg,#1a1a1a,#2d2d2d);border-radius:12px;padding:50px 40px;text-align:center;color:#fff}
+.about-visual-logo{font-family:'Playfair Display',serif;font-size:64px;font-weight:700;background:linear-gradient(135deg,#EBC351,#fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:16px}
+.about-visual p{color:rgba(255,255,255,.5);font-size:14px;line-height:1.8;font-style:italic}
+
+/* ─ VALUES ─ */
+.values-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
+.value-card{padding:36px 28px;border:1px solid #eee;border-radius:10px;transition:all .3s}
+.value-card:hover{border-color:#EBC351;box-shadow:0 8px 30px rgba(235,195,81,.12);transform:translateY(-4px)}
+.value-icon{width:52px;height:52px;background:linear-gradient(135deg,#EBC351,#D8AD30);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#000;margin-bottom:20px}
+.value-card h3{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;margin-bottom:10px}
+.value-card p{font-size:13.5px;color:#777;line-height:1.7}
+
+/* ─ BLOG ─ */
+.blog-section{background:#0a0a0a;padding:80px 20px}
+.blog-section .sec-title{color:#fff}
+.blog-section .sec-desc{color:rgba(255,255,255,.45)}
+.blog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
+.blog-card{background:#111;border:1px solid rgba(255,255,255,.07);border-radius:10px;overflow:hidden;transition:all .3s;cursor:pointer}
+.blog-card:hover{transform:translateY(-5px);border-color:rgba(235,195,81,.3);box-shadow:0 16px 40px rgba(0,0,0,.4)}
+.blog-card-img{height:200px;overflow:hidden;position:relative}
+.blog-card-img-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:64px;transition:transform .6s}
+.blog-card:hover .blog-card-img-inner{transform:scale(1.08)}
+.blog-card-cat{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#EBC351;font-weight:700;padding:18px 20px 0}
+.blog-card-body{padding:10px 20px 24px}
+.blog-card h3{font-family:'Playfair Display',serif;font-size:18px;color:#fff;line-height:1.35;margin-bottom:10px;font-weight:600}
+.blog-card p{font-size:13px;color:rgba(255,255,255,.4);line-height:1.7;margin-bottom:16px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.blog-card-meta{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:rgba(255,255,255,.3)}
+.blog-read-more{color:#EBC351;font-weight:600;font-size:12px;display:flex;align-items:center;gap:5px;transition:gap .3s}
+.blog-card:hover .blog-read-more{gap:9px}
+
+/* ─ NEWSLETTER ─ */
+.newsletter-section{background:linear-gradient(135deg,#EBC351 0%,#D8AD30 100%);padding:70px 20px;text-align:center}
+.newsletter-section h2{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:#000;margin-bottom:12px}
+.newsletter-section p{color:rgba(0,0,0,.6);font-size:15px;margin-bottom:32px}
+.newsletter-form-gold{display:flex;gap:0;max-width:480px;margin:0 auto;border-radius:50px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.2)}
+.newsletter-form-gold input{flex:1;padding:16px 24px;border:none;outline:none;font-size:14px;font-family:'Montserrat',sans-serif}
+.newsletter-form-gold button{padding:16px 28px;background:#000;color:#fff;border:none;cursor:pointer;font-size:13px;font-weight:700;font-family:'Montserrat',sans-serif;letter-spacing:.5px;transition:background .3s;white-space:nowrap}
+.newsletter-form-gold button:hover{background:#1a1a1a}
+
+/* ─ FOOTER MINI ─ */
+.oay-footer{background:#0a0a0a;padding:24px 40px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(255,255,255,.06)}
+.oay-footer p{color:rgba(255,255,255,.25);font-size:12px}
+.oay-footer-links{display:flex;gap:20px}
+.oay-footer-links a{color:rgba(255,255,255,.3);font-size:12px;transition:color .3s}
+.oay-footer-links a:hover{color:#EBC351}
+
+@media(max-width:768px){
+.about-grid,.values-grid,.blog-grid{grid-template-columns:1fr}
+.oay-hero h1{font-size:34px}
+.oay-nav{gap:16px}
+.oay-topbar{padding:0 20px}
+}
+</style>
+</head>
+<body>
+
+<!-- Topbar -->
+<div class="oay-topbar">
+    <div class="oay-logo"><a href="../../../index.html">OX<span>EN PROVENCE</span></a></div>
+    <nav class="oay-nav">
+        <a href="#">Blog</a>
+        <a href="#">Sản phẩm</a>
+        <a href="#">Về chúng tôi</a>
+        <a href="../../../index.html" class="back-btn"><i class="fas fa-store"></i> Mua sắm</a>
+    </nav>
+</div>
+
+<!-- Hero -->
+<section class="oay-hero">
+    <div class="oay-hero-content">
+        <span class="oay-hero-tag">OX AND YOU</span>
+        <h1>Làm đẹp <em>không phải</em><br>chỉ dành cho phái đẹp</h1>
+        <p>Cộng đồng dành riêng cho nam giới quan tâm đến bản thân. Chia sẻ kiến thức, kinh nghiệm và những sản phẩm tốt nhất cho làn da của bạn.</p>
+        <div class="oay-hero-btns">
+            <a href="#blog" class="btn-gold"><i class="fas fa-book-open"></i> Đọc Blog</a>
+            <a href="../../../index.html" class="btn-outline-white">Khám phá sản phẩm</a>
+        </div>
+    </div>
+</section>
+
+<!-- About -->
+<section class="about-strip">
+    <div class="container-md">
+        <div class="about-grid">
+            <div>
+                <span class="sec-tag">Câu chuyện của chúng tôi</span>
+                <h2 class="sec-title">OX — Hơn cả<br>một thương hiệu</h2>
+                <p class="sec-desc">OX En Provence ra đời từ niềm tin rằng nam giới xứng đáng được chăm sóc bản thân một cách chuyên nghiệp. Chúng tôi cung cấp các sản phẩm chính hãng, kiến thức làm đẹp đúng đắn và một cộng đồng đồng hành cùng bạn trên hành trình đó.</p>
+                <div class="about-stats">
+                    <div class="stat-item"><div class="stat-num">50K+</div><div class="stat-label">Khách hàng</div></div>
+                    <div class="stat-item"><div class="stat-num">200+</div><div class="stat-label">Thương hiệu</div></div>
+                    <div class="stat-item"><div class="stat-num">5★</div><div class="stat-label">Đánh giá TB</div></div>
+                    <div class="stat-item"><div class="stat-num">100%</div><div class="stat-label">Chính hãng</div></div>
+                </div>
+            </div>
+            <div class="about-visual">
+                <div class="about-visual-logo">OX</div>
+                <p>"Vẻ đẹp không phân biệt giới tính — chỉ có sự chăm sóc và tự tin."</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Values -->
+<section class="section">
+    <div class="container-md">
+        <span class="sec-tag">Giá trị cốt lõi</span>
+        <h2 class="sec-title">Tại sao chọn OX?</h2>
+        <div class="values-grid">
+            <div class="value-card">
+                <div class="value-icon"><i class="fas fa-certificate"></i></div>
+                <h3>100% Chính hãng</h3>
+                <p>Mọi sản phẩm đều được nhập khẩu trực tiếp từ nhà sản xuất và đại lý ủy quyền, kèm theo tem chống giả và giấy tờ đầy đủ.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon"><i class="fas fa-flask"></i></div>
+                <h3>Được kiểm định khoa học</h3>
+                <p>Đội ngũ chuyên gia da liễu và chăm sóc sức khỏe nam giới của chúng tôi kiểm tra và đánh giá từng sản phẩm trước khi bán.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon"><i class="fas fa-users"></i></div>
+                <h3>Cộng đồng sôi động</h3>
+                <p>Hàng ngàn nam giới đang chia sẻ kinh nghiệm, review sản phẩm và hỗ trợ nhau trong hành trình chăm sóc bản thân.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Blog -->
+<section class="blog-section" id="blog">
+    <div class="container-md">
+        <span class="sec-tag" style="color:#EBC351">Blog & Kiến thức</span>
+        <h2 class="sec-title">Bài viết nổi bật</h2>
+        <p class="sec-desc">Những chia sẻ thực tế về chăm sóc da, lựa chọn sản phẩm và phong cách sống dành riêng cho nam giới hiện đại.</p>
+        <div class="blog-grid">
+
+            <div class="blog-card">
+                <div class="blog-card-img" style="background:linear-gradient(135deg,#1a2a1a,#2d4a2d)">
+                    <div class="blog-card-img-inner">🧴</div>
+                </div>
+                <span class="blog-card-cat">Skincare cơ bản</span>
+                <div class="blog-card-body">
+                    <h3>5 bước chăm sóc da dành cho nam giới mới bắt đầu</h3>
+                    <p>Bạn chưa biết bắt đầu từ đâu? Đây là routine tối giản nhất — chỉ cần 5 phút mỗi sáng — giúp da bạn sạch, khỏe và tươi sáng rõ rệt sau 2 tuần.</p>
+                    <div class="blog-card-meta">
+                        <span>15 Tháng 4, 2026</span>
+                        <a href="#" class="blog-read-more">Đọc tiếp <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="blog-card">
+                <div class="blog-card-img" style="background:linear-gradient(135deg,#1a1a2a,#2d2d4a)">
+                    <div class="blog-card-img-inner">☀️</div>
+                </div>
+                <span class="blog-card-cat">Chống nắng</span>
+                <div class="blog-card-body">
+                    <h3>Tại sao kem chống nắng quan trọng hơn bạn nghĩ?</h3>
+                    <p>90% dấu hiệu lão hóa da đến từ tia UV. Bài viết này giải thích cơ chế gây hại, chỉ số SPF/PA và cách chọn kem chống nắng phù hợp với da dầu, da khô.</p>
+                    <div class="blog-card-meta">
+                        <span>8 Tháng 4, 2026</span>
+                        <a href="#" class="blog-read-more">Đọc tiếp <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="blog-card">
+                <div class="blog-card-img" style="background:linear-gradient(135deg,#2a1a1a,#4a2d2d)">
+                    <div class="blog-card-img-inner">🪒</div>
+                </div>
+                <span class="blog-card-cat">Cạo râu</span>
+                <div class="blog-card-body">
+                    <h3>Nghệ thuật cạo râu — Từ cơ bản đến chuyên nghiệp</h3>
+                    <p>Cách cạo râu sạch mà không gây kích ứng, mọc ngược lông hay viêm nang lông. Bao gồm review top 5 gel cạo râu phổ biến nhất hiện nay.</p>
+                    <div class="blog-card-meta">
+                        <span>1 Tháng 4, 2026</span>
+                        <a href="#" class="blog-read-more">Đọc tiếp <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="blog-card">
+                <div class="blog-card-img" style="background:linear-gradient(135deg,#1a2a2a,#2d4a4a)">
+                    <div class="blog-card-img-inner">💧</div>
+                </div>
+                <span class="blog-card-cat">Dưỡng ẩm</span>
+                <div class="blog-card-body">
+                    <h3>Review: Top 6 kem dưỡng ẩm tốt nhất cho da nam 2026</h3>
+                    <p>Đã test thực tế 6 sản phẩm trong 30 ngày. Đây là nhận xét trung thực về kết cấu, hiệu quả, mùi hương và mức giá của từng loại.</p>
+                    <div class="blog-card-meta">
+                        <span>25 Tháng 3, 2026</span>
+                        <a href="#" class="blog-read-more">Đọc tiếp <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="blog-card">
+                <div class="blog-card-img" style="background:linear-gradient(135deg,#2a2a1a,#4a4a2d)">
+                    <div class="blog-card-img-inner">🌿</div>
+                </div>
+                <span class="blog-card-cat">Thành phần</span>
+                <div class="blog-card-body">
+                    <h3>Niacinamide, Retinol, Hyaluronic Acid — Khác gì nhau?</h3>
+                    <p>Giải mã các thuật ngữ khoa học thường gặp trên bao bì mỹ phẩm. Biết công dụng để chọn đúng sản phẩm cho từng vấn đề da của bạn.</p>
+                    <div class="blog-card-meta">
+                        <span>18 Tháng 3, 2026</span>
+                        <a href="#" class="blog-read-more">Đọc tiếp <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="blog-card">
+                <div class="blog-card-img" style="background:linear-gradient(135deg,#1a1a1a,#333)">
+                    <div class="blog-card-img-inner">🧔</div>
+                </div>
+                <span class="blog-card-cat">Phong cách</span>
+                <div class="blog-card-body">
+                    <h3>Grooming 2026: Xu hướng chăm sóc bản thân cho nam giới</h3>
+                    <p>Từ skincare minimal đến beard care chuyên sâu — những xu hướng làm đẹp đang được giới trẻ nam toàn cầu áp dụng trong năm 2026.</p>
+                    <div class="blog-card-meta">
+                        <span>10 Tháng 3, 2026</span>
+                        <a href="#" class="blog-read-more">Đọc tiếp <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter -->
+<section class="newsletter-section">
+    <div class="container-md">
+        <h2>Đừng bỏ lỡ bài viết mới</h2>
+        <p>Nhận thông báo bài viết mới và ưu đãi độc quyền mỗi tuần</p>
+        <form class="newsletter-form-gold" onsubmit="return false;">
+            <input type="email" placeholder="Nhập email của bạn...">
+            <button type="submit"><i class="fas fa-paper-plane"></i> Đăng ký</button>
+        </form>
+    </div>
+</section>
+
+<!-- Footer mini -->
+<div class="oay-footer">
+    <p>© 2026 <strong>OX En Provence</strong>. Tất cả quyền được bảo lưu.</p>
+    <div class="oay-footer-links">
+        <a href="../../../index.html">Trang chủ</a>
+        <a href="#">Sản phẩm</a>
+        <a href="#">Liên hệ</a>
+    </div>
+</div>
+
+</body>
+</html>

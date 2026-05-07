@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OX - Hệ thống bán lẻ mỹ phẩm chính hãng</title>
+    <link rel="stylesheet" href="src/assets/css/styles.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- [COMPONENTS: src/components/Header.html] -->
+    <div class="ox-header-wrapper">
+        <header class="ox-main-header">
+            <div class="container ox-main-header-container">
+                <!-- Left: Hamburger + Search -->
+                <div class="header-left">
+                    <button class="hamburger-btn" aria-label="Open menu"><i class="fas fa-bars"></i></button>
+                    <div class="header-search-box" id="searchTrigger">
+                        <input type="text" placeholder="Tìm kiếm sản phẩm..." id="searchInputTrigger" readonly>
+                        <button id="searchBtnTrigger"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+
+                <!-- Center: Logo -->
+                <div class="ox-logo">
+                    <h2 style="line-height: 1;"><a href="index.html">OX<br><span
+                                style="font-size: 11px; font-weight: 500; letter-spacing: 3px; font-family: 'Playfair Display', serif;">EN
+                                PROVENCE</span></a></h2>
+                </div>
+
+                <!-- Right: Icons -->
+                <div class="header-right">
+                    <a href="#" class="ox-top-link flag-link"><img
+                            src="https://upload.wikimedia.org/wikipedia/commons/2/21/Flag_of_Vietnam.svg" width="20"
+                            height="14" alt="VN"> <i class="fas fa-chevron-down"
+                            style="font-size: 10px; margin-left:4px;"></i></a>
+                    <a href="#" class="ox-top-link" id="user-icon-btn"><i class="far fa-user"></i></a>
+                    <a href="#" class="ox-top-link hide-mobile"><i class="fas fa-map-marker-alt"></i></a>
+                    <a href="#" class="ox-top-link"><i class="far fa-heart"></i> <span
+                            class="badge yellow-badge">0</span></a>
+                    <a href="#" class="ox-top-link ox-cart-trigger" id="cart-icon-btn">
+                        <i class="fas fa-shopping-bag"></i> <span class="badge yellow-badge cart-count">0</span>
+                    </a>
+                </div>
+            </div>
+        </header>
+    </div>
+
+    <!-- Side Menu Overlay -->
+    <div class="side-menu-overlay"></div>
+
+    <!-- Side Menu Panel -->
+    <div class="side-menu-panel">
+        <div class="side-menu-header">
+            <h3>Menu</h3>
+            <button class="close-menu-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <ul class="side-menu-list">
+            <li>
+                <a href="#" class="toggle-sub-menu"
+                    onclick="event.preventDefault(); this.nextElementSibling.classList.toggle('open');">
+                    Danh mục sản phẩm <i class="fas fa-chevron-down"></i>
+                </a>
+                <ul class="sub-menu-list">
+                    <!-- Chăm sóc da mặt -->
+                    <li><a href="#">Chăm sóc da mặt (Skincare)</a></li>
+
+                    <!-- Chăm sóc cơ thể & Khử mùi -->
+                    <li><a href="#">Chăm sóc cơ thể (Body & Bath)</a></li>
+
+                    <!-- Tóc & Da đầu -->
+                    <li><a href="#">Chăm sóc & Tạo kiểu tóc (Hair)</a></li>
+
+                    <!-- Danh mục đặc thù cho nam -->
+                    <li><a href="#">Râu & Cạo râu (Shaving & Beard)</a></li>
+
+                    <!-- Nước hoa nam -->
+                    <li><a href="#">Nước hoa nam (Fragrance)</a></li>
+
+                    <!-- Chống nắng hoặc Trang điểm nhẹ -->
+                    <li><a href="#">Chống nắng & Trang điểm (Grooming)</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Bán chạy nhất</a></li>
+            <li><a href="#">Mới ra mắt</a></li>
+            <li><a href="#">On Sale</a></li>
+            <li><a href="src/views/OXAndYou/oxandyou.html">OX and you</a></li>
+        </ul>
+    </div>
+    <!-- Hero Video Section -->
+    <section class="hero-video-section">
+        <video autoplay loop muted playsinline>
+            <source src="src/assets/images/header video.mp4" type="video/mp4">
+        </video>
+        <div class="hero-video-overlay"></div>
+        <div class="hero-video-content">
+            <h1>ĐẲNG CẤP CHẤT LƯỢNG </h1>
+            <p>Khám phá bộ sưu tập chăm sóc da mới nhất</p>
+            <a href="#" class="btn-hero">Khám phá ngay</a>
+        </div>
+    </section>
+
+    <!-- Trust Badges -->
+    <section class="trust-badges-section container">
+        <div class="trust-badges-grid">
+            <div class="trust-badge-item">
+                <div class="tb-icon"><i class="fas fa-truck"></i></div>
+                <div class="tb-text">
+                    <h4>MIỄN PHÍ VẬN CHUYỂN</h4>
+                    <p>Đơn hàng từ 500k</p>
+                </div>
+            </div>
+            <div class="trust-badge-item">
+                <div class="tb-icon"><i class="fas fa-award"></i></div>
+                <div class="tb-text">
+                    <h4>100% CHÍNH HÃNG</h4>
+                    <p>Cam kết chất lượng</p>
+                </div>
+            </div>
+            <div class="trust-badge-item">
+                <div class="tb-icon"><i class="fas fa-undo"></i></div>
+                <div class="tb-text">
+                    <h4>ĐỔI TRẢ 30 NGÀY</h4>
+                    <p>Miễn phí đổi trả</p>
+                </div>
+            </div>
+            <div class="trust-badge-item">
+                <div class="tb-icon"><i class="fas fa-headset"></i></div>
+                <div class="tb-text">
+                    <h4>HỖ TRỢ 24/7</h4>
+                    <p>Luôn đồng hành cùng bạn</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Category Showcase -->
+    <section class="category-showcase-section">
+        <div class="container">
+            <div class="section-header" style="margin-bottom: 28px;">
+                <h2>DANH MỤC SẢN PHẨM</h2>
+                <a href="#" class="view-all">Xem tất cả &gt;</a>
+            </div>
+            <div class="category-showcase-grid">
+
+                <!-- Skincare -->
+                <a href="#" class="cat-card">
+                    <img src="src/assets/images/skincare.jpg" alt="Chăm sóc da mặt">
+                    <div class="cat-card-content">
+                        <span class="cat-card-sub">Skincare</span>
+                        <div class="cat-card-name">Chăm sóc da mặt</div>
+                        <span class="cat-card-cta">Khám phá ngay <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+
+                <!-- Body & Bath -->
+                <a href="#" class="cat-card">
+                    <img src="src/assets/images/body.jpg" alt="Chăm sóc cơ thể">
+                    <div class="cat-card-content">
+                        <span class="cat-card-sub">Body &amp; Bath</span>
+                        <div class="cat-card-name">Chăm sóc cơ thể</div>
+                        <span class="cat-card-cta">Khám phá ngay <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+
+                <!-- Hair -->
+                <a href="#" class="cat-card">
+                    <img src="src/assets/images/hair.jpg" alt="Chăm sóc tóc">
+                    <div class="cat-card-content">
+                        <span class="cat-card-sub">Hair</span>
+                        <div class="cat-card-name">Chăm sóc &amp; Tạo kiểu tóc</div>
+                        <span class="cat-card-cta">Khám phá ngay <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+
+                <!-- Shaving & Beard -->
+                <a href="#" class="cat-card">
+                    <img src="src/assets/images/shaving.jpg" alt="Râu và Cạo râu">
+                    <div class="cat-card-content">
+                        <span class="cat-card-sub">Shaving &amp; Beard</span>
+                        <div class="cat-card-name">Râu &amp; Cạo râu</div>
+                        <span class="cat-card-cta">Khám phá ngay <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+
+                <!-- Fragrance -->
+                <a href="#" class="cat-card">
+                    <img src="src/assets/images/fragrance.jpg" alt="Nước hoa nam">
+                    <div class="cat-card-content">
+                        <span class="cat-card-sub">Fragrance</span>
+                        <div class="cat-card-name">Nước hoa nam</div>
+                        <span class="cat-card-cta">Khám phá ngay <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+
+                <!-- Grooming -->
+                <a href="#" class="cat-card">
+                    <img src="src/assets/images/grooming.jpg" alt="Grooming">
+                    <div class="cat-card-content">
+                        <span class="cat-card-sub">Grooming</span>
+                        <div class="cat-card-name">Chống nắng &amp; Trang điểm</div>
+                        <span class="cat-card-cta">Khám phá ngay <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+    </section>
+
+
+    <!-- [COMPONENTS: src/components/Footer.html] -->
+    <footer class="main-footer">
+
+        <!-- Newsletter Strip -->
+        <div class="footer-newsletter">
+            <div class="container newsletter-inner">
+                <div class="newsletter-text">
+                    <i class="fas fa-envelope-open-text"></i>
+                    <div>
+                        <h4>Đăng ký nhận ưu đãi độc quyền</h4>
+                        <p>Nhận ngay voucher 50K cho đơn hàng đầu tiên</p>
+                    </div>
+                </div>
+                <form class="newsletter-form" onsubmit="return false;">
+                    <input type="email" placeholder="Nhập email của bạn..." />
+                    <button type="submit"><i class="fas fa-paper-plane"></i> Đăng ký</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Main Footer Body -->
+        <div class="footer-body">
+            <div class="container footer-grid">
+
+                <!-- Col 1: Brand -->
+                <div class="footer-col footer-brand">
+                    <div class="footer-logo">OX</div>
+                    <p class="footer-tagline">Mỹ phẩm chính hãng — Vẻ đẹp đích thực</p>
+                    <div class="footer-contact-list">
+                        <div class="footer-contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>123 Nguyễn Huệ, Quận 1, TP. Hồ Chí Minh</span>
+                        </div>
+                        <div class="footer-contact-item">
+                            <i class="fas fa-phone-alt"></i>
+                            <span>1800 6868 (Miễn phí · 8:00–22:00)</span>
+                        </div>
+                        <div class="footer-contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>hello@ox.vn</span>
+                        </div>
+                    </div>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                        <a href="#" aria-label="Pinterest"><i class="fab fa-pinterest-p"></i></a>
+                    </div>
+                </div>
+
+                <!-- Col 2: About -->
+                <div class="footer-col">
+                    <h3 class="footer-col-title">Về OX</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Giới thiệu thương hiệu</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Tuyển dụng</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Hệ thống cửa hàng</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Chính sách bảo mật</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Điều khoản sử dụng</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Tin tức & Blog</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: Support -->
+                <div class="footer-col">
+                    <h3 class="footer-col-title">Hỗ trợ khách hàng</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Hướng dẫn mua hàng</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Chính sách đổi trả</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Phương thức thanh toán</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Chính sách giao hàng</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Khách hàng thân thiết</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right"></i> Câu hỏi thường gặp</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 4: Payment & Security -->
+                <div class="footer-col">
+                    <h3 class="footer-col-title">Thanh toán & Bảo mật</h3>
+                    <div class="footer-payment-badges">
+                        <div class="payment-badge"><i class="fab fa-cc-visa"></i></div>
+                        <div class="payment-badge"><i class="fab fa-cc-mastercard"></i></div>
+                        <div class="payment-badge"><i class="fab fa-cc-paypal"></i></div>
+                        <div class="payment-badge"><i class="fas fa-mobile-alt"></i><span>MoMo</span></div>
+                        <div class="payment-badge"><i class="fas fa-university"></i><span>ATM</span></div>
+                        <div class="payment-badge"><i class="fas fa-money-bill-wave"></i><span>COD</span></div>
+                    </div>
+                    <h3 class="footer-col-title" style="margin-top: 24px;">Chứng nhận</h3>
+                    <div class="footer-cert-badges">
+                        <div class="cert-badge"><i class="fas fa-shield-alt"></i><span>SSL Secure</span></div>
+                        <div class="cert-badge"><i class="fas fa-award"></i><span>Chính hãng 100%</span></div>
+                        <div class="cert-badge"><i class="fas fa-undo-alt"></i><span>Hoàn tiền 30 ngày</span></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="footer-bottom-bar">
+            <div class="container footer-bottom-inner">
+                <p>&copy; 2026 <span class="footer-brand-inline">OX</span>. Tất cả quyền được bảo lưu.</p>
+                <div class="footer-bottom-links">
+                    <a href="#">Chính sách Cookie</a>
+                    <span>·</span>
+                    <a href="#">Điều khoản</a>
+                    <span>·</span>
+                    <a href="#">Bảo mật</a>
+                </div>
+            </div>
+        </div>
+
+    </footer>
+
+    <!-- Floating Actions -->
+    <div class="floating-actions">
+        <button class="fab-btn chat-btn" title="Chat với chúng tôi"><i class="fas fa-comment-dots"></i></button>
+        <button class="fab-btn top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Lên đầu trang"><i
+                class="fas fa-chevron-up"></i></button>
+    </div>
+
+    <!-- Auth Overlay -->
+    <div class="auth-overlay" id="authOverlay">
+        <div class="overlay-backdrop" id="authBackdrop"></div>
+        <div class="auth-overlay-panel">
+            <button class="auth-overlay-close" id="authCloseBtn"><i class="fas fa-times"></i></button>
+            <div class="auth-overlay-inner">
+                <div class="auth-overlay-logo">OX<span>EN PROVENCE</span></div>
+                <p class="auth-overlay-tagline">Mỹ phẩm chính hãng — Vẻ đẹp đích thực</p>
+                <div class="auth-tabs">
+                    <div class="auth-tab active" onclick="switchAuthTab('login')" id="tab-login">Đăng nhập</div>
+                    <div class="auth-tab" onclick="switchAuthTab('register')" id="tab-register">Đăng ký</div>
+                </div>
+                <!-- Login Form -->
+                <form class="auth-form" id="form-login" onsubmit="event.preventDefault(); closeAuthOverlay();"
+                    style="display:flex;">
+                    <div class="form-group">
+                        <label for="ov-login-email">Email / Số điện thoại</label>
+                        <input type="text" id="ov-login-email" placeholder="Nhập email hoặc số điện thoại" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ov-login-pw">Mật khẩu</label>
+                        <input type="password" id="ov-login-pw" placeholder="Nhập mật khẩu" required>
+                    </div>
+                    <div class="form-options">
+                        <label><input type="checkbox" checked> Ghi nhớ đăng nhập</label>
+                        <a href="#" class="forgot-pw">Quên mật khẩu?</a>
+                    </div>
+                    <button type="submit" class="auth-btn">Đăng nhập</button>
+                    <div class="auth-social">
+                        <p>Hoặc đăng nhập bằng</p>
+                        <div class="social-btns">
+                            <button type="button" class="social-btn"><i class="fab fa-google"
+                                    style="color:#DB4437;"></i> Google</button>
+                            <button type="button" class="social-btn"><i class="fab fa-facebook-f"
+                                    style="color:#4267B2;"></i> Facebook</button>
+                        </div>
+                    </div>
+                </form>
+                <!-- Register Form -->
+                <form class="auth-form" id="form-register" onsubmit="event.preventDefault(); closeAuthOverlay();"
+                    style="display:none;">
+                    <div class="form-group">
+                        <label for="ov-reg-name">Họ và tên</label>
+                        <input type="text" id="ov-reg-name" placeholder="Nhập họ và tên của bạn" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ov-reg-email">Email</label>
+                        <input type="email" id="ov-reg-email" placeholder="Nhập địa chỉ email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ov-reg-pw">Mật khẩu</label>
+                        <input type="password" id="ov-reg-pw" placeholder="Tạo mật khẩu (ít nhất 8 ký tự)" required>
+                    </div>
+                    <div class="form-options">
+                        <label><input type="checkbox" required> Tôi đồng ý với <a href="#" class="forgot-pw">Điều khoản
+                                &amp; Bảo mật</a></label>
+                    </div>
+                    <button type="submit" class="auth-btn">Tạo tài khoản mới</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Overlay -->
+    <div class="cart-overlay" id="cartOverlay">
+        <div class="overlay-backdrop" id="cartBackdrop"></div>
+        <div class="cart-overlay-panel">
+            <div class="cart-overlay-header">
+                <h3>Giỏ Hàng</h3>
+                <button class="cart-overlay-close-btn" id="cartCloseBtn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="cart-overlay-body" id="cartOverlayBody">
+                <div class="cart-ov-empty">
+                    <i class="fas fa-shopping-bag"></i>
+                    <p>Giỏ hàng của bạn đang trống</p>
+                    <span>Hãy khám phá bộ sưu tập của chúng tôi</span>
+                </div>
+            </div>
+            <div class="cart-overlay-footer">
+                <div class="cart-ov-summary-line">
+                    <span>Tạm tính:</span><span id="cartOverlaySubtotal">0đ</span>
+                </div>
+                <div class="cart-ov-summary-line">
+                    <span>Vận chuyển:</span><span>Miễn phí</span>
+                </div>
+                <div class="cart-ov-summary-line total">
+                    <span>Tổng cộng:</span><span id="cartOverlayTotal">0đ</span>
+                </div>
+                <a href="src/views/Cart/cart.html" class="cart-ov-checkout-btn">Xem giỏ hàng &amp; Thanh toán <i
+                        class="fas fa-arrow-right"></i></a>
+                <span class="cart-ov-continue" onclick="closeCartOverlay()">Tiếp tục mua sắm</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Overlay -->
+    <div class="search-overlay" id="searchOverlay">
+        <div class="search-overlay-backdrop" id="searchBackdrop"></div>
+        <div class="search-overlay-panel">
+            <div class="search-overlay-top">
+                <div class="search-overlay-input-wrap">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchOverlayInput" placeholder="Tìm kiếm sản phẩm, thương hiệu..." autocomplete="off">
+                    <button class="search-clear-btn" id="searchClearBtn"><i class="fas fa-times"></i></button>
+                </div>
+                <button class="search-close-btn" id="searchCloseBtn">Đóng <i class="fas fa-times" style="font-size:11px"></i></button>
+            </div>
+            <div class="search-overlay-body">
+                <div class="search-filter-group">
+                    <span class="search-filter-label">Danh mục</span>
+                    <div class="filter-chips-row">
+                        <button class="filter-chip active">Tất cả</button>
+                        <button class="filter-chip"><i class="fas fa-leaf"></i> Skincare</button>
+                        <button class="filter-chip"><i class="fas fa-soap"></i> Body &amp; Bath</button>
+                        <button class="filter-chip"><i class="fas fa-wind"></i> Hair</button>
+                        <button class="filter-chip"><i class="fas fa-cut"></i> Shaving</button>
+                        <button class="filter-chip"><i class="fas fa-spray-can"></i> Fragrance</button>
+                        <button class="filter-chip"><i class="fas fa-star"></i> Grooming</button>
+                    </div>
+                </div>
+                <div class="search-filter-group">
+                    <span class="search-filter-label">Khoảng giá</span>
+                    <div class="filter-chips-row">
+                        <button class="filter-chip active">Tất cả</button>
+                        <button class="filter-chip">Dưới 200k</button>
+                        <button class="filter-chip">200k – 500k</button>
+                        <button class="filter-chip">500k – 1 triệu</button>
+                        <button class="filter-chip">Trên 1 triệu</button>
+                    </div>
+                </div>
+                <div class="search-filter-group">
+                    <span class="search-filter-label">Sắp xếp theo</span>
+                    <div class="filter-chips-row">
+                        <button class="filter-chip active"><i class="fas fa-fire"></i> Phổ biến nhất</button>
+                        <button class="filter-chip"><i class="fas fa-sort-amount-up"></i> Giá tăng dần</button>
+                        <button class="filter-chip"><i class="fas fa-sort-amount-down"></i> Giá giảm dần</button>
+                        <button class="filter-chip"><i class="fas fa-clock"></i> Mới nhất</button>
+                    </div>
+                </div>
+                <div class="search-trending">
+                    <h4><i class="fas fa-chart-line" style="margin-right:6px;color:#EBC351"></i>Tìm kiếm phổ biến</h4>
+                    <div class="trending-tags">
+                        <a href="#" class="trending-tag"><i class="fas fa-fire"></i> Kem chống nắng</a>
+                        <a href="#" class="trending-tag"><i class="fas fa-fire"></i> Serum dưỡng da</a>
+                        <a href="#" class="trending-tag"><i class="fas fa-fire"></i> La Roche-Posay</a>
+                        <a href="#" class="trending-tag"><i class="fas fa-fire"></i> Sữa rửa mặt</a>
+                        <a href="#" class="trending-tag"><i class="fas fa-fire"></i> Nước hoa nam</a>
+                        <a href="#" class="trending-tag"><i class="fas fa-fire"></i> Dầu gội đầu</a>
+                        <a href="#" class="trending-tag"><i class="fas fa-fire"></i> Kem dưỡng ẩm</a>
+                        <a href="#" class="trending-tag"><i class="fas fa-fire"></i> Tẩy tế bào chết</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="src/utils/script.js"></script>
+</body>
+
+</html>

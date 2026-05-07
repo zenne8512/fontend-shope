@@ -1,0 +1,58 @@
+<!-- [COMPONENTS: src/components/Header.html] -->
+<div class="ox-header-wrapper">
+    <header class="ox-main-header">
+        <div class="container ox-main-header-container">
+            <!-- Left: Hamburger + Search -->
+            <div class="header-left">
+                <button class="hamburger-btn" aria-label="Open menu"><i class="fas fa-bars"></i></button>
+                <div class="header-search-box">
+                    <input type="text" placeholder="Tìm kiếm">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+
+            <!-- Center: Logo -->
+            <div class="ox-logo">
+                <h2 style="line-height: 1;"><a href="index.html">OX<br><span style="font-size: 11px; font-weight: 500; letter-spacing: 3px; font-family: 'Playfair Display', serif;">EN PROVENCE</span></a></h2>
+            </div>
+
+            <!-- Right: Icons -->
+            <div class="header-right">
+                <a href="#" class="ox-top-link flag-link"><img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Flag_of_Vietnam.svg" width="20" height="14" alt="VN"> <i class="fas fa-chevron-down" style="font-size: 10px; margin-left:4px;"></i></a>
+                <a href="src/views/Auth/login.html" class="ox-top-link"><i class="far fa-user"></i></a>
+                <a href="#" class="ox-top-link hide-mobile"><i class="fas fa-map-marker-alt"></i></a>
+                <a href="#" class="ox-top-link"><i class="far fa-heart"></i> <span class="badge yellow-badge">0</span></a>
+                <a href="src/views/Cart/cart.html" class="ox-top-link ox-cart-trigger">
+                    <i class="fas fa-shopping-bag"></i> <span class="badge yellow-badge cart-count">0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+</div>
+
+<!-- Side Menu Overlay -->
+<div class="side-menu-overlay"></div>
+
+<!-- Side Menu Panel -->
+<div class="side-menu-panel">
+    <div class="side-menu-header">
+        <h3>Menu</h3>
+        <button class="close-menu-btn"><i class="fas fa-times"></i></button>
+    </div>
+    <ul class="side-menu-list">
+        <li>
+            <a href="#" class="toggle-sub-menu" onclick="event.preventDefault(); this.nextElementSibling.classList.toggle('open');">
+                Danh mục sản phẩm <i class="fas fa-chevron-down"></i>
+            </a>
+            <ul class="sub-menu-list">
+                <li><a href="#">Skincare</a></li>
+                <li><a href="#">Body</a></li>
+                <li><a href="#">Hair</a></li>
+            </ul>
+        </li>
+        <li><a href="#">Bán chạy nhất</a></li>
+        <li><a href="#">Mới ra mắt</a></li>
+        <li><a href="#">On Sale</a></li>
+        <li><a href="#">OX and you</a></li>
+    </ul>
+</div>
