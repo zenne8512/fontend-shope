@@ -492,6 +492,29 @@
     </div>
 
     <script src="src/utils/script.js"></script>
+    <script>
+    // ── ADMIN ACCESS ──────────────────────────────────
+    // Desktop: Ctrl + Shift + A
+    document.addEventListener('keydown', function(e) {
+        if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+            e.preventDefault();
+            window.location.href = 'src/views/Admin/admin.html';
+        }
+    });
+    // Mobile: long-press hamburger 2s
+    const hbtn = document.querySelector('.hamburger-btn');
+    let lpTimer = null;
+    if (hbtn) {
+        hbtn.addEventListener('touchstart', function(e) {
+            lpTimer = setTimeout(function() {
+                e.preventDefault();
+                window.location.href = 'src/views/Admin/admin.html';
+            }, 2000);
+        });
+        hbtn.addEventListener('touchend', function() { clearTimeout(lpTimer); });
+        hbtn.addEventListener('touchmove', function() { clearTimeout(lpTimer); });
+    }
+    </script>
 </body>
 
 </html>

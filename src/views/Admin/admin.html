@@ -1,0 +1,891 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OX Admin — Quan tri he thong</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root{--bg:#0a0a0a;--bg2:#111;--bg3:#1a1a1a;--bg4:#161616;--border:rgba(255,255,255,0.07);--border-gold:rgba(235,195,81,0.25);--gold:#EBC351;--gold2:#D8AD30;--red:#e74c3c;--orange:#f39c12;--green:#27ae60;--text:#f0f0f0;--text2:rgba(255,255,255,0.55);--text3:rgba(255,255,255,0.25);--sidebar:240px;--topbar:64px;--r:10px;--ease:0.25s cubic-bezier(0.4,0,0.2,1)}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:inherit}
+input,textarea,select{font-family:inherit}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
+
+/* PIN SCREEN */
+#pinScreen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .5s,transform .5s}
+#pinScreen.hide{opacity:0;transform:scale(1.05);pointer-events:none}
+#pinScreen::before{content:'';position:fixed;top:-10%;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(235,195,81,.07) 0%,transparent 65%);pointer-events:none}
+.pin-logo{font-size:52px;font-weight:800;letter-spacing:8px;background:linear-gradient(135deg,#fff 0%,#EBC351 50%,#fff 100%);background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shine 3s linear infinite;margin-bottom:4px}
+.pin-logo-sub{font-size:10px;letter-spacing:4px;color:var(--text3);text-transform:uppercase;margin-bottom:36px;display:block}
+.pin-label{font-size:13px;color:var(--text2);margin-bottom:20px;letter-spacing:.3px}
+.pin-dots{display:flex;gap:14px;margin-bottom:10px}
+.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.18);transition:all .2s}
+.pin-dot.on{background:var(--gold);border-color:var(--gold);box-shadow:0 0 12px rgba(235,195,81,.4)}
+.pin-error{height:18px;font-size:12px;color:var(--red);margin-bottom:24px;opacity:0;transition:opacity .3s;text-align:center}
+.pin-error.show{opacity:1}
+.numpad{display:grid;grid-template-columns:repeat(3,72px);gap:12px;margin-bottom:28px}
+.nb{width:72px;height:72px;border-radius:50%;border:1px solid var(--border);background:var(--bg2);color:var(--text);font-size:22px;font-weight:500;display:flex;align-items:center;justify-content:center;transition:all .15s;user-select:none}
+.nb:hover{background:var(--bg3);border-color:rgba(255,255,255,.14);transform:scale(1.06)}
+.nb:active{transform:scale(.93);background:rgba(235,195,81,.15)}
+.nb.del{font-size:17px;color:var(--text2)}
+.nb.ok{background:var(--gold);border-color:var(--gold);color:#000;font-weight:700}
+.nb.ok:hover{background:var(--gold2)}
+.nb.sp{background:transparent;border:none;pointer-events:none}
+.pin-back{font-size:12px;color:var(--text3);transition:color .2s}
+.pin-back:hover{color:var(--gold)}
+.pin-hint{font-size:11px;color:var(--text3);margin-top:10px}
+@keyframes shine{0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes shake{0%,100%{transform:translateX(0)}15%{transform:translateX(-8px)}30%{transform:translateX(8px)}45%{transform:translateX(-6px)}60%{transform:translateX(6px)}75%{transform:translateX(-3px)}90%{transform:translateX(3px)}}
+.shake{animation:shake .5s ease}
+
+/* LAYOUT */
+#adminApp{display:none;min-height:100vh}
+#adminApp.on{display:flex}
+.sidebar{width:var(--sidebar);min-height:100vh;background:var(--bg);border-right:1px solid var(--border);position:fixed;top:0;left:0;display:flex;flex-direction:column;z-index:100}
+.sb-brand{padding:22px 20px 18px;border-bottom:1px solid var(--border)}
+.sb-logo{font-size:20px;font-weight:800;letter-spacing:4px;background:linear-gradient(135deg,#fff 0%,#EBC351 60%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sb-sub{font-size:8px;letter-spacing:2.5px;color:var(--text3);margin-top:2px}
+.sb-badge{display:inline-block;font-size:9px;font-weight:700;letter-spacing:1px;background:rgba(235,195,81,.12);color:var(--gold);border:1px solid var(--border-gold);padding:3px 8px;border-radius:4px;margin-top:8px}
+.sb-nav{flex:1;padding:14px 10px;overflow-y:auto}
+.nav-grp-label{font-size:10px;letter-spacing:1.5px;color:var(--text3);text-transform:uppercase;padding:8px 10px 6px;margin-top:4px}
+.nav-item{display:flex;align-items:center;gap:11px;padding:10px 14px;border-radius:8px;font-size:13.5px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .2s;margin-bottom:2px;border:none;background:transparent;width:100%;text-align:left}
+.nav-item i{width:16px;text-align:center;font-size:14px}
+.nav-item:hover{background:var(--bg3);color:var(--text)}
+.nav-item.active{background:rgba(235,195,81,.1);color:var(--gold);border-left:3px solid var(--gold);padding-left:11px}
+.nav-badge{margin-left:auto;font-size:10px;font-weight:700;background:var(--red);color:#fff;padding:2px 7px;border-radius:10px}
+.sb-footer{padding:14px 16px;border-top:1px solid var(--border)}
+.sb-user{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.sb-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#000;flex-shrink:0}
+.sb-user-info{flex:1;min-width:0}
+.sb-user-name{font-size:13px;font-weight:600;color:var(--text)}
+.sb-user-role{font-size:11px;color:var(--text3)}
+.sb-logout{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text3);background:none;border:none;padding:8px 12px;border-radius:7px;width:100%;transition:all .2s}
+.sb-logout:hover{background:rgba(231,76,60,.1);color:var(--red)}
+
+/* MAIN */
+.main{margin-left:var(--sidebar);flex:1;min-height:100vh;display:flex;flex-direction:column}
+.topbar{height:var(--topbar);background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 28px;gap:16px;position:sticky;top:0;z-index:50}
+.topbar-title{font-size:16px;font-weight:600;flex:1}
+.topbar-time{font-size:12px;color:var(--text3)}
+.topbar-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 8px rgba(39,174,96,.6);flex-shrink:0}
+
+/* ALERT BANNERS */
+.alert-zone{padding:0 28px}
+.alert-banner{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:var(--r);margin-top:14px;font-size:13px;font-weight:500;animation:slideDown .4s ease}
+.alert-banner.danger{background:rgba(231,76,60,.12);border:1px solid rgba(231,76,60,.3);color:#ff6b6b}
+.alert-banner.warn{background:rgba(243,156,18,.1);border:1px solid rgba(243,156,18,.28);color:#f9ca74}
+.alert-banner i{font-size:15px;flex-shrink:0}
+.alert-banner .ab-action{margin-left:auto;font-size:12px;font-weight:600;text-decoration:underline;cursor:pointer;opacity:.8}
+.alert-banner .ab-action:hover{opacity:1}
+@keyframes slideDown{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+
+/* CONTENT */
+.content{flex:1;padding:28px;display:flex;flex-direction:column;gap:24px}
+.section{display:none}
+.section.active{display:flex;flex-direction:column;gap:24px}
+.sec-header{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.sec-title{font-size:22px;font-weight:700;color:var(--text)}
+.sec-sub{font-size:13px;color:var(--text3);margin-top:2px}
+
+/* KPI CARDS */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.kpi-card{background:var(--bg4);border:1px solid var(--border);border-radius:var(--r);padding:20px;transition:all .3s;cursor:default}
+.kpi-card:hover{border-color:var(--border-gold);transform:translateY(-2px)}
+.kpi-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.kpi-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px}
+.kpi-icon.blue{background:rgba(52,152,219,.15);color:#5dade2}
+.kpi-icon.gold{background:rgba(235,195,81,.13);color:var(--gold)}
+.kpi-icon.red{background:rgba(231,76,60,.13);color:var(--red)}
+.kpi-icon.green{background:rgba(39,174,96,.13);color:var(--green)}
+.kpi-label{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1px}
+.kpi-val{font-size:28px;font-weight:700;color:var(--text);line-height:1}
+.kpi-desc{font-size:12px;color:var(--text3);margin-top:6px}
+
+/* CHARTS */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.chart-card{background:var(--bg4);border:1px solid var(--border);border-radius:var(--r);padding:20px}
+.chart-card.wide{grid-column:1/3}
+.chart-title{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.chart-canvas-wrap{position:relative;height:200px}
+
+/* TABLE */
+.table-toolbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--bg4);border:1px solid var(--border);border-radius:8px;padding:8px 14px;flex:1;min-width:200px}
+.search-box input{background:none;border:none;outline:none;color:var(--text);font-size:13px;width:100%}
+.search-box i{color:var(--text3);font-size:13px;flex-shrink:0}
+.filter-select{background:var(--bg4);border:1px solid var(--border);color:var(--text2);font-size:13px;padding:8px 12px;border-radius:8px;outline:none;cursor:pointer}
+.filter-select option{background:var(--bg3)}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600;border:none;transition:all .2s;letter-spacing:.3px}
+.btn-gold{background:var(--gold);color:#000}
+.btn-gold:hover{background:var(--gold2);transform:translateY(-1px)}
+.btn-ghost{background:var(--bg4);color:var(--text2);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--bg3);color:var(--text)}
+.btn-danger{background:rgba(231,76,60,.1);color:var(--red);border:1px solid rgba(231,76,60,.25)}
+.btn-danger:hover{background:rgba(231,76,60,.2)}
+.btn-sm{padding:6px 11px;font-size:12px}
+
+.tbl-wrap{background:var(--bg4);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+table{width:100%;border-collapse:collapse}
+thead th{padding:12px 16px;text-align:left;font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02)}
+tbody tr{border-bottom:1px solid var(--border);transition:background .15s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:rgba(255,255,255,.03)}
+tbody td{padding:13px 16px;font-size:13px;color:var(--text2)}
+.td-name{color:var(--text);font-weight:500}
+.td-price{font-weight:600;color:var(--gold)}
+.td-img{width:40px;height:40px;border-radius:6px;object-fit:cover;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px}
+.actions{display:flex;gap:6px}
+
+/* EXPIRY BADGES */
+.exp-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.exp-safe{background:rgba(39,174,96,.12);color:#4ecf7e;border:1px solid rgba(39,174,96,.25)}
+.exp-warn{background:rgba(243,156,18,.12);color:#f9ca74;border:1px solid rgba(243,156,18,.25)}
+.exp-critical{background:rgba(231,76,60,.12);color:#ff6b6b;border:1px solid rgba(231,76,60,.25);animation:pulse 2s infinite}
+.exp-expired{background:rgba(255,255,255,.05);color:var(--text3);border:1px solid var(--border);text-decoration:line-through}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(231,76,60,.4)}50%{box-shadow:0 0 0 4px rgba(231,76,60,0)}}
+
+/* SLIDE OVER */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px)}
+.overlay.on{opacity:1;pointer-events:all}
+.slideover{position:fixed;top:0;right:0;bottom:0;width:480px;max-width:95vw;background:var(--bg2);border-left:1px solid var(--border);z-index:201;transform:translateX(100%);transition:transform var(--ease);display:flex;flex-direction:column}
+.slideover.on{transform:translateX(0)}
+.so-header{padding:22px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.so-title{font-size:16px;font-weight:700;flex:1}
+.so-close{width:32px;height:32px;border-radius:7px;background:var(--bg3);border:none;color:var(--text2);font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.so-close:hover{background:var(--bg4);color:var(--text)}
+.so-body{flex:1;overflow-y:auto;padding:24px}
+.so-footer{padding:18px 24px;border-top:1px solid var(--border);display:flex;gap:10px}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-full{grid-column:1/-1}
+.fg{display:flex;flex-direction:column;gap:6px}
+.fg label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.8px}
+.fg input,.fg select,.fg textarea{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);font-size:14px;outline:none;transition:border .2s;width:100%}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--text3)}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(235,195,81,.1)}
+.fg select option{background:var(--bg3)}
+.fg textarea{resize:vertical;min-height:80px}
+.exp-preview{padding:10px 14px;border-radius:8px;font-size:12px;font-weight:600;margin-top:6px;display:none}
+
+/* CONFIRM MODAL */
+.modal-wrap{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(6px)}
+.modal-wrap.on{opacity:1;pointer-events:all}
+.modal-box{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:28px;max-width:380px;width:90%;transform:scale(.92);transition:transform .3s;text-align:center}
+.modal-wrap.on .modal-box{transform:scale(1)}
+.modal-icon{font-size:36px;margin-bottom:14px}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:8px}
+.modal-sub{font-size:13px;color:var(--text2);margin-bottom:22px}
+.modal-actions{display:flex;gap:10px;justify-content:center}
+
+/* TOAST */
+.toast-zone{position:fixed;bottom:24px;right:24px;z-index:999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 18px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:10px;min-width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);animation:toastIn .4s ease;pointer-events:all}
+.toast.success{border-color:rgba(39,174,96,.35)}
+.toast.success i{color:var(--green)}
+.toast.error{border-color:rgba(231,76,60,.35)}
+.toast.error i{color:var(--red)}
+.toast.info{border-color:var(--border-gold)}
+.toast.info i{color:var(--gold)}
+@keyframes toastIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes toastOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(12px)}}
+
+/* EXPIRY TAB */
+.exp-tabs{display:flex;gap:0;border-bottom:1px solid var(--border)}
+.exp-tab{padding:10px 20px;font-size:13px;font-weight:600;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none}
+.exp-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.exp-tab-count{font-size:10px;background:rgba(255,255,255,.08);padding:2px 7px;border-radius:10px;margin-left:6px}
+.exp-tab.active .exp-tab-count.red-count{background:rgba(231,76,60,.2);color:var(--red)}
+.exp-list{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+.exp-item{background:var(--bg4);border:1px solid var(--border);border-radius:var(--r);padding:14px 18px;display:flex;align-items:center;gap:14px}
+.exp-item.critical{border-color:rgba(231,76,60,.3)}
+.exp-item.warn-item{border-color:rgba(243,156,18,.25)}
+.exp-item.expired-item{opacity:.55}
+.exp-days{font-size:22px;font-weight:800;min-width:48px;text-align:center}
+.exp-days.d-red{color:var(--red)}
+.exp-days.d-orange{color:var(--orange)}
+.exp-days.d-green{color:var(--green)}
+.exp-days.d-gray{color:var(--text3)}
+.exp-item-info{flex:1;min-width:0}
+.exp-item-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px}
+.exp-item-meta{font-size:12px;color:var(--text3)}
+.exp-item-actions{display:flex;gap:8px;flex-shrink:0}
+.exp-suggest{font-size:11px;background:rgba(235,195,81,.12);color:var(--gold);border:1px solid var(--border-gold);padding:4px 10px;border-radius:6px;font-weight:600;white-space:nowrap}
+
+/* SETTINGS */
+.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.settings-card{background:var(--bg4);border:1px solid var(--border);border-radius:var(--r);padding:22px}
+.settings-card-title{font-size:13px;font-weight:700;margin-bottom:16px;color:var(--text)}
+.pin-change-input{display:flex;flex-direction:column;gap:10px}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+.kpi-grid{grid-template-columns:1fr 1fr}
+.charts-grid{grid-template-columns:1fr}
+.chart-card.wide{grid-column:1}
+.settings-grid{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+.sidebar{transform:translateX(-100%)}
+.sidebar.mob-open{transform:translateX(0)}
+.main{margin-left:0}
+.topbar{padding:0 16px}
+.content{padding:16px}
+.kpi-grid{grid-template-columns:1fr 1fr}
+.slideover{width:100%;max-width:100%}
+}
+</style>
+</head>
+<body>
+<!-- PIN SCREEN -->
+<div id="pinScreen">
+  <div class="pin-logo">OX</div>
+  <span class="pin-logo-sub">EN PROVENCE — ADMIN</span>
+  <p class="pin-label">Nhập mã PIN để truy cập hệ thống</p>
+  <div class="pin-dots" id="pinDots">
+    <div class="pin-dot" id="d0"></div><div class="pin-dot" id="d1"></div>
+    <div class="pin-dot" id="d2"></div><div class="pin-dot" id="d3"></div>
+  </div>
+  <p class="pin-error" id="pinError">Mã PIN không đúng. Vui lòng thử lại.</p>
+  <div class="numpad">
+    <button class="nb" onclick="pinInput('1')">1</button>
+    <button class="nb" onclick="pinInput('2')">2</button>
+    <button class="nb" onclick="pinInput('3')">3</button>
+    <button class="nb" onclick="pinInput('4')">4</button>
+    <button class="nb" onclick="pinInput('5')">5</button>
+    <button class="nb" onclick="pinInput('6')">6</button>
+    <button class="nb" onclick="pinInput('7')">7</button>
+    <button class="nb" onclick="pinInput('8')">8</button>
+    <button class="nb" onclick="pinInput('9')">9</button>
+    <button class="nb sp"></button>
+    <button class="nb" onclick="pinInput('0')">0</button>
+    <button class="nb del" onclick="pinDel()"><i class="fas fa-delete-left"></i></button>
+  </div>
+  <a href="../../../index.html" class="pin-back"><i class="fas fa-arrow-left"></i> Quay về trang chủ</a>
+  <p class="pin-hint">PIN mặc định: 2026</p>
+</div>
+
+<!-- ADMIN APP -->
+<div id="adminApp">
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-brand">
+      <div class="sb-logo">OX</div>
+      <div class="sb-sub">EN PROVENCE</div>
+      <div class="sb-badge">ADMIN PANEL</div>
+    </div>
+    <nav class="sb-nav">
+      <div class="nav-grp-label">Tổng quan</div>
+      <button class="nav-item active" onclick="goTo('dashboard',this)" id="nav-dashboard">
+        <i class="fas fa-chart-pie"></i> Dashboard
+      </button>
+      <div class="nav-grp-label">Quản lý</div>
+      <button class="nav-item" onclick="goTo('products',this)" id="nav-products">
+        <i class="fas fa-box-open"></i> Sản phẩm
+      </button>
+      <button class="nav-item" onclick="goTo('expiry',this)" id="nav-expiry">
+        <i class="fas fa-clock"></i> Hạn sử dụng <span class="nav-badge" id="expiryNavBadge">0</span>
+      </button>
+      <button class="nav-item" onclick="goTo('orders',this)" id="nav-orders">
+        <i class="fas fa-receipt"></i> Đơn hàng
+      </button>
+      <div class="nav-grp-label">Hệ thống</div>
+      <button class="nav-item" onclick="goTo('settings',this)" id="nav-settings">
+        <i class="fas fa-gear"></i> Cài đặt
+      </button>
+    </nav>
+    <div class="sb-footer">
+      <div class="sb-user">
+        <div class="sb-avatar">A</div>
+        <div class="sb-user-info">
+          <div class="sb-user-name">Admin OX</div>
+          <div class="sb-user-role">Quản trị viên</div>
+        </div>
+      </div>
+      <button class="sb-logout" onclick="logout()"><i class="fas fa-right-from-bracket"></i> Đăng xuất</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <button style="background:none;border:none;color:var(--text2);font-size:18px;display:none" id="mobMenuBtn" onclick="document.getElementById('sidebar').classList.toggle('mob-open')"><i class="fas fa-bars"></i></button>
+      <div class="topbar-title" id="topbarTitle">Dashboard</div>
+      <div class="topbar-time" id="topbarClock"></div>
+      <div class="topbar-dot"></div>
+    </div>
+
+    <!-- ALERTS -->
+    <div class="alert-zone" id="alertZone"></div>
+
+    <!-- CONTENT -->
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="section active" id="sectionDashboard">
+        <div class="sec-header">
+          <div><div class="sec-title">Dashboard</div><div class="sec-sub">Tổng quan hệ thống OX En Provence</div></div>
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-top"><span class="kpi-label">Tổng sản phẩm</span><div class="kpi-icon blue"><i class="fas fa-boxes-stacked"></i></div></div>
+            <div class="kpi-val" id="kpiTotal">0</div>
+            <div class="kpi-desc">Đang quản lý</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-top"><span class="kpi-label">Sắp hết hạn</span><div class="kpi-icon gold"><i class="fas fa-triangle-exclamation"></i></div></div>
+            <div class="kpi-val" id="kpiWarn">0</div>
+            <div class="kpi-desc">Trong 90 ngày tới</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-top"><span class="kpi-label">Đã hết hạn</span><div class="kpi-icon red"><i class="fas fa-skull-crossbones"></i></div></div>
+            <div class="kpi-val" id="kpiExpired">0</div>
+            <div class="kpi-desc">Cần xử lý ngay</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-top"><span class="kpi-label">Giá trị tồn kho</span><div class="kpi-icon green"><i class="fas fa-sack-dollar"></i></div></div>
+            <div class="kpi-val" id="kpiValue">0</div>
+            <div class="kpi-desc">Triệu đồng</div>
+          </div>
+        </div>
+        <div class="charts-grid">
+          <div class="chart-card wide">
+            <div class="chart-title"><i class="fas fa-chart-bar" style="color:var(--gold)"></i> Phân bố sản phẩm theo danh mục</div>
+            <div class="chart-canvas-wrap"><canvas id="chartCat"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title"><i class="fas fa-circle-half-stroke" style="color:var(--gold)"></i> Trạng thái hạn dùng</div>
+            <div class="chart-canvas-wrap"><canvas id="chartExp"></canvas></div>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title"><i class="fas fa-chart-line" style="color:var(--gold)"></i> Timeline hết hạn (6 tháng tới)</div>
+          <div class="chart-canvas-wrap" style="height:160px"><canvas id="chartLine"></canvas></div>
+        </div>
+      </div>
+
+      <!-- PRODUCTS -->
+      <div class="section" id="sectionProducts">
+        <div class="sec-header">
+          <div><div class="sec-title">Sản phẩm</div><div class="sec-sub">Quản lý toàn bộ sản phẩm</div></div>
+          <button class="btn btn-gold" onclick="openSlideOver()"><i class="fas fa-plus"></i> Thêm sản phẩm</button>
+        </div>
+        <div class="table-toolbar">
+          <div class="search-box"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm..." oninput="renderTable()"></div>
+          <select class="filter-select" id="filterCat" onchange="renderTable()">
+            <option value="">Tất cả danh mục</option>
+            <option>Skincare</option><option>Body &amp; Bath</option><option>Hair</option>
+            <option>Shaving &amp; Beard</option><option>Fragrance</option><option>Grooming</option>
+          </select>
+          <select class="filter-select" id="filterExp" onchange="renderTable()">
+            <option value="">Tất cả trạng thái</option>
+            <option value="safe">An toàn</option>
+            <option value="warn">Sắp hết hạn</option>
+            <option value="critical">Khẩn cấp</option>
+            <option value="expired">Hết hạn</option>
+          </select>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Sản phẩm</th>
+                <th>Danh mục</th>
+                <th>Giá</th>
+                <th>Tồn kho</th>
+                <th>Hạn sử dụng</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="productTbody"></tbody>
+          </table>
+        </div>
+        <p style="font-size:12px;color:var(--text3)" id="tableCount"></p>
+      </div>
+
+      <!-- EXPIRY -->
+      <div class="section" id="sectionExpiry">
+        <div class="sec-header">
+          <div><div class="sec-title">Quản lý hạn sử dụng</div><div class="sec-sub">Theo dõi và xử lý hạn dùng mỹ phẩm</div></div>
+        </div>
+        <div class="tbl-wrap" style="padding:0 0 4px">
+          <div style="padding:16px 20px 0" class="exp-tabs">
+            <button class="exp-tab active" onclick="switchExpTab('critical',this)">🚨 Khẩn cấp <span class="exp-tab-count red-count" id="tabCritCount">0</span></button>
+            <button class="exp-tab" onclick="switchExpTab('warn',this)">⚠️ Theo dõi <span class="exp-tab-count" id="tabWarnCount">0</span></button>
+            <button class="exp-tab" onclick="switchExpTab('safe',this)">✅ An toàn <span class="exp-tab-count" id="tabSafeCount">0</span></button>
+            <button class="exp-tab" onclick="switchExpTab('expired',this)">💀 Hết hạn <span class="exp-tab-count" id="tabExpCount">0</span></button>
+          </div>
+          <div style="padding:16px 20px" id="expListWrap"></div>
+        </div>
+      </div>
+
+      <!-- ORDERS (UI only) -->
+      <div class="section" id="sectionOrders">
+        <div class="sec-header"><div><div class="sec-title">Đơn hàng</div><div class="sec-sub">Quản lý đơn hàng</div></div></div>
+        <div style="text-align:center;padding:60px;color:var(--text3)">
+          <i class="fas fa-receipt" style="font-size:48px;margin-bottom:16px;display:block;opacity:.3"></i>
+          <p style="font-size:14px">Chức năng đang phát triển — cần kết nối backend</p>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="section" id="sectionSettings">
+        <div class="sec-header"><div><div class="sec-title">Cài đặt</div><div class="sec-sub">Cấu hình hệ thống</div></div></div>
+        <div class="settings-grid">
+          <div class="settings-card">
+            <div class="settings-card-title"><i class="fas fa-lock" style="color:var(--gold);margin-right:8px"></i>Đổi mã PIN Admin</div>
+            <div class="pin-change-input">
+              <div class="fg"><label>PIN hiện tại</label><input type="password" id="oldPin" placeholder="Nhập PIN cũ" maxlength="4"></div>
+              <div class="fg"><label>PIN mới (4 số)</label><input type="password" id="newPin" placeholder="Nhập PIN mới" maxlength="4"></div>
+              <div class="fg"><label>Xác nhận PIN mới</label><input type="password" id="confirmPin" placeholder="Nhập lại PIN mới" maxlength="4"></div>
+              <button class="btn btn-gold" style="margin-top:4px" onclick="changePin()"><i class="fas fa-key"></i> Cập nhật PIN</button>
+            </div>
+          </div>
+          <div class="settings-card">
+            <div class="settings-card-title"><i class="fas fa-bell" style="color:var(--gold);margin-right:8px"></i>Ngưỡng cảnh báo</div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div class="fg"><label>🚨 Cảnh báo đỏ (ngày)</label><input type="number" id="threshRed" value="30" min="1" max="90"></div>
+              <div class="fg"><label>⚠️ Cảnh báo vàng (ngày)</label><input type="number" id="threshYellow" value="90" min="1" max="365"></div>
+              <button class="btn btn-gold" style="margin-top:4px" onclick="saveSettings()"><i class="fas fa-floppy-disk"></i> Lưu cài đặt</button>
+            </div>
+          </div>
+          <div class="settings-card">
+            <div class="settings-card-title"><i class="fas fa-database" style="color:var(--gold);margin-right:8px"></i>Dữ liệu</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <button class="btn btn-ghost" onclick="exportData()"><i class="fas fa-download"></i> Xuất dữ liệu JSON</button>
+              <button class="btn btn-danger" onclick="resetData()"><i class="fas fa-rotate-left"></i> Khôi phục dữ liệu mẫu</button>
+            </div>
+          </div>
+          <div class="settings-card">
+            <div class="settings-card-title"><i class="fas fa-circle-info" style="color:var(--gold);margin-right:8px"></i>Hướng dẫn truy cập</div>
+            <div style="font-size:13px;color:var(--text2);line-height:1.8">
+              <p>💻 <strong>Desktop:</strong> Nhấn <kbd style="background:var(--bg3);padding:2px 6px;border-radius:4px;font-size:11px">Ctrl+Shift+A</kbd> từ bất kỳ trang nào</p>
+              <p style="margin-top:8px">📱 <strong>Mobile:</strong> Giữ nút ☰ menu 2 giây</p>
+              <p style="margin-top:8px">🔗 <strong>Direct URL:</strong> <code style="font-size:11px;color:var(--gold)">/src/views/Admin/admin.html</code></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end content -->
+  </main>
+</div><!-- end adminApp -->
+
+<!-- SLIDE OVER -->
+<div class="overlay" id="soOverlay" onclick="closeSlideOver()"></div>
+<div class="slideover" id="slideover">
+  <div class="so-header">
+    <div class="so-title" id="soTitle">Thêm sản phẩm</div>
+    <button class="so-close" onclick="closeSlideOver()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="so-body">
+    <input type="hidden" id="editId">
+    <div class="form-grid">
+      <div class="fg form-full"><label>Tên sản phẩm *</label><input type="text" id="fName" placeholder="Nhập tên sản phẩm"></div>
+      <div class="fg"><label>Thương hiệu</label><input type="text" id="fBrand" placeholder="La Roche-Posay..."></div>
+      <div class="fg"><label>Danh mục *</label>
+        <select id="fCat">
+          <option value="">Chọn danh mục</option>
+          <option>Skincare</option><option>Body &amp; Bath</option><option>Hair</option>
+          <option>Shaving &amp; Beard</option><option>Fragrance</option><option>Grooming</option>
+        </select>
+      </div>
+      <div class="fg"><label>Giá (VNĐ) *</label><input type="number" id="fPrice" placeholder="395000"></div>
+      <div class="fg"><label>Tồn kho</label><input type="number" id="fStock" placeholder="0"></div>
+      <div class="fg"><label>Ngày sản xuất</label><input type="date" id="fMfg"></div>
+      <div class="fg form-full">
+        <label>Hạn sử dụng *</label>
+        <input type="date" id="fExpiry" onchange="previewExpiry()">
+        <div class="exp-preview" id="expPreview"></div>
+      </div>
+      <div class="fg form-full"><label>Ảnh URL</label><input type="url" id="fImage" placeholder="https://..."></div>
+      <div class="fg form-full"><label>Mô tả</label><textarea id="fDesc" placeholder="Mô tả sản phẩm..."></textarea></div>
+    </div>
+  </div>
+  <div class="so-footer">
+    <button class="btn btn-gold" onclick="saveProduct()" style="flex:1"><i class="fas fa-floppy-disk"></i> Lưu sản phẩm</button>
+    <button class="btn btn-ghost" onclick="closeSlideOver()">Hủy</button>
+  </div>
+</div>
+
+<!-- DELETE MODAL -->
+<div class="modal-wrap" id="deleteModal">
+  <div class="modal-box">
+    <div class="modal-icon">🗑️</div>
+    <div class="modal-title">Xóa sản phẩm?</div>
+    <div class="modal-sub" id="deleteModalSub">Hành động này không thể hoàn tác.</div>
+    <div class="modal-actions">
+      <button class="btn btn-danger" onclick="confirmDelete()"><i class="fas fa-trash"></i> Xóa</button>
+      <button class="btn btn-ghost" onclick="closeDeleteModal()">Hủy</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST ZONE -->
+<div class="toast-zone" id="toastZone"></div>
+<script>
+const ADMIN_PIN_KEY='ox_admin_pin';const AUTH_KEY='ox_admin_auth';const DATA_KEY='ox_products';const THRESH_KEY='ox_thresh';
+let products=[],editingId=null,deleteId=null,currentExpTab='critical';
+let chartCat=null,chartExp=null,chartLine=null;
+const DEFAULT_PIN='2026';
+function getPin(){return localStorage.getItem(ADMIN_PIN_KEY)||DEFAULT_PIN}
+function getThresh(){const t=JSON.parse(localStorage.getItem(THRESH_KEY)||'{}');return{red:t.red||30,yellow:t.yellow||90}}
+const SAMPLE_PRODUCTS=[
+{id:1,name:'Kem Chong Nang La Roche-Posay Anthelios SPF50+',brand:'La Roche-Posay',category:'Skincare',price:395000,stock:24,mfgDate:'2024-06-01',expiryDate:'2026-06-20',description:'Kem chong nang the he moi SPF50+',imageUrl:''},
+{id:2,name:'Sua Rua Mat CeraVe Hydrating',brand:'CeraVe',category:'Skincare',price:220000,stock:15,mfgDate:'2024-01-15',expiryDate:'2026-05-18',description:'Sua rua mat diu nhe',imageUrl:''},
+{id:3,name:'Gel Cao Rau Bulldog Sensitive',brand:'Bulldog',category:'Shaving & Beard',price:185000,stock:30,mfgDate:'2024-03-01',expiryDate:'2026-05-25',description:'Gel cao rau cho da nhay cam',imageUrl:''},
+{id:4,name:'Nuoc Hoa Acqua Di Gio EDT 100ml',brand:'Giorgio Armani',category:'Fragrance',price:2800000,stock:8,mfgDate:'2024-07-01',expiryDate:'2027-07-01',description:'Nuoc hoa nam huong bien mat',imageUrl:''},
+{id:5,name:'Dau Goi Redken Brews Daily',brand:'Redken',category:'Hair',price:340000,stock:20,mfgDate:'2024-05-01',expiryDate:'2026-09-15',description:'Dau goi hang ngay cho nam',imageUrl:''},
+{id:6,name:'Sua Duong The Jack Black Pit Boss',brand:'Jack Black',category:'Body & Bath',price:450000,stock:12,mfgDate:'2024-08-01',expiryDate:'2027-02-01',description:'Sua duong the khu mui',imageUrl:''},
+{id:7,name:'Kem Chong Nang Vichy Homme',brand:'Vichy',category:'Skincare',price:320000,stock:18,mfgDate:'2024-02-01',expiryDate:'2026-05-30',description:'Kem chong nang cho nam',imageUrl:''},
+{id:8,name:'Dau Xa Toc Dove Men+Care',brand:'Dove',category:'Hair',price:95000,stock:45,mfgDate:'2024-04-01',expiryDate:'2026-07-15',description:'Dau xa toc dan ong',imageUrl:''},
+{id:9,name:'Xa Phong Giat Axe Gold',brand:'Axe',category:'Body & Bath',price:75000,stock:60,mfgDate:'2023-09-01',expiryDate:'2026-04-01',description:'Xa phong tam huong gold',imageUrl:''},
+{id:10,name:'Dau Kien Tao Kiehl Since 1851',brand:'Kiehls',category:'Hair',price:780000,stock:10,mfgDate:'2024-10-01',expiryDate:'2027-04-01',description:'Dau duong toc chinh hang',imageUrl:''},
+{id:11,name:'Kem Duong Am Cetaphil Men',brand:'Cetaphil',category:'Skincare',price:280000,stock:25,mfgDate:'2024-09-01',expiryDate:'2026-12-01',description:'Kem duong am cho da nam',imageUrl:''},
+{id:12,name:'Nuoc Hoa Tommy Hilfiger Impact',brand:'Tommy Hilfiger',category:'Fragrance',price:1200000,stock:6,mfgDate:'2023-01-01',expiryDate:'2025-12-31',description:'Nuoc hoa nam phong cach',imageUrl:''}
+];
+function loadData(){
+  const raw=localStorage.getItem(DATA_KEY);
+  products=raw?JSON.parse(raw):[...SAMPLE_PRODUCTS];
+  if(!raw)localStorage.setItem(DATA_KEY,JSON.stringify(products));
+}
+function saveData(){localStorage.setItem(DATA_KEY,JSON.stringify(products))}
+function getExpStatus(dateStr){
+  if(!dateStr)return{level:'safe',label:'Chua co HSD',color:'--text3',days:9999};
+  const t=getThresh();
+  const now=new Date();now.setHours(0,0,0,0);
+  const exp=new Date(dateStr);exp.setHours(0,0,0,0);
+  const days=Math.round((exp-now)/(1000*60*60*24));
+  if(days<0)return{level:'expired',label:'Da het han',color:'var(--text3)',days};
+  if(days<=t.red)return{level:'critical',label:'Con '+days+' ngay',color:'var(--red)',days};
+  if(days<=t.yellow)return{level:'warn',label:'Con '+days+' ngay',color:'var(--orange)',days};
+  return{level:'safe',label:'Con '+days+' ngay',color:'var(--green)',days};
+}
+function expBadgeHtml(dateStr){
+  const s=getExpStatus(dateStr);
+  const cls={expired:'exp-expired',critical:'exp-critical',warn:'exp-warn',safe:'exp-safe'}[s.level];
+  const icon={expired:'fa-skull-crossbones',critical:'fa-fire',warn:'fa-triangle-exclamation',safe:'fa-circle-check'}[s.level];
+  return`<span class="exp-badge ${cls}"><i class="fas ${icon}"></i>${s.label}</span>`;
+}
+function fmtPrice(n){return new Intl.NumberFormat('vi-VN').format(n)+'d'}
+function fmtDate(d){if(!d)return'-';const x=new Date(d);return x.toLocaleDateString('vi-VN')}
+
+/* PIN AUTH */
+let pinVal='';
+function pinInput(n){
+  if(pinVal.length>=4)return;
+  pinVal+=n;
+  updateDots();
+  if(pinVal.length===4)setTimeout(verifyPin,200);
+}
+function pinDel(){pinVal=pinVal.slice(0,-1);updateDots()}
+function updateDots(){
+  for(let i=0;i<4;i++){const d=document.getElementById('d'+i);if(d)d.classList.toggle('on',i<pinVal.length)}
+}
+function verifyPin(){
+  if(pinVal===getPin()){
+    sessionStorage.setItem(AUTH_KEY,'1');
+    document.getElementById('pinScreen').classList.add('hide');
+    setTimeout(()=>{document.getElementById('pinScreen').style.display='none';showAdmin()},500);
+  } else {
+    const dots=document.getElementById('pinDots');
+    dots.classList.add('shake');
+    setTimeout(()=>dots.classList.remove('shake'),600);
+    const err=document.getElementById('pinError');
+    err.classList.add('show');
+    setTimeout(()=>err.classList.remove('show'),3000);
+    pinVal='';updateDots();
+  }
+}
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('pinScreen').style.display==='none')return;
+  if(e.key>='0'&&e.key<='9')pinInput(e.key);
+  else if(e.key==='Backspace')pinDel();
+  else if(e.key==='Enter'&&pinVal.length===4)verifyPin();
+});
+
+/* ADMIN */
+function showAdmin(){
+  loadData();
+  document.getElementById('adminApp').classList.add('on');
+  renderDashboard();
+  renderTable();
+  renderExpirySection();
+  renderAlerts();
+  updateExpiryBadge();
+  startClock();
+}
+function logout(){sessionStorage.removeItem(AUTH_KEY);window.location.href='../../../index.html'}
+function goTo(sec,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('section'+sec.charAt(0).toUpperCase()+sec.slice(1)).classList.add('active');
+  if(btn)btn.classList.add('active');
+  const titles={dashboard:'Dashboard',products:'San pham',expiry:'Han su dung',orders:'Don hang',settings:'Cai dat'};
+  document.getElementById('topbarTitle').textContent=titles[sec]||sec;
+  if(sec==='expiry')renderExpirySection();
+}
+function startClock(){
+  function tick(){
+    const now=new Date();
+    document.getElementById('topbarClock').textContent=now.toLocaleString('vi-VN',{hour:'2-digit',minute:'2-digit',second:'2-digit',day:'2-digit',month:'2-digit',year:'numeric'});
+  }tick();setInterval(tick,1000);
+}
+
+/* DASHBOARD */
+function renderDashboard(){
+  const warn=products.filter(p=>{const s=getExpStatus(p.expiryDate);return s.level==='critical'||s.level==='warn'}).length;
+  const expired=products.filter(p=>getExpStatus(p.expiryDate).level==='expired').length;
+  const val=(products.reduce((a,p)=>(a+p.price*(p.stock||0)),0)/1000000).toFixed(1);
+  animCount('kpiTotal',products.length);
+  animCount('kpiWarn',warn);
+  animCount('kpiExpired',expired);
+  document.getElementById('kpiValue').textContent=val+' Tr';
+  initCharts();
+}
+function animCount(id,target){
+  const el=document.getElementById(id);let n=0;const step=Math.max(1,Math.ceil(target/30));
+  const t=setInterval(()=>{n=Math.min(n+step,target);el.textContent=n;if(n>=target)clearInterval(t)},30);
+}
+function initCharts(){
+  const cats=['Skincare','Body & Bath','Hair','Shaving & Beard','Fragrance','Grooming'];
+  const catCounts=cats.map(c=>products.filter(p=>p.category===c).length);
+  const expCounts=[
+    products.filter(p=>getExpStatus(p.expiryDate).level==='safe').length,
+    products.filter(p=>getExpStatus(p.expiryDate).level==='warn').length,
+    products.filter(p=>getExpStatus(p.expiryDate).level==='critical').length,
+    products.filter(p=>getExpStatus(p.expiryDate).level==='expired').length
+  ];
+  const baseOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'rgba(255,255,255,0.55)',font:{family:'Inter',size:12}}}}};
+  const gridColor='rgba(255,255,255,0.05)';
+  if(chartCat)chartCat.destroy();
+  chartCat=new Chart(document.getElementById('chartCat'),{type:'bar',data:{labels:cats,datasets:[{label:'So san pham',data:catCounts,backgroundColor:'rgba(235,195,81,0.75)',borderColor:'#EBC351',borderWidth:1,borderRadius:6}]},options:{...baseOpts,plugins:{...baseOpts.plugins,legend:{display:false}},scales:{x:{ticks:{color:'rgba(255,255,255,0.5)',font:{size:12}},grid:{color:gridColor}},y:{ticks:{color:'rgba(255,255,255,0.5)',stepSize:1},grid:{color:gridColor},beginAtZero:true}}}});
+  if(chartExp)chartExp.destroy();
+  chartExp=new Chart(document.getElementById('chartExp'),{type:'doughnut',data:{labels:['An toan','Sap het han','Khan cap','Het han'],datasets:[{data:expCounts,backgroundColor:['rgba(39,174,96,0.8)','rgba(243,156,18,0.8)','rgba(231,76,60,0.8)','rgba(150,150,150,0.6)'],borderColor:['#27ae60','#f39c12','#e74c3c','#666'],borderWidth:1}]},options:{...baseOpts,cutout:'65%'}});
+  const now=new Date();
+  const months=[];const lineCounts=[];
+  for(let i=0;i<6;i++){const m=new Date(now.getFullYear(),now.getMonth()+i,1);months.push(m.toLocaleDateString('vi-VN',{month:'short',year:'numeric'}));lineCounts.push(products.filter(p=>{if(!p.expiryDate)return false;const e=new Date(p.expiryDate);return e.getFullYear()===m.getFullYear()&&e.getMonth()===m.getMonth()}).length);}
+  if(chartLine)chartLine.destroy();
+  chartLine=new Chart(document.getElementById('chartLine'),{type:'line',data:{labels:months,datasets:[{label:'SP het han',data:lineCounts,borderColor:'#EBC351',backgroundColor:'rgba(235,195,81,0.1)',tension:0.4,fill:true,pointBackgroundColor:'#EBC351',pointRadius:5}]},options:{...baseOpts,plugins:{...baseOpts.plugins,legend:{display:false}},scales:{x:{ticks:{color:'rgba(255,255,255,0.5)'},grid:{color:gridColor}},y:{ticks:{color:'rgba(255,255,255,0.5)',stepSize:1},grid:{color:gridColor},beginAtZero:true}}}});
+}
+
+/* ALERTS */
+function renderAlerts(){
+  const z=document.getElementById('alertZone');z.innerHTML='';
+  const t=getThresh();
+  const critical=products.filter(p=>getExpStatus(p.expiryDate).level==='critical');
+  const expired=products.filter(p=>getExpStatus(p.expiryDate).level==='expired');
+  if(expired.length>0){z.innerHTML+=`<div class="alert-banner danger"><i class="fas fa-skull-crossbones"></i><span><strong>${expired.length} san pham</strong> da het han — can thu hoi va xu ly ngay!</span><span class="ab-action" onclick="goTo('expiry',document.getElementById('nav-expiry'))">Xem ngay</span></div>`;}
+  if(critical.length>0){z.innerHTML+=`<div class="alert-banner warn"><i class="fas fa-fire"></i><span><strong>${critical.length} san pham</strong> con duoi ${t.red} ngay — nen giam gia de giai phong hang!</span><span class="ab-action" onclick="goTo('expiry',document.getElementById('nav-expiry'))">Xem ngay</span></div>`;}
+}
+function updateExpiryBadge(){
+  const n=products.filter(p=>{const s=getExpStatus(p.expiryDate).level;return s==='critical'||s==='expired'}).length;
+  const b=document.getElementById('expiryNavBadge');b.textContent=n;b.style.display=n>0?'':'none';
+}
+
+/* TABLE */
+function renderTable(){
+  const q=(document.getElementById('searchInput').value||'').toLowerCase();
+  const cat=document.getElementById('filterCat').value;
+  const exp=document.getElementById('filterExp').value;
+  const filtered=products.filter(p=>{
+    if(q&&!p.name.toLowerCase().includes(q)&&!(p.brand||'').toLowerCase().includes(q))return false;
+    if(cat&&p.category!==cat)return false;
+    if(exp&&getExpStatus(p.expiryDate).level!==exp)return false;
+    return true;
+  });
+  const tbody=document.getElementById('productTbody');
+  tbody.innerHTML=filtered.map(p=>{
+    const imgHtml=p.imageUrl?`<img src="${p.imageUrl}" style="width:40px;height:40px;border-radius:6px;object-fit:cover">`:`<div class="td-img">${p.category==='Fragrance'?'🌸':p.category==='Hair'?'💈':p.category==='Skincare'?'🧴':'📦'}</div>`;
+    return`<tr>
+      <td><div style="display:flex;align-items:center;gap:10px">${imgHtml}<div><div class="td-name">${p.name}</div><div style="font-size:11px;color:var(--text3)">${p.brand||''}</div></div></div></td>
+      <td><span style="font-size:12px;background:rgba(255,255,255,0.06);padding:3px 8px;border-radius:5px">${p.category||'-'}</span></td>
+      <td class="td-price">${fmtPrice(p.price)}</td>
+      <td>${p.stock||0}</td>
+      <td style="font-size:12px;color:var(--text3)">${fmtDate(p.expiryDate)}</td>
+      <td>${expBadgeHtml(p.expiryDate)}</td>
+      <td><div class="actions">
+        <button class="btn btn-ghost btn-sm" onclick="openSlideOver(${p.id})"><i class="fas fa-pen"></i></button>
+        <button class="btn btn-danger btn-sm" onclick="openDeleteModal(${p.id},'${p.name}')"><i class="fas fa-trash"></i></button>
+      </div></td>
+    </tr>`;
+  }).join('');
+  document.getElementById('tableCount').textContent=`Hien thi ${filtered.length} / ${products.length} san pham`;
+}
+
+/* SLIDE OVER */
+function openSlideOver(id){
+  editingId=id||null;
+  document.getElementById('soTitle').textContent=id?'Chinh sua san pham':'Them san pham moi';
+  document.getElementById('editId').value=id||'';
+  if(id){
+    const p=products.find(x=>x.id===id);
+    if(p){
+      document.getElementById('fName').value=p.name||'';
+      document.getElementById('fBrand').value=p.brand||'';
+      document.getElementById('fCat').value=p.category||'';
+      document.getElementById('fPrice').value=p.price||'';
+      document.getElementById('fStock').value=p.stock||0;
+      document.getElementById('fMfg').value=p.mfgDate||'';
+      document.getElementById('fExpiry').value=p.expiryDate||'';
+      document.getElementById('fImage').value=p.imageUrl||'';
+      document.getElementById('fDesc').value=p.description||'';
+      previewExpiry();
+    }
+  } else {
+    ['fName','fBrand','fPrice','fStock','fMfg','fExpiry','fImage','fDesc'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('fCat').value='';
+    document.getElementById('expPreview').style.display='none';
+  }
+  document.getElementById('soOverlay').classList.add('on');
+  document.getElementById('slideover').classList.add('on');
+}
+function closeSlideOver(){
+  document.getElementById('soOverlay').classList.remove('on');
+  document.getElementById('slideover').classList.remove('on');
+}
+function previewExpiry(){
+  const val=document.getElementById('fExpiry').value;
+  const prev=document.getElementById('expPreview');
+  if(!val){prev.style.display='none';return;}
+  const s=getExpStatus(val);
+  const colors={safe:'rgba(39,174,96,0.12)',warn:'rgba(243,156,18,0.12)',critical:'rgba(231,76,60,0.12)',expired:'rgba(150,150,150,0.1)'};
+  const borders={safe:'rgba(39,174,96,0.3)',warn:'rgba(243,156,18,0.3)',critical:'rgba(231,76,60,0.3)',expired:'rgba(150,150,150,0.2)'};
+  const icons={safe:'✅',warn:'⚠️',critical:'🚨',expired:'💀'};
+  prev.style.display='block';
+  prev.style.background=colors[s.level];
+  prev.style.border='1px solid '+borders[s.level];
+  prev.style.color=s.color;
+  const msgs={safe:`San pham an toan — ${s.label}`,warn:`San pham sap het han — ${s.label} — Theo doi`,critical:`Khan cap! ${s.label} — De xuat giam gia ngay`,expired:'San pham da het han — Ngung ban va xu ly'};
+  prev.textContent=icons[s.level]+' '+msgs[s.level];
+}
+function saveProduct(){
+  const name=document.getElementById('fName').value.trim();
+  const cat=document.getElementById('fCat').value;
+  const price=parseFloat(document.getElementById('fPrice').value);
+  const expiry=document.getElementById('fExpiry').value;
+  if(!name||!cat||!price||!expiry){toast('Vui long dien day du cac truong bat buoc (*)','error');return;}
+  const data={name,brand:document.getElementById('fBrand').value.trim(),category:cat,price,stock:parseInt(document.getElementById('fStock').value)||0,mfgDate:document.getElementById('fMfg').value,expiryDate:expiry,imageUrl:document.getElementById('fImage').value.trim(),description:document.getElementById('fDesc').value.trim()};
+  if(editingId){
+    const i=products.findIndex(p=>p.id===editingId);
+    if(i>-1)products[i]={...products[i],...data};
+    toast('Da cap nhat san pham!','success');
+  } else {
+    data.id=Date.now();
+    products.push(data);
+    toast('Da them san pham moi!','success');
+  }
+  saveData();closeSlideOver();renderTable();renderDashboard();renderAlerts();updateExpiryBadge();
+}
+
+/* DELETE */
+function openDeleteModal(id,name){
+  deleteId=id;
+  document.getElementById('deleteModalSub').textContent=`Ban co chac muon xoa "${name}"? Hanh dong nay khong the hoan tac.`;
+  document.getElementById('deleteModal').classList.add('on');
+}
+function closeDeleteModal(){document.getElementById('deleteModal').classList.remove('on');deleteId=null;}
+function confirmDelete(){
+  if(!deleteId)return;
+  products=products.filter(p=>p.id!==deleteId);
+  saveData();closeDeleteModal();renderTable();renderDashboard();renderAlerts();updateExpiryBadge();
+  toast('Da xoa san pham!','info');
+}
+
+/* EXPIRY SECTION */
+let currentTab='critical';
+function switchExpTab(tab,btn){
+  currentTab=tab;
+  document.querySelectorAll('.exp-tab').forEach(t=>t.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  renderExpirySection();
+}
+function renderExpirySection(){
+  const groups={safe:[],warn:[],critical:[],expired:[]};
+  products.forEach(p=>{const s=getExpStatus(p.expiryDate);groups[s.level].push({...p,_status:s});});
+  groups.critical.sort((a,b)=>a._status.days-b._status.days);
+  groups.warn.sort((a,b)=>a._status.days-b._status.days);
+  document.getElementById('tabCritCount').textContent=groups.critical.length;
+  document.getElementById('tabWarnCount').textContent=groups.warn.length;
+  document.getElementById('tabSafeCount').textContent=groups.safe.length;
+  document.getElementById('tabExpCount').textContent=groups.expired.length;
+  const list=groups[currentTab];
+  const wrap=document.getElementById('expListWrap');
+  if(!list.length){wrap.innerHTML=`<div style="text-align:center;padding:40px;color:var(--text3)"><i class="fas fa-check-circle" style="font-size:32px;margin-bottom:12px;display:block;color:var(--green)"></i>Khong co san pham nao trong muc nay</div>`;return;}
+  const dayColor={critical:'d-red',warn:'d-orange',safe:'d-green',expired:'d-gray'};
+  const itemClass={critical:'critical',warn:'warn-item',safe:'',expired:'expired-item'};
+  wrap.innerHTML=list.map(p=>{
+    const s=p._status;
+    const daysDisp=s.days<0?`${Math.abs(s.days)}n qua`:`${s.days}n`;
+    const suggest=s.level==='critical'?`<span class="exp-suggest">💡 De xuat giam ${Math.min(50,Math.round((30-s.days)/30*50))}%</span>`:'';
+    const expiredNote=s.level==='expired'?`<span class="exp-suggest" style="background:rgba(231,76,60,.1);color:var(--red);border-color:rgba(231,76,60,.3)">🚫 Ngung ban</span>`:'';
+    return`<div class="exp-item ${itemClass[s.level]}">
+      <div class="exp-days ${dayColor[s.level]}">${daysDisp}</div>
+      <div class="exp-item-info">
+        <div class="exp-item-name">${p.name}</div>
+        <div class="exp-item-meta">${p.brand||''} · ${p.category||''} · HSD: ${fmtDate(p.expiryDate)} · Ton: ${p.stock||0}</div>
+      </div>
+      <div class="exp-item-actions">${suggest}${expiredNote}<button class="btn btn-ghost btn-sm" onclick="openSlideOver(${p.id})"><i class="fas fa-pen"></i></button></div>
+    </div>`;
+  }).join('');
+}
+
+/* SETTINGS */
+function saveSettings(){
+  const red=parseInt(document.getElementById('threshRed').value)||30;
+  const yellow=parseInt(document.getElementById('threshYellow').value)||90;
+  localStorage.setItem(THRESH_KEY,JSON.stringify({red,yellow}));
+  renderTable();renderDashboard();renderAlerts();renderExpirySection();updateExpiryBadge();
+  toast('Da luu cai dat!','success');
+}
+function changePin(){
+  const old=document.getElementById('oldPin').value;
+  const n=document.getElementById('newPin').value;
+  const c=document.getElementById('confirmPin').value;
+  if(old!==getPin()){toast('PIN hien tai khong dung!','error');return;}
+  if(n.length!==4||!/^\d{4}$/.test(n)){toast('PIN moi phai la 4 chu so!','error');return;}
+  if(n!==c){toast('PIN xac nhan khong khop!','error');return;}
+  localStorage.setItem(ADMIN_PIN_KEY,n);
+  ['oldPin','newPin','confirmPin'].forEach(id=>document.getElementById(id).value='');
+  toast('Da doi PIN thanh cong!','success');
+}
+function exportData(){
+  const blob=new Blob([JSON.stringify(products,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ox_products.json';a.click();
+  toast('Da xuat du lieu!','success');
+}
+function resetData(){
+  if(!confirm('Khoi phuc du lieu mau? Du lieu hien tai se bi xoa!'))return;
+  localStorage.setItem(DATA_KEY,JSON.stringify(SAMPLE_PRODUCTS));
+  loadData();renderDashboard();renderTable();renderExpirySection();renderAlerts();updateExpiryBadge();
+  toast('Da khoi phuc du lieu mau!','info');
+}
+
+/* TOAST */
+function toast(msg,type='info'){
+  const icons={success:'fa-check-circle',error:'fa-circle-xmark',info:'fa-circle-info'};
+  const div=document.createElement('div');div.className=`toast ${type}`;
+  div.innerHTML=`<i class="fas ${icons[type]}"></i><span>${msg}</span>`;
+  document.getElementById('toastZone').appendChild(div);
+  setTimeout(()=>{div.style.animation='toastOut .4s ease forwards';setTimeout(()=>div.remove(),400)},3000);
+}
+
+/* INIT */
+window.addEventListener('DOMContentLoaded',()=>{
+  if(sessionStorage.getItem(AUTH_KEY)==='1'){
+    document.getElementById('pinScreen').style.display='none';showAdmin();
+  }
+  if(window.innerWidth<768)document.getElementById('mobMenuBtn').style.display='flex';
+  document.getElementById('threshRed').value=getThresh().red;
+  document.getElementById('threshYellow').value=getThresh().yellow;
+});
+</script>
+</body></html>
