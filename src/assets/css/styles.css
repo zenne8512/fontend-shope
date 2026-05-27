@@ -1,4 +1,4 @@
-﻿:root {
+:root {
     /* â”€â”€ L'Occitane Provence Style â”€â”€ */
     --primary-color: #EBC351;       /* Sunny yellow */
     --primary-hover: #D8AD30;       /* Darker yellow */
@@ -587,8 +587,8 @@ ul {
 
 .btn-buy-now {
     border: none;
-    background: linear-gradient(135deg, #000000, #333333);
-    color: #0C0C0C;
+    background: linear-gradient(135deg, #1a1a1a, #333333);
+    color: #EBC351;
     font-weight: 700;
     letter-spacing: 0.8px;
     transition: all 0.3s;
@@ -1480,10 +1480,8 @@ ul {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
 }
 
-/* Product Cards */
 .product-card {
-    min-width: calc(20% - 12px);
-    width: calc(20% - 12px);
+    width: 100%;
     border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 15px;
@@ -1508,13 +1506,16 @@ ul {
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    background: #f8f8f8;
+    border-radius: 6px;
 }
 
 .card-img img {
-    max-width: 100%;
-    max-height: 100%;
-    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     transition: transform 0.3s;
+    display: block;
 }
 
 .product-card:hover .card-img img {
@@ -1523,16 +1524,15 @@ ul {
 
 .card-img .discount {
     position: absolute;
-    top: 5px;
-    left: 5px;
-    background: #0C0C0C;
-    color: #000000;
-    padding: 3px 10px;
-    border-radius: 3px;
+    top: 8px;
+    left: 8px;
+    background: #cc0000;
+    color: #ffffff;
+    padding: 4px 10px;
+    border-radius: 4px;
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.5px;
-    border: 1px solid rgba(0, 0, 0, 0.4);
 }
 
 /* Hover Add to Cart Button â€” Gold luxury */
@@ -1542,11 +1542,12 @@ ul {
     left: 0;
     width: 100%;
     height: 40px;
-    background: linear-gradient(135deg, #000000, #333333);
-    color: #0C0C0C;
+    background: linear-gradient(135deg, #000000, #1a1a1a);
+    color: #EBC351;
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 8px;
     font-weight: 700;
     font-size: 13px;
     letter-spacing: 0.8px;
@@ -1663,6 +1664,9 @@ ul {
     .search-bar {
         width: 40%;
     }
+    .products-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 @media (max-width: 768px) {
@@ -1681,6 +1685,15 @@ ul {
     }
     .action-buttons {
         width: 100%;
+    }
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .products-grid {
+        grid-template-columns: 1fr;
     }
 }
 

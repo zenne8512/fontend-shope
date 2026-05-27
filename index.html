@@ -144,12 +144,12 @@
         <div class="container">
             <div class="section-header" style="margin-bottom: 28px;">
                 <h2>DANH MỤC SẢN PHẨM</h2>
-                <a href="#" class="view-all">Xem tất cả &gt;</a>
+                <a href="javascript:filterCategoryOnHome('')" class="view-all">Xem tất cả &gt;</a>
             </div>
             <div class="category-showcase-grid">
 
                 <!-- Skincare -->
-                <a href="#" class="cat-card">
+                <a href="javascript:filterCategoryOnHome('skincare')" class="cat-card">
                     <img src="src/assets/images/skincare.jpg" alt="Chăm sóc da mặt">
                     <div class="cat-card-content">
                         <span class="cat-card-sub">Skincare</span>
@@ -159,7 +159,7 @@
                 </a>
 
                 <!-- Body & Bath -->
-                <a href="#" class="cat-card">
+                <a href="javascript:filterCategoryOnHome('body-bath')" class="cat-card">
                     <img src="src/assets/images/body.jpg" alt="Chăm sóc cơ thể">
                     <div class="cat-card-content">
                         <span class="cat-card-sub">Body &amp; Bath</span>
@@ -169,7 +169,7 @@
                 </a>
 
                 <!-- Hair -->
-                <a href="#" class="cat-card">
+                <a href="javascript:filterCategoryOnHome('hair')" class="cat-card">
                     <img src="src/assets/images/hair.jpg" alt="Chăm sóc tóc">
                     <div class="cat-card-content">
                         <span class="cat-card-sub">Hair</span>
@@ -179,7 +179,7 @@
                 </a>
 
                 <!-- Shaving & Beard -->
-                <a href="#" class="cat-card">
+                <a href="javascript:filterCategoryOnHome('shaving-beard')" class="cat-card">
                     <img src="src/assets/images/shaving.jpg" alt="Râu và Cạo râu">
                     <div class="cat-card-content">
                         <span class="cat-card-sub">Shaving &amp; Beard</span>
@@ -189,7 +189,7 @@
                 </a>
 
                 <!-- Fragrance -->
-                <a href="#" class="cat-card">
+                <a href="javascript:filterCategoryOnHome('fragrance')" class="cat-card">
                     <img src="src/assets/images/fragrance.jpg" alt="Nước hoa nam">
                     <div class="cat-card-content">
                         <span class="cat-card-sub">Fragrance</span>
@@ -199,7 +199,7 @@
                 </a>
 
                 <!-- Grooming -->
-                <a href="#" class="cat-card">
+                <a href="javascript:filterCategoryOnHome('grooming')" class="cat-card">
                     <img src="src/assets/images/grooming.jpg" alt="Grooming">
                     <div class="cat-card-content">
                         <span class="cat-card-sub">Grooming</span>
@@ -209,6 +209,30 @@
                 </a>
 
             </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="featured-products-section container" id="our-products" style="padding: 60px 0; border-top: 1px solid rgba(255,255,255,0.06);">
+        <div class="section-header" style="margin-bottom: 36px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+            <h2 style="font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; letter-spacing: 2px; color: #fff;">SẢN PHẨM CỦA CHÚNG TÔI</h2>
+            <p style="font-family: 'Montserrat', sans-serif; font-size: 14px; color: rgba(255,255,255,0.4); max-width: 600px;">Khám phá bộ sưu tập mỹ phẩm chính hãng tinh tế dành riêng cho nam giới</p>
+            
+            <!-- Category Filter Tabs -->
+            <div class="category-tabs" style="display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; justify-content: center;">
+                <button class="cat-filter-btn active" data-category="" style="padding: 10px 20px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; color: #fff; font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; outline: none;">Tất cả</button>
+                <button class="cat-filter-btn" data-category="skincare" style="padding: 10px 20px; background: transparent; border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; color: rgba(255,255,255,0.6); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; outline: none;">Chăm sóc da mặt</button>
+                <button class="cat-filter-btn" data-category="body-bath" style="padding: 10px 20px; background: transparent; border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; color: rgba(255,255,255,0.6); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; outline: none;">Chăm sóc cơ thể</button>
+                <button class="cat-filter-btn" data-category="hair" style="padding: 10px 20px; background: transparent; border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; color: rgba(255,255,255,0.6); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; outline: none;">Chăm sóc tóc</button>
+                <button class="cat-filter-btn" data-category="shaving-beard" style="padding: 10px 20px; background: transparent; border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; color: rgba(255,255,255,0.6); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; outline: none;">Râu & Cạo râu</button>
+                <button class="cat-filter-btn" data-category="fragrance" style="padding: 10px 20px; background: transparent; border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; color: rgba(255,255,255,0.6); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; outline: none;">Nước hoa nam</button>
+                <button class="cat-filter-btn" data-category="grooming" style="padding: 10px 20px; background: transparent; border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; color: rgba(255,255,255,0.6); font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; outline: none;">Chống nắng & Makeup</button>
+            </div>
+        </div>
+        
+        <!-- Products Grid -->
+        <div id="api-products-grid" class="products-grid">
+            <!-- Injected by script.js -->
         </div>
     </section>
 
@@ -491,6 +515,7 @@
         </div>
     </div>
 
+    <script src="src/utils/api.js"></script>
     <script src="src/utils/script.js"></script>
     <script>
     // ── ADMIN ACCESS ──────────────────────────────────

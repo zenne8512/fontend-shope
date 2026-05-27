@@ -417,6 +417,7 @@
         </div>
     </main>
 
+    <script src="../../utils/api.js"></script>
     <script>
         function switchTab(tab) {
             document.getElementById('tab-login').classList.remove('active');
@@ -435,6 +436,66 @@
                 document.querySelector('.auth-card-sub').textContent = 'Tham gia cộng đồng OX và nhận voucher 50K ngay hôm nay';
             }
         }
+
+        // Nếu đã đăng nhập, chuyển về trang chủ luôn
+        if (Auth.isLoggedIn()) {
+            window.location.href = '../../../index.html';
+        }
+
+        // Form Đăng nhập
+        document.getElementById('form-login').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('.auth-submit-btn');
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            btn.textContent = 'Đang đăng nhập...';
+            btn.disabled = true;
+            try {
+                await Auth.login(email, password);
+                window.location.href = '../../../index.html';
+            } catch (err) {
+                showMsg(err.message, 'error');
+                btn.textContent = 'ĐĂNG NHẬP';
+                btn.disabled = false;
+            }
+        });
+
+        // Form Đăng ký
+        document.getElementById('form-register').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('.auth-submit-btn');
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+            btn.textContent = 'Đang tạo tài khoản...';
+            btn.disabled = true;
+            try {
+                await Auth.register(email, password, name);
+                window.location.href = '../../../index.html';
+            } catch (err) {
+                showMsg(err.message, 'error');
+                btn.textContent = 'TẠO TÀI KHOẢN';
+                btn.disabled = false;
+            }
+        });
+
+        function showMsg(msg, type = 'success') {
+            const existing = document.getElementById('auth-msg');
+            if (existing) existing.remove();
+            const div = document.createElement('div');
+            div.id = 'auth-msg';
+            div.style.cssText = `
+                position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+                background:${type === 'error' ? '#c0392b' : '#27ae60'};
+                color:#fff;padding:12px 28px;border-radius:50px;
+                font-family:'Montserrat',sans-serif;font-size:13px;font-weight:600;
+                box-shadow:0 8px 30px rgba(0,0,0,0.4);z-index:9999;
+            `;
+            div.textContent = msg;
+            document.body.appendChild(div);
+            setTimeout(() => div && div.remove(), 3000);
+        }
     </script>
 </body>
 </html>
+

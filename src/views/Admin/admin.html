@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
@@ -241,6 +241,16 @@ tbody td{padding:13px 16px;font-size:13px;color:var(--text2)}
 .kpi-grid{grid-template-columns:1fr 1fr}
 .slideover{width:100%;max-width:100%}
 }
+/* BACKEND LOGIN SCREEN */
+#backendLoginScreen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9998;transition:opacity .5s,transform .5s}
+#backendLoginScreen.hide{opacity:0;transform:scale(1.05);pointer-events:none}
+#backendLoginScreen::before{content:'';position:fixed;top:-10%;left:50%;transform:translateX(-50%);width:600px;height:600px;background:radial-gradient(circle,rgba(235,195,81,.07) 0%,transparent 65%);pointer-events:none}
+.login-box{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:36px;width:100%;max-width:400px;box-shadow:0 12px 40px rgba(0,0,0,0.5);text-align:center;position:relative}
+.login-title{font-size:18px;font-weight:700;margin-bottom:8px;color:var(--text)}
+.login-sub{font-size:12px;color:var(--text2);margin-bottom:24px;line-height:1.5}
+.login-form{display:flex;flex-direction:column;gap:16px;text-align:left}
+.login-back{font-size:12px;color:var(--text3);margin-top:20px;display:inline-block;transition:color .2s;text-align:center}
+.login-back:hover{color:var(--gold)}
 </style>
 </head>
 <body>
@@ -270,6 +280,28 @@ tbody td{padding:13px 16px;font-size:13px;color:var(--text2)}
   </div>
   <a href="../../../index.html" class="pin-back"><i class="fas fa-arrow-left"></i> Quay về trang chủ</a>
   <p class="pin-hint">PIN mặc định: 2026</p>
+</div>
+
+<!-- BACKEND LOGIN SCREEN -->
+<div id="backendLoginScreen" style="display:none">
+  <div class="login-box">
+    <div class="pin-logo">OX</div>
+    <span class="pin-logo-sub">Backend Database Authentication</span>
+    <div class="login-title">Đăng nhập Database</div>
+    <div class="login-sub">Nhập tài khoản Admin của hệ thống để thực hiện các thao tác dữ liệu thực tế.</div>
+    <div class="login-form">
+      <div class="fg">
+        <label>Email Admin *</label>
+        <input type="email" id="bEmail" placeholder="admin@shoppi.com" value="admin@shoppi.com">
+      </div>
+      <div class="fg">
+        <label>Mật khẩu *</label>
+        <input type="password" id="bPassword" placeholder="••••••••" value="admin123">
+      </div>
+      <button class="btn btn-gold" onclick="loginBackend()" style="margin-top:8px;justify-content:center"><i class="fas fa-right-to-bracket"></i> Đăng nhập hệ thống</button>
+    </div>
+    <a href="#" onclick="showPinScreen()" class="login-back"><i class="fas fa-arrow-left"></i> Quay lại nhập PIN</a>
+  </div>
 </div>
 
 <!-- ADMIN APP -->
@@ -460,6 +492,7 @@ tbody td{padding:13px 16px;font-size:13px;color:var(--text2)}
           <div class="settings-card">
             <div class="settings-card-title"><i class="fas fa-database" style="color:var(--gold);margin-right:8px"></i>Dữ liệu</div>
             <div style="display:flex;flex-direction:column;gap:10px">
+              <button class="btn btn-gold" onclick="syncFromBackend()"><i class="fas fa-sync"></i> Đồng bộ sản phẩm từ Backend</button>
               <button class="btn btn-ghost" onclick="exportData()"><i class="fas fa-download"></i> Xuất dữ liệu JSON</button>
               <button class="btn btn-danger" onclick="resetData()"><i class="fas fa-rotate-left"></i> Khôi phục dữ liệu mẫu</button>
             </div>
@@ -531,20 +564,69 @@ tbody td{padding:13px 16px;font-size:13px;color:var(--text2)}
 
 <!-- TOAST ZONE -->
 <div class="toast-zone" id="toastZone"></div>
+<script src="../../utils/api.js"></script>
 <script>
 const ADMIN_PIN_KEY='ox_admin_pin';const AUTH_KEY='ox_admin_auth';const DATA_KEY='ox_products';const THRESH_KEY='ox_thresh';
-let products=[],editingId=null,deleteId=null,currentExpTab='critical';
+let products=[],editingId=null,deleteId=null,currentExpTab='critical',dbCategories=[],dbBrands=[];
 let chartCat=null,chartExp=null,chartLine=null;
 const DEFAULT_PIN='2026';
 function getPin(){return localStorage.getItem(ADMIN_PIN_KEY)||DEFAULT_PIN}
 function getThresh(){const t=JSON.parse(localStorage.getItem(THRESH_KEY)||'{}');return{red:t.red||30,yellow:t.yellow||90}}
+
+function mapBackendProductToAdmin(p) {
+  const now = new Date();
+  const existingLocal = products.find(x => x.id === p.id);
+  
+  const mfgDate = existingLocal ? existingLocal.mfgDate : new Date(now.getTime() - 150 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+  const expiryDate = existingLocal ? existingLocal.expiryDate : new Date(now.getTime() + 180 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+  const price = p.product_variants && p.product_variants.length > 0 ? parseFloat(p.product_variants[0].price) : p.price || 300000;
+  const stock = p.product_variants && p.product_variants.length > 0 ? p.product_variants[0].stock : 50;
+  
+  let rawImg = '';
+  if (p.product_images && p.product_images.length > 0) {
+    rawImg = p.product_images[0].image_url;
+  } else if (p.image) {
+    rawImg = p.image;
+  }
+  const imgUrl = getImageUrl(rawImg);
+  
+  let category = 'Skincare';
+  const catName = p.categories ? p.categories.name : '';
+  if (catName.toLowerCase().includes('body') || catName.toLowerCase().includes('tắm') || catName.toLowerCase().includes('thể')) category = 'Body & Bath';
+  else if (catName.toLowerCase().includes('tóc') || catName.toLowerCase().includes('hair')) category = 'Hair';
+  else if (catName.toLowerCase().includes('râu') || catName.toLowerCase().includes('shaving')) category = 'Shaving & Beard';
+  else if (catName.toLowerCase().includes('nước hoa') || catName.toLowerCase().includes('fragrance')) category = 'Fragrance';
+  else if (catName.toLowerCase().includes('trang điểm') || catName.toLowerCase().includes('grooming') || catName.toLowerCase().includes('chống nắng')) category = 'Grooming';
+
+  let brandName = '';
+  if (p.brands) {
+    brandName = p.brands.name;
+  } else if (p.brand_id && dbBrands.length > 0) {
+    brandName = dbBrands.find(b => b.id === p.brand_id)?.name || '';
+  }
+
+  return {
+    id: p.id,
+    name: p.name,
+    brand: brandName,
+    category: category,
+    price: price,
+    stock: stock,
+    mfgDate: mfgDate,
+    expiryDate: expiryDate,
+    description: p.description || '',
+    imageUrl: imgUrl
+  };
+}
+
 const SAMPLE_PRODUCTS=[
 {id:1,name:'Kem Chong Nang La Roche-Posay Anthelios SPF50+',brand:'La Roche-Posay',category:'Skincare',price:395000,stock:24,mfgDate:'2024-06-01',expiryDate:'2026-06-20',description:'Kem chong nang the he moi SPF50+',imageUrl:''},
 {id:2,name:'Sua Rua Mat CeraVe Hydrating',brand:'CeraVe',category:'Skincare',price:220000,stock:15,mfgDate:'2024-01-15',expiryDate:'2026-05-18',description:'Sua rua mat diu nhe',imageUrl:''},
 {id:3,name:'Gel Cao Rau Bulldog Sensitive',brand:'Bulldog',category:'Shaving & Beard',price:185000,stock:30,mfgDate:'2024-03-01',expiryDate:'2026-05-25',description:'Gel cao rau cho da nhay cam',imageUrl:''},
 {id:4,name:'Nuoc Hoa Acqua Di Gio EDT 100ml',brand:'Giorgio Armani',category:'Fragrance',price:2800000,stock:8,mfgDate:'2024-07-01',expiryDate:'2027-07-01',description:'Nuoc hoa nam huong bien mat',imageUrl:''},
 {id:5,name:'Dau Goi Redken Brews Daily',brand:'Redken',category:'Hair',price:340000,stock:20,mfgDate:'2024-05-01',expiryDate:'2026-09-15',description:'Dau goi hang ngay cho nam',imageUrl:''},
-{id:6,name:'Sua Duong The Jack Black Pit Boss',brand:'Jack Black',category:'Body & Bath',price:450000,stock:12,mfgDate:'2024-08-01',expiryDate:'2027-02-01',description:'Sua duong the khu mui',imageUrl:''},
+{id:6,name:'Sua Duong Thie Jack Black Pit Boss',brand:'Jack Black',category:'Body & Bath',price:450000,stock:12,mfgDate:'2024-08-01',expiryDate:'2027-02-01',description:'Sua duong the khu mui',imageUrl:''},
 {id:7,name:'Kem Chong Nang Vichy Homme',brand:'Vichy',category:'Skincare',price:320000,stock:18,mfgDate:'2024-02-01',expiryDate:'2026-05-30',description:'Kem chong nang cho nam',imageUrl:''},
 {id:8,name:'Dau Xa Toc Dove Men+Care',brand:'Dove',category:'Hair',price:95000,stock:45,mfgDate:'2024-04-01',expiryDate:'2026-07-15',description:'Dau xa toc dan ong',imageUrl:''},
 {id:9,name:'Xa Phong Giat Axe Gold',brand:'Axe',category:'Body & Bath',price:75000,stock:60,mfgDate:'2023-09-01',expiryDate:'2026-04-01',description:'Xa phong tam huong gold',imageUrl:''},
@@ -552,10 +634,59 @@ const SAMPLE_PRODUCTS=[
 {id:11,name:'Kem Duong Am Cetaphil Men',brand:'Cetaphil',category:'Skincare',price:280000,stock:25,mfgDate:'2024-09-01',expiryDate:'2026-12-01',description:'Kem duong am cho da nam',imageUrl:''},
 {id:12,name:'Nuoc Hoa Tommy Hilfiger Impact',brand:'Tommy Hilfiger',category:'Fragrance',price:1200000,stock:6,mfgDate:'2023-01-01',expiryDate:'2025-12-31',description:'Nuoc hoa nam phong cach',imageUrl:''}
 ];
-function loadData(){
+async function loadData(){
+  try {
+    dbCategories = await Categories.getAll();
+    dbBrands = await Brands.getAll();
+  } catch (e) {
+    console.error("Lỗi tải danh mục/thương hiệu từ Backend API:", e);
+  }
+
   const raw=localStorage.getItem(DATA_KEY);
-  products=raw?JSON.parse(raw):[...SAMPLE_PRODUCTS];
-  if(!raw)localStorage.setItem(DATA_KEY,JSON.stringify(products));
+  let parsed = null;
+  try {
+    parsed = raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    parsed = null;
+  }
+  if (!parsed || !Array.isArray(parsed) || parsed.length === 0) {
+    try {
+      const data = await Products.getAll({ limit: 100 });
+      const backendProducts = data.products || data;
+      if (backendProducts && backendProducts.length > 0) {
+        products = backendProducts.map(p => {
+          const mapped = mapBackendProductToAdmin(p);
+          const now = new Date();
+          const randDaysMfg = Math.floor(Math.random() * 200) + 100;
+          const mfg = new Date(now.getTime() - randDaysMfg * 24 * 60 * 60 * 1000);
+          
+          const randExpiryChoice = Math.random();
+          let exp;
+          if (randExpiryChoice < 0.1) {
+            exp = new Date(now.getTime() - (Math.floor(Math.random() * 15) + 5) * 24 * 60 * 60 * 1000);
+          } else if (randExpiryChoice < 0.25) {
+            exp = new Date(now.getTime() + (Math.floor(Math.random() * 15) + 10) * 24 * 60 * 60 * 1000);
+          } else if (randExpiryChoice < 0.4) {
+            exp = new Date(now.getTime() + (Math.floor(Math.random() * 50) + 30) * 24 * 60 * 60 * 1000);
+          } else {
+            exp = new Date(now.getTime() + (Math.floor(Math.random() * 250) + 150) * 24 * 60 * 60 * 1000);
+          }
+          mapped.mfgDate = mfg.toISOString().split('T')[0];
+          mapped.expiryDate = exp.toISOString().split('T')[0];
+          return mapped;
+        });
+        localStorage.setItem(DATA_KEY, JSON.stringify(products));
+        return;
+      }
+    } catch (e) {
+      console.error("Lỗi đồng bộ sản phẩm từ Backend API, dùng sản phẩm mặc định:", e);
+    }
+    
+    products = [...SAMPLE_PRODUCTS];
+    localStorage.setItem(DATA_KEY, JSON.stringify(products));
+  } else {
+    products = parsed;
+  }
 }
 function saveData(){localStorage.setItem(DATA_KEY,JSON.stringify(products))}
 function getExpStatus(dateStr){
@@ -594,7 +725,10 @@ function verifyPin(){
   if(pinVal===getPin()){
     sessionStorage.setItem(AUTH_KEY,'1');
     document.getElementById('pinScreen').classList.add('hide');
-    setTimeout(()=>{document.getElementById('pinScreen').style.display='none';showAdmin()},500);
+    setTimeout(()=>{
+      document.getElementById('pinScreen').style.display='none';
+      verifyBackendAuth();
+    },500);
   } else {
     const dots=document.getElementById('pinDots');
     dots.classList.add('shake');
@@ -605,16 +739,62 @@ function verifyPin(){
     pinVal='';updateDots();
   }
 }
-document.addEventListener('keydown',e=>{
-  if(document.getElementById('pinScreen').style.display==='none')return;
-  if(e.key>='0'&&e.key<='9')pinInput(e.key);
-  else if(e.key==='Backspace')pinDel();
-  else if(e.key==='Enter'&&pinVal.length===4)verifyPin();
-});
+
+async function verifyBackendAuth() {
+  if (Auth.isAdmin()) {
+    await showAdmin();
+  } else {
+    showBackendLogin();
+  }
+}
+
+function showBackendLogin() {
+  document.getElementById('backendLoginScreen').style.display = 'flex';
+  document.getElementById('backendLoginScreen').classList.remove('hide');
+  document.getElementById('adminApp').classList.remove('on');
+}
+
+function showPinScreen() {
+  document.getElementById('backendLoginScreen').classList.add('hide');
+  setTimeout(() => {
+    document.getElementById('backendLoginScreen').style.display = 'none';
+    document.getElementById('pinScreen').style.display = 'flex';
+    document.getElementById('pinScreen').classList.remove('hide');
+    pinVal = '';
+    updateDots();
+  }, 500);
+}
+
+async function loginBackend() {
+  const email = document.getElementById('bEmail').value.trim();
+  const password = document.getElementById('bPassword').value;
+  if (!email || !password) {
+    toast('Vui lòng điền đầy đủ email và mật khẩu!', 'error');
+    return;
+  }
+  
+  try {
+    toast('Đang xác thực với Backend...', 'info');
+    const data = await Auth.login(email, password);
+    if (data.role === 'ADMIN') {
+      toast('Đăng nhập Backend thành công!', 'success');
+      document.getElementById('backendLoginScreen').classList.add('hide');
+      setTimeout(async () => {
+        document.getElementById('backendLoginScreen').style.display = 'none';
+        await showAdmin();
+      }, 500);
+    } else {
+      toast('Tài khoản không phải ADMIN!', 'error');
+      Auth.logout();
+    }
+  } catch (err) {
+    toast(err.message || 'Đăng nhập thất bại!', 'error');
+  }
+}
 
 /* ADMIN */
-function showAdmin(){
-  loadData();
+async function showAdmin(){
+  await loadData();
   document.getElementById('adminApp').classList.add('on');
   renderDashboard();
   renderTable();
@@ -623,7 +803,7 @@ function showAdmin(){
   updateExpiryBadge();
   startClock();
 }
-function logout(){sessionStorage.removeItem(AUTH_KEY);window.location.href='../../../index.html'}
+function logout(){sessionStorage.removeItem(AUTH_KEY);Auth.logout();window.location.href='../../../index.html'}
 function goTo(sec,btn){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -767,23 +947,95 @@ function previewExpiry(){
   const msgs={safe:`San pham an toan — ${s.label}`,warn:`San pham sap het han — ${s.label} — Theo doi`,critical:`Khan cap! ${s.label} — De xuat giam gia ngay`,expired:'San pham da het han — Ngung ban va xu ly'};
   prev.textContent=icons[s.level]+' '+msgs[s.level];
 }
-function saveProduct(){
+async function saveProduct(){
   const name=document.getElementById('fName').value.trim();
   const cat=document.getElementById('fCat').value;
   const price=parseFloat(document.getElementById('fPrice').value);
   const expiry=document.getElementById('fExpiry').value;
-  if(!name||!cat||!price||!expiry){toast('Vui long dien day du cac truong bat buoc (*)','error');return;}
-  const data={name,brand:document.getElementById('fBrand').value.trim(),category:cat,price,stock:parseInt(document.getElementById('fStock').value)||0,mfgDate:document.getElementById('fMfg').value,expiryDate:expiry,imageUrl:document.getElementById('fImage').value.trim(),description:document.getElementById('fDesc').value.trim()};
-  if(editingId){
-    const i=products.findIndex(p=>p.id===editingId);
-    if(i>-1)products[i]={...products[i],...data};
-    toast('Da cap nhat san pham!','success');
-  } else {
-    data.id=Date.now();
-    products.push(data);
-    toast('Da them san pham moi!','success');
+  if(!name||!cat||!price||!expiry){toast('Vui lòng điền đầy đủ các trường bắt buộc (*)','error');return;}
+  
+  // 1. Map category to database category_id
+  const categorySlugs = {
+    'Skincare': 'skincare',
+    'Body & Bath': 'body-bath',
+    'Hair': 'hair',
+    'Shaving & Beard': 'shaving-beard',
+    'Fragrance': 'fragrance',
+    'Grooming': 'grooming'
+  };
+  const mappedSlug = categorySlugs[cat] || 'skincare';
+  let matchedCat = dbCategories.find(c => c.slug === mappedSlug);
+  if (!matchedCat && dbCategories.length > 0) matchedCat = dbCategories[0];
+  const categoryId = matchedCat ? matchedCat.id : null;
+  
+  // 2. Map brand to brand_id (create if not exists)
+  const enteredBrand = document.getElementById('fBrand').value.trim();
+  let brandId = null;
+  if (enteredBrand) {
+    let matchedBrand = dbBrands.find(b => b.name.toLowerCase() === enteredBrand.toLowerCase());
+    if (!matchedBrand) {
+      try {
+        toast('Đang tạo thương hiệu mới: ' + enteredBrand, 'info');
+        matchedBrand = await Brands.create({ name: enteredBrand });
+        dbBrands.push(matchedBrand);
+      } catch (err) {
+        console.error("Lỗi tạo thương hiệu:", err);
+      }
+    }
+    if (matchedBrand) brandId = matchedBrand.id;
   }
-  saveData();closeSlideOver();renderTable();renderDashboard();renderAlerts();updateExpiryBadge();
+
+  const mfgDate = document.getElementById('fMfg').value;
+  const stock = parseInt(document.getElementById('fStock').value) || 0;
+  const imageUrl = document.getElementById('fImage').value.trim();
+  const description = document.getElementById('fDesc').value.trim();
+
+  const apiData = {
+    name,
+    price,
+    description,
+    image: imageUrl,
+    category_id: categoryId,
+    brand_id: brandId,
+    stock: stock
+  };
+
+  try {
+    toast('Đang lưu thay đổi vào database...', 'info');
+    let updatedBackendProduct;
+    
+    if (editingId) {
+      updatedBackendProduct = await Products.update(editingId, apiData);
+      
+      const mapped = mapBackendProductToAdmin(updatedBackendProduct);
+      if (mfgDate) mapped.mfgDate = mfgDate;
+      if (expiry) mapped.expiryDate = expiry;
+      
+      const idx = products.findIndex(p => p.id === editingId);
+      if (idx > -1) products[idx] = mapped;
+      
+      toast('Đã cập nhật sản phẩm thành công!', 'success');
+    } else {
+      updatedBackendProduct = await Products.create(apiData);
+      
+      const mapped = mapBackendProductToAdmin(updatedBackendProduct);
+      if (mfgDate) mapped.mfgDate = mfgDate;
+      if (expiry) mapped.expiryDate = expiry;
+      
+      products.push(mapped);
+      toast('Đã thêm sản phẩm mới thành công!', 'success');
+    }
+    
+    saveData();
+    closeSlideOver();
+    renderTable();
+    renderDashboard();
+    renderAlerts();
+    updateExpiryBadge();
+  } catch (err) {
+    toast(err.message || 'Lỗi lưu sản phẩm vào database!', 'error');
+    console.error("Lỗi lưu sản phẩm:", err);
+  }
 }
 
 /* DELETE */
@@ -793,11 +1045,24 @@ function openDeleteModal(id,name){
   document.getElementById('deleteModal').classList.add('on');
 }
 function closeDeleteModal(){document.getElementById('deleteModal').classList.remove('on');deleteId=null;}
-function confirmDelete(){
+async function confirmDelete(){
   if(!deleteId)return;
-  products=products.filter(p=>p.id!==deleteId);
-  saveData();closeDeleteModal();renderTable();renderDashboard();renderAlerts();updateExpiryBadge();
-  toast('Da xoa san pham!','info');
+  try {
+    toast('Đang xóa sản phẩm khỏi database...', 'info');
+    await Products.delete(deleteId);
+    
+    products=products.filter(p=>p.id!==deleteId);
+    saveData();
+    closeDeleteModal();
+    renderTable();
+    renderDashboard();
+    renderAlerts();
+    updateExpiryBadge();
+    toast('Đã xóa sản phẩm thành công!', 'success');
+  } catch (err) {
+    toast(err.message || 'Lỗi xóa sản phẩm từ database!', 'error');
+    console.error("Lỗi xóa sản phẩm:", err);
+  }
 }
 
 /* EXPIRY SECTION */
@@ -862,11 +1127,24 @@ function exportData(){
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ox_products.json';a.click();
   toast('Da xuat du lieu!','success');
 }
-function resetData(){
+async function resetData(){
   if(!confirm('Khoi phuc du lieu mau? Du lieu hien tai se bi xoa!'))return;
   localStorage.setItem(DATA_KEY,JSON.stringify(SAMPLE_PRODUCTS));
-  loadData();renderDashboard();renderTable();renderExpirySection();renderAlerts();updateExpiryBadge();
+  await loadData();renderDashboard();renderTable();renderExpirySection();renderAlerts();updateExpiryBadge();
   toast('Da khoi phuc du lieu mau!','info');
+}
+
+async function syncFromBackend() {
+  if(!confirm('Đồng bộ toàn bộ sản phẩm thực tế từ Database backend? Dữ liệu hiện tại sẽ bị ghi đè!')) return;
+  localStorage.removeItem(DATA_KEY);
+  toast('Đang đồng bộ dữ liệu...', 'info');
+  await loadData();
+  renderDashboard();
+  renderTable();
+  renderExpirySection();
+  renderAlerts();
+  updateExpiryBadge();
+  toast('Đã đồng bộ thành công sản phẩm từ Database backend!', 'success');
 }
 
 /* TOAST */
@@ -881,11 +1159,18 @@ function toast(msg,type='info'){
 /* INIT */
 window.addEventListener('DOMContentLoaded',()=>{
   if(sessionStorage.getItem(AUTH_KEY)==='1'){
-    document.getElementById('pinScreen').style.display='none';showAdmin();
+    document.getElementById('pinScreen').style.display='none';
+    verifyBackendAuth();
   }
   if(window.innerWidth<768)document.getElementById('mobMenuBtn').style.display='flex';
   document.getElementById('threshRed').value=getThresh().red;
   document.getElementById('threshYellow').value=getThresh().yellow;
+});
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('pinScreen').style.display==='none')return;
+  if(e.key>='0'&&e.key<='9')pinInput(e.key);
+  else if(e.key==='Backspace')pinDel();
+  else if(e.key==='Enter'&&pinVal.length===4)verifyPin();
 });
 </script>
 </body></html>

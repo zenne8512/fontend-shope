@@ -291,22 +291,142 @@ a{text-decoration:none;color:inherit}
     </div>
 </div>
 
+<script src="../../utils/api.js"></script>
 <script>
-function changeQty(itemId, delta) {
-    const input = document.getElementById('qty-' + itemId);
-    let val = parseInt(input.value) + delta;
-    if (val < 1) val = 1;
-    input.value = val;
-}
-function removeItem(itemId) {
-    const el = document.getElementById(itemId);
-    if (el) {
-        el.style.opacity = '0';
-        el.style.transform = 'translateX(30px)';
-        el.style.transition = 'all .3s';
-        setTimeout(() => el.remove(), 300);
+const formatCurrency = (n) => new Intl.NumberFormat('vi-VN').format(n) + 'đ';
+
+async function loadCart() {
+    const itemsBox = document.querySelector('.cart-items-box');
+    const countEl = document.querySelector('.cart-items-header span');
+
+    if (!Auth.isLoggedIn()) {
+        itemsBox.innerHTML = `
+            <div class="cart-empty">
+                <i class="fas fa-user-lock" style="color:#EBC351;"></i>
+                <h3>Vui lòng đăng nhập</h3>
+                <p>Bạn cần đăng nhập để xem và quản lý giỏ hàng.</p>
+                <a href="../Auth/login.html">Đăng nhập ngay</a>
+            </div>`;
+        return;
+    }
+
+    try {
+        const items = await Cart.getCart();
+
+        if (items.length === 0) {
+            itemsBox.innerHTML = `
+                <div class="cart-empty">
+                    <i class="fas fa-shopping-bag"></i>
+                    <h3>Giỏ hàng trống</h3>
+                    <p>Hãy khám phá các sản phẩm tuyệt vời của chúng tôi.</p>
+                    <a href="../../../index.html">Tiếp tục mua sắm</a>
+                </div>`;
+            updateSummary(0, 0);
+            return;
+        }
+
+        if (countEl) countEl.textContent = `${items.length} sản phẩm`;
+
+        // Render items
+        const header = itemsBox.querySelector('.cart-items-header');
+        const coupon = itemsBox.querySelector('.cart-coupon');
+
+        // Xóa sản phẩm cũ
+        itemsBox.querySelectorAll('.cart-item-new').forEach(el => el.remove());
+
+        let subtotal = 0;
+        items.forEach(item => {
+            const price = item.products?.product_variants?.[0]?.price ? parseFloat(item.products.product_variants[0].price) : 0;
+            const lineTotal = price * item.quantity;
+            subtotal += lineTotal;
+            const imgUrl = getImageUrl(item.products?.product_images?.[0]?.image_url || '/src/assets/images/main.png');
+            const brand = item.products?.brands?.name || '';
+
+            const div = document.createElement('div');
+            div.className = 'cart-item-new';
+            div.id = `cart-item-${item.id}`;
+            div.innerHTML = `
+                <img src="${imgUrl}" alt="${item.products?.name || ''}" class="cart-item-new-img" onerror="this.src='/src/assets/images/main.png'">
+                <div class="cart-item-new-info">
+                    ${brand ? `<div class="cart-item-new-brand">${brand}</div>` : ''}
+                    <div class="cart-item-new-name">${item.products?.name || 'Sản phẩm'}</div>
+                    <div class="cart-item-new-variant">Mặc định</div>
+                    <div class="cart-item-new-qty">
+                        <button onclick="updateQty(${item.id}, ${item.quantity - 1})">−</button>
+                        <input type="text" value="${item.quantity}" id="qty-${item.id}" readonly>
+                        <button onclick="updateQty(${item.id}, ${item.quantity + 1})">+</button>
+                    </div>
+                </div>
+                <div class="cart-item-new-price">
+                    <div class="price-current" id="price-${item.id}">${formatCurrency(lineTotal)}</div>
+                    <div style="font-size:11px;color:#aaa;margin-top:2px;">${formatCurrency(price)} / sp</div>
+                </div>
+                <button class="cart-remove-btn" onclick="deleteItem(${item.id})" title="Xóa">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+
+            // Chèn trước phần coupon
+            if (coupon) itemsBox.insertBefore(div, coupon);
+            else itemsBox.appendChild(div);
+        });
+
+        updateSummary(subtotal, items.length);
+    } catch (err) {
+        itemsBox.innerHTML = `<div class="cart-empty"><i class="fas fa-exclamation-triangle" style="color:#e74c3c;"></i><h3>Lỗi kết nối</h3><p>${err.message}</p></div>`;
     }
 }
+
+function updateSummary(subtotal, count) {
+    const ship = subtotal >= 500000 ? 0 : 30000;
+    const total = subtotal + ship;
+    const summaryBox = document.querySelector('.cart-summary-box');
+    if (!summaryBox) return;
+    summaryBox.querySelector('.sum-row:nth-child(2) span:last-child').textContent = formatCurrency(subtotal);
+    const shipEl = summaryBox.querySelector('.sum-row:nth-child(3) span:last-child');
+    if (shipEl) { shipEl.textContent = ship === 0 ? 'Miễn phí' : formatCurrency(ship); shipEl.style.color = ship === 0 ? '#27ae60' : '#111'; }
+    summaryBox.querySelector('.sum-row.total span:last-child').textContent = formatCurrency(total);
+    // Update heading
+    const countEl = document.querySelector('.cart-items-header span');
+    if (countEl) countEl.textContent = `${count} sản phẩm`;
+}
+
+async function updateQty(cartItemId, newQty) {
+    if (newQty < 1) { await deleteItem(cartItemId); return; }
+    try {
+        await Cart.updateItem(cartItemId, newQty);
+        await loadCart();
+    } catch (err) { alert(err.message); }
+}
+
+async function deleteItem(cartItemId) {
+    const el = document.getElementById(`cart-item-${cartItemId}`);
+    if (el) { el.style.opacity = '0'; el.style.transition = 'opacity .3s'; }
+    try {
+        await Cart.removeItem(cartItemId);
+        await loadCart();
+    } catch (err) { alert(err.message); }
+}
+
+// Checkout
+document.querySelector('.checkout-btn-new').addEventListener('click', async function() {
+    if (!Auth.isLoggedIn()) { window.location.href = '../Auth/login.html'; return; }
+    this.textContent = 'Đang xử lý...';
+    this.disabled = true;
+    try {
+        const order = await Orders.checkout();
+        alert(`✅ Đặt hàng thành công! Mã đơn hàng của bạn: #${order.id}`);
+        window.location.href = '../../../index.html';
+    } catch (err) {
+        alert('❌ ' + err.message);
+        this.innerHTML = '<i class="fas fa-lock" style="margin-right:8px"></i> Thanh toán ngay';
+        this.disabled = false;
+    }
+});
+
+// Load khi trang mở
+loadCart();
 </script>
 </body>
 </html>
+
