@@ -568,6 +568,22 @@ tbody td{padding:13px 16px;font-size:13px;color:var(--text2)}
   </div>
 </div>
 
+<!-- ORDER INFO MODAL -->
+<div class="modal-wrap" id="orderInfoModal">
+  <div class="modal-box" style="max-width: 500px; text-align: left;">
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border); padding-bottom:12px; margin-bottom:16px;">
+      <div class="modal-title" style="margin:0; font-size:16px;" id="orderInfoModalTitle">Thông tin đơn hàng</div>
+      <button onclick="closeOrderInfoModal()" style="background:none; border:none; font-size:18px; cursor:pointer; color:var(--text3);"><i class="fas fa-times"></i></button>
+    </div>
+    <div id="orderInfoModalBody" style="font-size: 13px; line-height: 1.6; color: var(--text2);">
+      <!-- Loaded dynamically -->
+    </div>
+    <div class="modal-actions" style="margin-top: 20px; justify-content: flex-end;">
+      <button class="btn btn-gold" onclick="closeOrderInfoModal()">Đóng</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST ZONE -->
 <div class="toast-zone" id="toastZone"></div>
 <script src="../../utils/api.js"></script>
@@ -1182,14 +1198,19 @@ function renderOrdersTable() {
       <td class="td-price">${fmtPrice(o.total_amount)}</td>
       <td>${getStatusBadge(o.status)}</td>
       <td>
-        <select class="filter-select" style="padding:4px 8px; font-size:12px;" onchange="changeOrderStatus(${o.id}, this.value)" ${o.status === 'CANCELLED' ? 'disabled' : ''}>
-          <option value="">Đổi trạng thái</option>
-          <option value="PENDING" ${o.status === 'PENDING' ? 'disabled' : ''}>Chờ xử lý</option>
-          <option value="PROCESSING" ${o.status === 'PROCESSING' ? 'disabled' : ''}>Đang xử lý</option>
-          <option value="SHIPPED" ${o.status === 'SHIPPED' ? 'disabled' : ''}>Đang giao</option>
-          <option value="DELIVERED" ${o.status === 'DELIVERED' ? 'disabled' : ''}>Đã giao</option>
-          <option value="CANCELLED" ${o.status === 'CANCELLED' ? 'disabled' : ''}>Hủy đơn</option>
-        </select>
+        <div style="display:flex; gap:6px; align-items:center;">
+          <select class="filter-select" style="padding:4px 8px; font-size:12px; margin:0;" onchange="changeOrderStatus(${o.id}, this.value)" ${o.status === 'CANCELLED' ? 'disabled' : ''}>
+            <option value="">Đổi trạng thái</option>
+            <option value="PENDING" ${o.status === 'PENDING' ? 'disabled' : ''}>Chờ xử lý</option>
+            <option value="PROCESSING" ${o.status === 'PROCESSING' ? 'disabled' : ''}>Đang xử lý</option>
+            <option value="SHIPPED" ${o.status === 'SHIPPED' ? 'disabled' : ''}>Đang giao</option>
+            <option value="DELIVERED" ${o.status === 'DELIVERED' ? 'disabled' : ''}>Đã giao</option>
+            <option value="CANCELLED" ${o.status === 'CANCELLED' ? 'disabled' : ''}>Hủy đơn</option>
+          </select>
+          <button class="btn btn-ghost btn-sm" style="padding:4px 8px; font-size:11px; display:inline-flex; align-items:center; gap:4px; height:29px;" onclick="showOrderInfo(${o.id})" title="Xem thông tin chi tiết đơn hàng">
+            <i class="fas fa-info-circle"></i> Chi tiết
+          </button>
+        </div>
       </td>
     </tr>`;
   }).join('');
@@ -1216,6 +1237,74 @@ async function changeOrderStatus(id, newStatus) {
     console.error(err);
     renderOrdersTable(); // reset select
   }
+}
+
+function showOrderInfo(id) {
+  const order = adminOrders.find(o => o.id === id);
+  if (!order) return;
+
+  const modal = document.getElementById('orderInfoModal');
+  const title = document.getElementById('orderInfoModalTitle');
+  const body = document.getElementById('orderInfoModalBody');
+
+  title.textContent = `Thông tin đơn hàng #${order.id}`;
+
+  // Build items list html
+  const itemsHtml = order.order_items.map(item => {
+    const productName = item.products?.name || 'Sản phẩm không tên';
+    const qty = item.quantity;
+    const price = parseFloat(item.price);
+    return `
+      <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.04);">
+        <div style="flex:1; padding-right:10px;">
+          <div style="font-weight:600; color:var(--text);">${productName}</div>
+          <div style="font-size:11px; color:var(--text3);">${fmtPrice(price)} x ${qty}</div>
+        </div>
+        <div style="font-weight:600; color:var(--gold); align-self:center;">${fmtPrice(price * qty)}</div>
+      </div>
+    `;
+  }).join('');
+
+  body.innerHTML = `
+    <div style="margin-bottom: 20px;">
+      <h4 style="font-size:12px; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:4px;">Thông tin khách hàng</h4>
+      <table style="width:100%; border-collapse:collapse;">
+        <tr>
+          <td style="padding:4px 0; color:var(--text3); width:120px;">Họ và tên:</td>
+          <td style="padding:4px 0; color:var(--text); font-weight:600;">${order.users?.name || 'Chưa cung cấp'}</td>
+        </tr>
+        <tr>
+          <td style="padding:4px 0; color:var(--text3);">Số điện thoại:</td>
+          <td style="padding:4px 0; color:var(--text); font-weight:600;">${order.users?.phone || 'Chưa cung cấp'}</td>
+        </tr>
+        <tr>
+          <td style="padding:4px 0; color:var(--text3);">Email:</td>
+          <td style="padding:4px 0; color:var(--text);">${order.users?.email || 'Chưa cung cấp'}</td>
+        </tr>
+        <tr>
+          <td style="padding:4px 0; color:var(--text3); vertical-align:top;">Địa chỉ giao hàng:</td>
+          <td style="padding:4px 0; color:var(--text); line-height:1.4;">${order.users?.address || 'Chưa cung cấp'}</td>
+        </tr>
+      </table>
+    </div>
+    
+    <div>
+      <h4 style="font-size:12px; font-weight:700; color:var(--gold); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:4px;">Chi tiết sản phẩm</h4>
+      <div style="max-height:180px; overflow-y:auto; margin-bottom:16px; border:1px solid var(--border); border-radius:6px; padding:0 12px; background:rgba(0,0,0,0.15);">
+        ${itemsHtml}
+      </div>
+      <div style="display:flex; justify-content:space-between; font-weight:700; font-size:14px; padding-top:8px;">
+        <span style="color:var(--text2);">Tổng thanh toán:</span>
+        <span style="color:var(--gold); font-size:16px;">${fmtPrice(order.total_amount)}</span>
+      </div>
+    </div>
+  `;
+
+  modal.classList.add('on');
+}
+
+function closeOrderInfoModal() {
+  document.getElementById('orderInfoModal').classList.remove('on');
 }
 
 /* INIT */
