@@ -201,7 +201,7 @@ a{text-decoration:none;color:inherit}
                         </div>
                         <div>
                             <label style="display:block; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:1px; color:#666; margin-bottom:6px;">Địa chỉ Email <span style="color:#e74c3c">*</span></label>
-                            <input type="email" id="cust-email" style="width:100%; padding:12px; border:1px solid #e0e0e0; border-radius:6px; font-family:'Montserrat',sans-serif; font-size:14px; outline:none; background:#f9f9f9; color:#666;" readonly>
+                            <input type="email" id="cust-email" style="width:100%; padding:12px; border:1px solid #e0e0e0; border-radius:6px; font-family:'Montserrat',sans-serif; font-size:14px; outline:none;" placeholder="Nhập địa chỉ email...">
                         </div>
                     </div>
                     <div>
@@ -307,17 +307,6 @@ async function loadCart() {
     const itemsBox = document.querySelector('.cart-items-box');
     const cartStep1 = document.getElementById('cart-step1-view');
     const countEl = document.querySelector('.cart-items-header span');
-
-    if (!Auth.isLoggedIn()) {
-        cartStep1.innerHTML = `
-            <div class="cart-empty">
-                <i class="fas fa-user-lock" style="color:#EBC351;"></i>
-                <h3>Vui lòng đăng nhập</h3>
-                <p>Bạn cần đăng nhập để xem và quản lý giỏ hàng.</p>
-                <a href="../Auth/login.html">Đăng nhập ngay</a>
-            </div>`;
-        return;
-    }
 
     try {
         const items = await Cart.getCart();
@@ -487,16 +476,26 @@ function updateStepUI() {
 }
 
 async function prefillUserInfo() {
-    try {
-        const user = await Auth.getProfile();
-        if (user) {
-            document.getElementById('cust-name').value = user.name || '';
-            document.getElementById('cust-phone').value = user.phone || '';
-            document.getElementById('cust-email').value = user.email || '';
-            document.getElementById('cust-address').value = user.address || '';
+    const emailInput = document.getElementById('cust-email');
+    if (Auth.isLoggedIn()) {
+        try {
+            const user = await Auth.getProfile();
+            if (user) {
+                document.getElementById('cust-name').value = user.name || '';
+                document.getElementById('cust-phone').value = user.phone || '';
+                emailInput.value = user.email || '';
+                emailInput.readOnly = true;
+                emailInput.style.background = '#f9f9f9';
+                emailInput.style.color = '#666';
+                document.getElementById('cust-address').value = user.address || '';
+            }
+        } catch (err) {
+            console.error('Lỗi khi tải thông tin khách hàng:', err);
         }
-    } catch (err) {
-        console.error('Lỗi khi tải thông tin khách hàng:', err);
+    } else {
+        emailInput.readOnly = false;
+        emailInput.style.background = '#fff';
+        emailInput.style.color = '#111';
     }
 }
 
@@ -507,8 +506,6 @@ function goToStep(step) {
 
 // Checkout Button Event Listener
 document.querySelector('.checkout-btn-new').addEventListener('click', async function() {
-    if (!Auth.isLoggedIn()) { window.location.href = '../Auth/login.html'; return; }
-    
     if (currentStep === 1) {
         goToStep(2);
     } else if (currentStep === 2) {
@@ -519,17 +516,43 @@ document.querySelector('.checkout-btn-new').addEventListener('click', async func
         
         if (!name) { alert('Vui lòng nhập họ và tên'); return; }
         if (!phone) { alert('Vui lòng nhập số điện thoại'); return; }
+        if (!email) { alert('Vui lòng nhập địa chỉ email'); return; }
         if (!address) { alert('Vui lòng nhập địa chỉ giao hàng'); return; }
         
         this.textContent = 'Đang xử lý đặt hàng...';
         this.disabled = true;
         
         try {
-            // 1. Cập nhật thông tin profile của user (name, phone, address)
-            await Auth.updateProfile({ name, phone, address });
-            
-            // 2. Thực hiện checkout
-            const order = await Orders.checkout();
+            let order;
+            if (Auth.isLoggedIn()) {
+                // 1. Cập nhật thông tin profile của user (name, phone, address)
+                await Auth.updateProfile({ name, phone, address });
+                
+                // 2. Thực hiện checkout
+                order = await Orders.checkout();
+            } else {
+                // Guest checkout flow
+                // 1. Load cart items
+                const items = await Cart.getCart();
+                const formattedItems = items.map(item => ({
+                    product_id: item.product_id,
+                    quantity: item.quantity
+                }));
+                // 2. Place guest order
+                order = await Orders.guestCheckout({
+                    name,
+                    phone,
+                    email,
+                    address,
+                    items: formattedItems
+                });
+                // 3. Clear guest cart locally
+                localStorage.removeItem('ox_guest_cart');
+                // Refresh cart badge
+                if (typeof UI !== 'undefined') {
+                    UI.updateCartBadge();
+                }
+            }
             
             // 3. Hiển thị thông tin thành công
             const successInfo = document.getElementById('success-order-info');

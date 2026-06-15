@@ -191,16 +191,6 @@ async function renderCartOverlay() {
     const body = document.getElementById('cartOverlayBody');
     if (!body) return;
 
-    if (!Auth.isLoggedIn()) {
-        body.innerHTML = `
-            <div class="cart-ov-empty">
-                <i class="fas fa-user-lock" style="color:#EBC351;font-size:36px;margin-bottom:12px;"></i>
-                <p>Vui lòng đăng nhập để xem giỏ hàng</p>
-                <span onclick="closeCartOverlay(); openAuthOverlay();" style="cursor:pointer;color:#EBC351;margin-top:8px;display:inline-block;font-weight:600;">Đăng nhập ngay</span>
-            </div>`;
-        return;
-    }
-
     body.innerHTML = `<div style="text-align:center;padding:32px;color:rgba(255,255,255,0.4);"><i class="fas fa-spinner fa-spin"></i> Đang tải giỏ hàng...</div>`;
 
     try {
@@ -280,11 +270,6 @@ async function removeCartItem(cartItemId) {
 
 // Hàm toàn cục gọi từ product page
 async function addToCartGlobal(productId, quantity = 1) {
-    if (!Auth.isLoggedIn()) {
-        UI.showToast('Vui lòng đăng nhập để thêm vào giỏ hàng.', 'error');
-        openAuthOverlay();
-        return;
-    }
     try {
         await Cart.addItem(productId, quantity);
         UI.showToast('Đã thêm sản phẩm vào giỏ hàng!');

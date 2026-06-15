@@ -159,11 +159,40 @@ const Products = {
 // ============================================================
 const Cart = {
     async getCart() {
+        if (!Auth.isLoggedIn()) {
+            const guestCart = JSON.parse(localStorage.getItem('ox_guest_cart') || '[]');
+            const results = [];
+            for (const item of guestCart) {
+                try {
+                    const product = await Products.getById(item.product_id);
+                    results.push({
+                        id: item.product_id,
+                        product_id: item.product_id,
+                        quantity: item.quantity,
+                        products: product
+                    });
+                } catch (err) {
+                    console.error('Error fetching guest product details:', err);
+                }
+            }
+            return results;
+        }
         const res = await fetch(`${API_BASE_URL}/cart`, { headers: authHeaders() });
         return handleResponse(res);
     },
 
     async addItem(product_id, quantity = 1) {
+        if (!Auth.isLoggedIn()) {
+            const guestCart = JSON.parse(localStorage.getItem('ox_guest_cart') || '[]');
+            const idx = guestCart.findIndex(item => item.product_id === product_id);
+            if (idx > -1) {
+                guestCart[idx].quantity += quantity;
+            } else {
+                guestCart.push({ product_id, quantity });
+            }
+            localStorage.setItem('ox_guest_cart', JSON.stringify(guestCart));
+            return { message: 'Đã thêm vào giỏ hàng khách' };
+        }
         const res = await fetch(`${API_BASE_URL}/cart`, {
             method: 'POST',
             headers: authHeaders(),
@@ -173,6 +202,15 @@ const Cart = {
     },
 
     async updateItem(cartItemId, quantity) {
+        if (!Auth.isLoggedIn()) {
+            const guestCart = JSON.parse(localStorage.getItem('ox_guest_cart') || '[]');
+            const idx = guestCart.findIndex(item => item.product_id === cartItemId);
+            if (idx > -1) {
+                guestCart[idx].quantity = quantity;
+                localStorage.setItem('ox_guest_cart', JSON.stringify(guestCart));
+            }
+            return { message: 'Đã cập nhật số lượng' };
+        }
         const res = await fetch(`${API_BASE_URL}/cart/${cartItemId}`, {
             method: 'PUT',
             headers: authHeaders(),
@@ -182,6 +220,12 @@ const Cart = {
     },
 
     async removeItem(cartItemId) {
+        if (!Auth.isLoggedIn()) {
+            let guestCart = JSON.parse(localStorage.getItem('ox_guest_cart') || '[]');
+            guestCart = guestCart.filter(item => item.product_id !== cartItemId);
+            localStorage.setItem('ox_guest_cart', JSON.stringify(guestCart));
+            return { message: 'Đã xóa sản phẩm khỏi giỏ hàng' };
+        }
         const res = await fetch(`${API_BASE_URL}/cart/${cartItemId}`, {
             method: 'DELETE',
             headers: authHeaders()
@@ -198,6 +242,15 @@ const Orders = {
         const res = await fetch(`${API_BASE_URL}/orders/checkout`, {
             method: 'POST',
             headers: authHeaders()
+        });
+        return handleResponse(res);
+    },
+
+    async guestCheckout(data) {
+        const res = await fetch(`${API_BASE_URL}/orders/guest-checkout`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
         });
         return handleResponse(res);
     },
@@ -317,7 +370,6 @@ const UI = {
 
     // Cập nhật badge giỏ hàng trên header
     async updateCartBadge() {
-        if (!Auth.isLoggedIn()) return;
         try {
             const items = await Cart.getCart();
             const total = items.reduce((sum, item) => sum + item.quantity, 0);
