@@ -747,18 +747,17 @@ function verifyPin(){
 }
 
 async function verifyBackendAuth() {
-  if (Auth.isAdmin()) {
-    await showAdmin();
-  } else {
+  // Luôn đảm bảo token hiện tại là ADMIN
+  // Nếu token hiện tại không phải ADMIN (hoặc chưa có), đăng nhập lại với admin credentials
+  if (!Auth.isAdmin()) {
     try {
-      // Đăng nhập ngầm để lấy Token cho các thao tác Backend
-      await Auth.login('admin@shoppi.com', 'admin123');
-      await showAdmin();
+      // Đăng nhập ngầm bằng tài khoản ADMIN để lấy JWT token với role ADMIN
+      await Auth.login('admin@shoppi.com', 'Admin@123');
     } catch (err) {
-      toast('Lỗi kết nối Backend. Dùng dữ liệu nội bộ.', 'warn');
-      await showAdmin();
+      toast('Lỗi kết nối Backend. Một số chức năng có thể không hoạt động.', 'warn');
     }
   }
+  await showAdmin();
 }
 
 /* ADMIN */
