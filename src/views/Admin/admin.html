@@ -770,6 +770,7 @@ async function showAdmin(){
   renderAlerts();
   updateExpiryBadge();
   startClock();
+  loadOrders(); // Tải đơn hàng ngay khi vào admin
 }
 function logout(){sessionStorage.removeItem(AUTH_KEY);Auth.logout();window.location.href='../../../index.html'}
 function goTo(sec,btn){
@@ -777,9 +778,17 @@ function goTo(sec,btn){
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('section'+sec.charAt(0).toUpperCase()+sec.slice(1)).classList.add('active');
   if(btn)btn.classList.add('active');
-  const titles={dashboard:'Dashboard',products:'San pham',expiry:'Han su dung',orders:'Don hang',settings:'Cai dat'};
+  const titles={dashboard:'Dashboard',products:'Sản phẩm',expiry:'Hạn sử dụng',orders:'Đơn hàng',settings:'Cài đặt'};
   document.getElementById('topbarTitle').textContent=titles[sec]||sec;
   if(sec==='expiry')renderExpirySection();
+  if(sec==='orders'){
+    // Xóa filter cũ và tải lại đơn hàng mỗi khi vào tab
+    const si=document.getElementById('searchOrderInput');
+    if(si)si.value='';
+    const fs=document.getElementById('filterOrderStatus');
+    if(fs)fs.value='';
+    loadOrders();
+  }
 }
 function startClock(){
   function tick(){
