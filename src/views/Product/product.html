@@ -3,188 +3,803 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kem Chống Nắng La Roche-Posay Anthelios Uvair SPF50+ PA++++ 50ml | OX</title>
+    <title>Chi tiết sản phẩm — OX En Provence</title>
     <link rel="stylesheet" href="../../assets/css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ── CUSTOM PREMIUM PRODUCT PAGE STYLES ── */
+        body {
+            background-color: #fcfbf7; /* Softer, luxury warm backdrop */
+        }
+        
+        .product-page-wrapper {
+            padding-top: 40px;
+            padding-bottom: 80px;
+        }
+
+        /* Breadcrumb overrides */
+        .breadcrumb {
+            background: transparent;
+            padding: 16px 0;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            color: var(--text-light);
+            text-transform: uppercase;
+        }
+        .breadcrumb a {
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .breadcrumb span {
+            color: #b0a390;
+        }
+
+        /* Layout modifications */
+        .product-layout {
+            display: grid;
+            grid-template-columns: 480px 1fr;
+            gap: 50px;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.02);
+            align-items: start;
+        }
+
+        /* Gallery Zoom & Design */
+        .product-gallery {
+            width: 100%;
+        }
+        .main-image-container {
+            position: relative;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            aspect-ratio: 1;
+            background: #ffffff;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.01);
+        }
+        .main-image-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .main-image-container:hover img {
+            transform: scale(1.08);
+        }
+        
+        /* Badges */
+        .discount-badge {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: #e74c3c;
+            color: var(--white);
+            border-radius: 4px;
+            padding: 4px 10px;
+            font-size: 11px;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 10px rgba(231,76,60,0.2);
+            z-index: 2;
+        }
+
+        .thumbnail-list {
+            display: flex;
+            gap: 12px;
+        }
+        .thumbnail {
+            width: calc(25% - 9px);
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            padding: 8px;
+            transition: all 0.3s ease;
+            aspect-ratio: 1;
+            object-fit: contain;
+            background: #fff;
+        }
+        .thumbnail.active, .thumbnail:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(235,195,81,0.15);
+        }
+
+        /* Product Details Column */
+        .product-details {
+            width: 100%;
+        }
+        
+        .product-brand-tag {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #b0a390;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .product-title-premium {
+            font-size: 32px;
+            font-weight: 700;
+            font-family: 'Playfair Display', serif;
+            line-height: 1.3;
+            margin-bottom: 14px;
+            color: #111;
+        }
+
+        .product-meta-premium {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 14px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #f2eedf;
+            margin-bottom: 24px;
+        }
+        .rating-stars {
+            color: #fadb14;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .rating-text {
+            color: var(--text-light);
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .divider-bullet {
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #ccc;
+        }
+        .sold-text {
+            font-size: 13px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        /* Luxury Price Tag */
+        .price-card {
+            background: #faf9f6;
+            border: 1px solid #f2eedf;
+            padding: 20px 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .price-premium-current {
+            font-size: 30px;
+            font-weight: 700;
+            color: #000;
+            letter-spacing: -0.5px;
+        }
+        .price-premium-original {
+            font-size: 16px;
+            color: #aaa;
+            text-decoration: line-through;
+        }
+        .price-saving-badge {
+            background: rgba(46, 204, 113, 0.1);
+            color: #27ae60;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-left: auto;
+        }
+
+        /* Promotion Box */
+        .promotions-box {
+            border: 1px solid rgba(235,195,81,0.25);
+            background: #fdfdf9;
+            border-radius: 10px;
+            padding: 18px 20px;
+            margin-bottom: 28px;
+        }
+        .promotions-box h3 {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #555;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 700;
+        }
+        .promotions-box h3 i {
+            color: var(--primary-color);
+        }
+        .promotions-box ul li {
+            font-size: 13px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            color: #555;
+            line-height: 1.4;
+        }
+        .promotions-box ul li:last-child {
+            margin-bottom: 0;
+        }
+        .promotions-box ul li i {
+            color: #27ae60;
+            margin-top: 3px;
+        }
+
+        /* Variants Selector */
+        .variant-premium-label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #555;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .variant-chips {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+        }
+        
+        /* Custom buttons style for variant list injection */
+        .variant-chips .variant-btn {
+            padding: 10px 20px;
+            border: 1.5px solid var(--border-color);
+            background: #ffffff;
+            border-radius: 30px; /* Capsule shape */
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
+            color: var(--text-color);
+            outline: none;
+        }
+        .variant-chips .variant-btn:hover {
+            border-color: var(--primary-color);
+            background: var(--gold-light);
+        }
+        .variant-chips .variant-btn.active {
+            border-color: #000;
+            color: #fff;
+            background: #000;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        /* Quantity & Action grid */
+        .buy-action-panel {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 28px;
+            align-items: center;
+        }
+        .qty-box-premium {
+            display: flex;
+            align-items: center;
+            border: 1.5px solid var(--border-color);
+            border-radius: 30px;
+            overflow: hidden;
+            width: 110px;
+            height: 48px;
+            background: #fff;
+        }
+        .qty-box-premium button {
+            background: transparent;
+            border: none;
+            width: 35px;
+            height: 100%;
+            font-size: 16px;
+            cursor: pointer;
+            color: #777;
+            transition: background 0.2s;
+            outline: none;
+        }
+        .qty-box-premium button:hover {
+            background: #f7f7f7;
+            color: #000;
+        }
+        .qty-box-premium input {
+            width: 40px;
+            height: 100%;
+            border: none;
+            text-align: center;
+            font-size: 15px;
+            font-weight: 600;
+            color: #000;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .cta-action-grid {
+            display: flex;
+            flex: 1;
+            gap: 12px;
+        }
+        .cta-btn-premium {
+            flex: 1;
+            height: 48px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            outline: none;
+        }
+        .btn-premium-cart {
+            border: 1.5px solid #000;
+            background: transparent;
+            color: #000;
+        }
+        .btn-premium-cart:hover {
+            background: #000;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .btn-premium-buy {
+            border: none;
+            background: linear-gradient(135deg, #EBC351, #D8AD30);
+            color: #000;
+            box-shadow: 0 4px 15px rgba(235,195,81,0.2);
+            animation: pulseGlow 2s infinite alternate;
+        }
+        .btn-premium-buy:hover {
+            background: linear-gradient(135deg, #000000, #333333);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(235, 195, 81, 0.4); }
+            100% { box-shadow: 0 0 15px 4px rgba(235, 195, 81, 0.15); }
+        }
+
+        /* Brand Guarantees Grid */
+        .guarantees-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            border-top: 1px solid #f2eedf;
+            padding-top: 24px;
+            margin-top: 10px;
+        }
+        .guarantee-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--gold-light);
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
+            border: 1px solid rgba(235, 195, 81, 0.12);
+        }
+        .guarantee-card i {
+            font-size: 16px;
+            color: var(--primary-hover);
+        }
+
+        /* Product tabs section overrides */
+        .product-tabs-section {
+            background: #ffffff;
+            border-radius: 16px;
+            margin-top: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.02);
+            border: 1px solid rgba(0,0,0,0.02);
+            overflow: hidden;
+        }
+        .tabs-header {
+            display: flex;
+            background: #faf9f6;
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 20px;
+        }
+        .tab-btn {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            padding: 20px 24px;
+            font-weight: 700;
+            color: #888;
+        }
+        .tab-btn:hover {
+            color: #000;
+        }
+        .tab-btn.active {
+            color: #000;
+        }
+        .tab-btn.active::after {
+            background: #000;
+            height: 3px;
+            border-radius: 0;
+        }
+        .tab-content {
+            padding: 40px;
+        }
+        .tab-content h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: #111;
+            margin-bottom: 16px;
+        }
+        .tab-content p {
+            line-height: 1.7;
+            font-size: 14px;
+            color: #555;
+        }
+
+        /* Rating summary Sephora style */
+        .rating-summary-card {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            gap: 40px;
+            background: #faf9f6;
+            border: 1px solid #f2eedf;
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+        .rs-left {
+            text-align: center;
+            border-right: 1px solid #f2eedf;
+            padding-right: 40px;
+        }
+        .rs-left h2 {
+            font-size: 54px;
+            font-weight: 700;
+            color: #000;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+        .rs-left .stars {
+            color: #fadb14;
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+        .rs-left p {
+            font-size: 12px;
+            color: var(--text-light);
+            margin: 0;
+            font-weight: 500;
+        }
+        .rs-right {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .rating-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 11px;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+        .rating-bar span {
+            white-space: nowrap;
+        }
+        .rating-bar span:first-child {
+            width: 25px;
+        }
+        .rating-bar span:last-child {
+            width: 30px;
+            text-align: right;
+        }
+        .progress-bg {
+            flex: 1;
+            height: 6px;
+            background: #e9e6dc;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #fadb14;
+            border-radius: 3px;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 900px) {
+            .product-layout {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                padding: 24px;
+            }
+            .product-title-premium {
+                font-size: 26px;
+            }
+            .rating-summary-card {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                text-align: center;
+            }
+            .rs-left {
+                border-right: none;
+                border-bottom: 1px solid #f2eedf;
+                padding-right: 0;
+                padding-bottom: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- [COMPONENTS: src/components/Header.html] -->
-    <header class="main-header">
-        <div class="container header-container">
-            <div class="logo">
-                <h2><a href="../../index.html">OX</a></h2>
+
+    <!-- Header Components -->
+    <div class="ox-header-wrapper">
+        <header class="ox-main-header">
+            <div class="container ox-main-header-container">
+                <!-- Left: Hamburger + Search -->
+                <div class="header-left">
+                    <button class="hamburger-btn" aria-label="Open menu"><i class="fas fa-bars"></i></button>
+                    <div class="header-search-box" id="searchTrigger">
+                        <input type="text" placeholder="Tìm kiếm sản phẩm..." id="searchInputTrigger" readonly>
+                        <button id="searchBtnTrigger"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+
+                <!-- Center: Logo -->
+                <div class="ox-logo">
+                    <h2 style="line-height: 1;"><a href="../../index.html">OX<br><span style="font-size: 11px; font-weight: 500; letter-spacing: 3px; font-family: 'Playfair Display', serif;">EN PROVENCE</span></a></h2>
+                </div>
+
+                <!-- Right: Icons -->
+                <div class="header-right">
+                    <a href="#" class="ox-top-link flag-link"><img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Flag_of_Vietnam.svg" width="20" height="14" alt="VN"> <i class="fas fa-chevron-down" style="font-size: 10px; margin-left:4px;"></i></a>
+                    <a href="#" class="ox-top-link" id="user-icon-btn"><i class="far fa-user"></i></a>
+                    <a href="#" class="ox-top-link hide-mobile"><i class="fas fa-map-marker-alt"></i></a>
+                    <a href="#" class="ox-top-link"><i class="far fa-heart"></i> <span class="badge yellow-badge">0</span></a>
+                    <a href="#" class="ox-top-link ox-cart-trigger" id="cart-icon-btn">
+                        <i class="fas fa-shopping-bag"></i> <span class="badge yellow-badge cart-count">0</span>
+                    </a>
+                </div>
             </div>
-            <div class="search-bar">
-                <input type="text" placeholder="Tìm kiếm sản phẩm...">
-                <button><i class="fas fa-search"></i></button>
-            </div>
-            <div class="header-icons">
-                <a href="../Auth/login.html" class="icon-item"><i class="fas fa-user"></i><span>Tài khoản</span></a>
-                <a href="../Cart/cart.html" class="icon-item cart-icon">
-                    <i class="fas fa-shopping-cart"></i>
-                    <span class="cart-count">0</span>
-                    <span>Giỏ hàng</span>
+        </header>
+    </div>
+
+    <!-- Side Menu Overlay -->
+    <div class="side-menu-overlay"></div>
+
+    <!-- Side Menu Panel -->
+    <div class="side-menu-panel">
+        <div class="side-menu-header">
+            <h3>Menu</h3>
+            <button class="close-menu-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <ul class="side-menu-list">
+            <li>
+                <a href="#" class="toggle-sub-menu" onclick="event.preventDefault(); this.nextElementSibling.classList.toggle('open');">
+                    Danh mục sản phẩm <i class="fas fa-chevron-down"></i>
                 </a>
-            </div>
-        </div>
-    </header>
+                <ul class="sub-menu-list">
+                    <li><a href="#">Chăm sóc da mặt (Skincare)</a></li>
+                    <li><a href="#">Chăm sóc cơ thể (Body & Bath)</a></li>
+                    <li><a href="#">Chăm sóc & Tạo kiểu tóc (Hair)</a></li>
+                    <li><a href="#">Râu & Cạo râu (Shaving & Beard)</a></li>
+                    <li><a href="#">Nước hoa nam (Fragrance)</a></li>
+                    <li><a href="#">Chống nắng & Trang điểm (Grooming)</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Bán chạy nhất</a></li>
+            <li><a href="#">Mới ra mắt</a></li>
+            <li><a href="#">On Sale</a></li>
+            <li><a href="../OXAndYou/oxandyou.html">OX and you</a></li>
+        </ul>
+    </div>
 
-    <nav class="main-nav">
-        <div class="container nav-container">
-            <ul>
-                <li><i class="fas fa-bars"></i> DANH MỤC SẢN PHẨM</li>
-                <li><a href="#">Thương hiệu</a></li>
-                <li><a href="#">Trang điểm</a></li>
-                <li><a href="#">Chăm sóc da</a></li>
-                <li><a href="#">Chăm sóc cơ thể</a></li>
-                <li><a href="#">Bán chạy</a></li>
-                <li><a href="#" class="highlight">Flash Sale</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <!-- Breadcrumb -->
+    <!-- Breadcrumb Nav -->
     <div class="breadcrumb">
         <div class="container">
-            <a href="#">Trang chủ</a> > <a href="#">Chăm sóc da</a> > <a href="#">Kem chống nắng</a> > <span>La Roche-Posay Anthelios Uvair SPF50+</span>
+            <a href="../../index.html">Trang chủ</a> > <span id="api-breadcrumb-cat">Danh mục</span> > <span id="api-breadcrumb-name" style="color: #000; font-weight: 600;">Sản phẩm</span>
         </div>
     </div>
 
-    <!-- Main Product Section -->
-    <main class="product-page container">
+    <!-- Main Container -->
+    <main class="product-page-wrapper container">
         <div class="product-layout">
-            <!-- Left: Image Gallery -->
+            
+            <!-- Left Column: Gallery -->
             <div class="product-gallery">
                 <div class="main-image-container">
-                    <img id="api-product-image" src="../../assets/images/main.png" alt="Kem chống nắng La Roche-Posay">
-                    <div class="discount-badge">-15%</div>
+                    <img id="api-product-image" src="../../assets/images/main.png" alt="Sản phẩm" onerror="this.src='../../assets/images/main.png'">
+                    <div class="discount-badge" id="api-discount-tag">-15%</div>
                 </div>
                 <div class="thumbnail-list">
-                    <img src="../../assets/images/main.png" alt="Thumbnail 1" class="thumbnail active" onclick="changeImage('../../assets/images/main.png', this)">
-                    <img src="../../assets/images/thumb1.png" alt="Thumbnail 2" class="thumbnail" onclick="changeImage('../../assets/images/thumb1.png', this)">
-                    <img src="../../assets/images/thumb2.png" alt="Thumbnail 3" class="thumbnail" onclick="changeImage('../../assets/images/thumb2.png', this)">
+                    <!-- thumbnails dynamic injection -->
                 </div>
             </div>
 
-            <!-- Right: Product Details -->
+            <!-- Right Column: Product Detail & Purchases -->
             <div class="product-details">
-                <h1 class="product-title" id="api-product-title">Kem Chống Nắng La Roche-Posay Anthelios Uvair SPF50+ PA++++ 50ml (Dạng Serum)</h1>
-                <div class="product-meta">
-                    <div class="brand">Thương hiệu: <strong id="api-product-brand">La Roche-Posay</strong></div>
-                    <div class="rating">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star-half-alt"></i>
-                        <span>(4.8) | Đã bán 1.2k</span>
+                <span class="product-brand-tag" id="api-product-brand">Thương hiệu</span>
+                <h1 class="product-title-premium" id="api-product-title">Tên sản phẩm</h1>
+                
+                <div class="product-meta-premium">
+                    <div class="rating-stars" id="api-product-rating">
+                        <!-- stars injected by JS -->
                     </div>
+                    <div class="divider-bullet"></div>
+                    <div class="sold-text">Đã bán 1.8k</div>
+                    <div class="divider-bullet"></div>
+                    <div class="sold-text" style="color:#27ae60"><i class="fas fa-check-circle"></i> Sẵn hàng</div>
                 </div>
 
-                <div class="flash-sale-banner">
-                    <div class="fs-title"><i class="fas fa-bolt"></i> FLASH SALE</div>
-                    <div class="fs-countdown">Kết thúc trong: <span id="timer">02:45:10</span></div>
+                <!-- Price Section -->
+                <div class="price-card">
+                    <span class="price-premium-current" id="api-product-price">0đ</span>
+                    <span class="price-premium-original" id="api-original-price">0đ</span>
+                    <span class="price-saving-badge" id="api-saving-amount">Tiết kiệm 15%</span>
                 </div>
 
-                <div class="price-section">
-                    <span class="current-price" id="api-product-price">395.000đ</span>
-                    <span class="original-price">465.000đ</span>
-                </div>
-
-                <div class="promotions">
-                    <h3>Khuyến mãi đặc biệt</h3>
+                <!-- Promotions Box -->
+                <div class="promotions-box">
+                    <h3><i class="fas fa-gift"></i> Khuyến mãi & Ưu đãi đặc biệt</h3>
                     <ul>
-                        <li><i class="fas fa-gift"></i> Tặng kèm Bông Tẩy Trang Silcot khi mua đơn từ 500k</li>
-                        <li><i class="fas fa-truck"></i> Miễn phí vận chuyển toàn quốc cho đơn hàng từ 99k</li>
+                        <li><i class="fas fa-check"></i> Miễn phí vận chuyển toàn quốc cho tất cả đơn hàng từ 500.000đ.</li>
+                        <li><i class="fas fa-check"></i> Nhận ngay mẫu thử cao cấp (Mini size) cho hóa đơn từ 1.000.000đ.</li>
+                        <li><i class="fas fa-check"></i> Đăng ký thành viên tích lũy 5% điểm thưởng cho đơn hàng tiếp theo.</li>
                     </ul>
                 </div>
 
-                <div class="purchase-actions">
-                    <div class="variant-selector" id="api-product-variants" style="display: none; margin-bottom: 15px;">
-                        <h4 style="margin-bottom: 10px; font-weight: 600;">Dung tích / Phân loại:</h4>
-                        <div class="variant-list" style="display: flex; gap: 10px;">
-                            <!-- Variant buttons injected by JS -->
-                        </div>
-                    </div>
-                    <div class="quantity-selector">
-                        <button onclick="changeQuantity(-1)">-</button>
-                        <input type="text" id="quantity" value="1" readonly>
-                        <button onclick="changeQuantity(1)">+</button>
-                    </div>
-                    <div class="action-buttons">
-                        <button class="btn btn-add-cart" onclick="addToCart()"><i class="fas fa-cart-plus"></i> THÊM VÀO GIỎ</button>
-                        <button class="btn btn-buy-now">MUA NGAY</button>
+                <!-- Variants Selector -->
+                <div class="variant-selector" id="api-product-variants" style="display: none;">
+                    <span class="variant-premium-label">Lựa chọn phân loại:</span>
+                    <div class="variant-chips variant-list">
+                        <!-- Variant buttons injected by JS -->
                     </div>
                 </div>
 
-                <div class="product-guarantee">
-                    <div class="guarantee-item"><i class="fas fa-check-circle"></i> 100% Chính hãng</div>
-                    <div class="guarantee-item"><i class="fas fa-undo"></i> Đổi trả trong 7 ngày</div>
-                    <div class="guarantee-item"><i class="fas fa-headset"></i> Tư vấn miễn phí</div>
+                <!-- Quantity & Add to Cart -->
+                <div class="buy-action-panel">
+                    <div class="qty-box-premium">
+                        <button onclick="changeQuantity(-1)">−</button>
+                        <input type="text" id="quantity" value="1" readonly>
+                        <button onclick="changeQuantity(1)">+</button>
+                    </div>
+                    <div class="cta-action-grid">
+                        <button class="cta-btn-premium btn-premium-cart btn-add-cart"><i class="fas fa-shopping-cart"></i> Thêm vào giỏ</button>
+                        <button class="cta-btn-premium btn-premium-buy" id="btnBuyNowPremium">Mua ngay</button>
+                    </div>
                 </div>
+
+                <!-- Brand Guarantees Grid -->
+                <div class="guarantees-grid">
+                    <div class="guarantee-card">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>100% Chính Hãng</span>
+                    </div>
+                    <div class="guarantee-card">
+                        <i class="fas fa-truck"></i>
+                        <span>Giao Nhanh Toàn Quốc</span>
+                    </div>
+                    <div class="guarantee-card">
+                        <i class="fas fa-undo-alt"></i>
+                        <span>30 Ngày Đổi Trả</span>
+                    </div>
+                    <div class="guarantee-card">
+                        <i class="fas fa-headset"></i>
+                        <span>Hỗ Trợ 24/7 Hotline</span>
+                    </div>
+                </div>
+
             </div>
         </div>
 
         <!-- Product Information Tabs -->
         <div class="product-tabs-section">
             <div class="tabs-header">
-                <button class="tab-btn active" onclick="openTab(event, 'info')">Thông tin sản phẩm</button>
-                <button class="tab-btn" onclick="openTab(event, 'ingredients')">Thành phần</button>
+                <button class="tab-btn active" onclick="openTab(event, 'info')">Mô tả sản phẩm</button>
+                <button class="tab-btn" onclick="openTab(event, 'ingredients')">Thành phần chính</button>
                 <button class="tab-btn" onclick="openTab(event, 'usage')">Hướng dẫn sử dụng</button>
                 <button class="tab-btn" onclick="openTab(event, 'reviews')">Đánh giá khách hàng</button>
             </div>
             
             <div id="info" class="tab-content active">
                 <div id="api-product-desc">
-                    <h3>Kem Chống Nắng La Roche-Posay Anthelios Uvair SPF50+ PA++++</h3>
-                    <p>Là dòng sản phẩm chống nắng thế hệ mới từ thương hiệu dược mỹ phẩm La Roche-Posay, được thiết kế đặc biệt với màng lọc Mexoryl 400 độc quyền, bảo vệ da khỏi tia UVA dài - nguyên nhân chính gây thâm nám và lão hóa da.</p>
-                    <p>Kết cấu dạng serum mỏng nhẹ, thẩm thấu nhanh, không gây nhờn rít, không để lại vệt trắng trên da.</p>
-                    <br>
-                    <strong>Công dụng nổi bật:</strong>
-                    <ul>
-                        <li>Bảo vệ da toàn diện trước tia UVA/UVB, đặc biệt là tia UVA dài.</li>
-                        <li>Ngăn ngừa sạm nám, đốm nâu và các dấu hiệu lão hóa sớm.</li>
-                        <li>Kiểm soát bã nhờn hiệu quả, mang lại lớp finish mịn lì.</li>
-                        <li>Kháng nước, kháng mồ hôi tốt.</li>
-                    </ul>
+                    <p style="color:rgba(0,0,0,0.5); font-size:14px;">Đang tải mô tả sản phẩm...</p>
                 </div>
             </div>
             
             <div id="ingredients" class="tab-content">
-                <h3>Thành phần chính</h3>
-                <ul>
-                    <li><strong>Màng lọc Mexoryl 400:</strong> Màng lọc chống tia UV tân tiến nhất, bảo vệ da khỏi tia UVA siêu dài.</li>
-                    <li><strong>Nước khoáng La Roche-Posay:</strong> Làm dịu da, giảm kích ứng và chống oxy hóa.</li>
-                    <li><strong>Glycerin:</strong> Cấp ẩm sâu, duy trì làn da mềm mại.</li>
-                    <li><strong>Airlicium:</strong> Công nghệ kiểm soát dầu nhờn, giúp da khô thoáng.</li>
+                <h3>Thành phần chọn lọc</h3>
+                <p style="margin-bottom:15px; font-weight:500;">Công thức an toàn, lành tính mang đặc trưng Provence:</p>
+                <ul style="list-style-type:disc; padding-left:20px; font-size:14px; color:#555; line-height:1.8;">
+                    <li style="margin-bottom:8px;"><strong>Chiết xuất thảo mộc hữu cơ:</strong> Nuôi dưỡng sâu và bảo vệ màng sinh học tự nhiên của làn da.</li>
+                    <li style="margin-bottom:8px;"><strong>Tinh dầu tinh khiết chưng cất:</strong> Kháng khuẩn nhẹ, lưu lại hương thơm tự nhiên dễ chịu từ vùng Nam Nước Pháp.</li>
+                    <li style="margin-bottom:8px;"><strong>Glycerin thực vật & Acid Hyaluronic:</strong> Siêu cấp ẩm cấp nước đa tầng, duy trì sự mịn màng suốt cả ngày dài.</li>
+                    <li style="margin-bottom:8px;"><strong>Nước khoáng ngầm vùng cao:</strong> Cân bằng ion và làm dịu ngay tức khắc làn da nhạy cảm hoặc kích ứng.</li>
                 </ul>
-                <p><em>Sản phẩm không chứa hương liệu, không paraben, an toàn cho da nhạy cảm.</em></p>
+                <p style="margin-top:20px; font-size:12.5px; color:#999; font-style:italic;">* Sản phẩm cam kết không cồn khô, không dầu khoáng, không paraben, thân thiện môi trường.</p>
             </div>
             
             <div id="usage" class="tab-content">
-                <h3>Hướng dẫn sử dụng</h3>
-                <ol>
-                    <li>Lắc đều sản phẩm trước khi dùng.</li>
-                    <li>Lấy một lượng vừa đủ (khoảng 2 đốt ngón tay) thoa đều lên vùng da mặt và cổ.</li>
-                    <li>Nên thoa trước khi ra nắng 20 phút.</li>
-                    <li>Thoa lại sau mỗi 2 tiếng nếu tiếp xúc nhiều với nước hoặc đổ mồ hôi nhiều.</li>
+                <h3>Phương pháp sử dụng khuyên dùng</h3>
+                <p style="margin-bottom:15px; font-weight:500;">Để tối ưu hóa hiệu quả, khuyên dùng theo các bước:</p>
+                <ol style="padding-left:20px; font-size:14px; color:#555; line-height:1.8;">
+                    <li style="margin-bottom:8px;">Làm sạch bề mặt da bằng sản phẩm tẩy trang và sữa rửa mặt chuyên biệt.</li>
+                    <li style="margin-bottom:8px;">Cân bằng da bằng toner hoặc lotion để các tinh chất thẩm thấu tốt hơn.</li>
+                    <li style="margin-bottom:8px;">Thoa một lượng sản phẩm vừa đủ lên mặt và cổ, mát-xa nhẹ nhàng theo chiều cấu trúc da từ dưới lên trên.</li>
+                    <li style="margin-bottom:8px;">Sử dụng đều đặn 2 lần mỗi ngày (Sáng và Tối) để đạt kết quả rõ rệt nhất.</li>
                 </ol>
             </div>
 
             <div id="reviews" class="tab-content">
-                <h3>Đánh giá khách hàng</h3>
-                <div id="api-reviews-container" style="margin-top: 15px;">
-                    <p style="color:rgba(0,0,0,0.5);font-size:14px;">Đang tải đánh giá...</p>
+                <h3>Khách hàng phản hồi</h3>
+                
+                <!-- Dynamic Rating summary Sephora style -->
+                <div class="rating-summary-card">
+                    <div class="rs-left">
+                        <h2 id="summaryRatingValue">4.8</h2>
+                        <div class="stars">★★★★★</div>
+                        <p id="summaryRatingCount">12 đánh giá</p>
+                    </div>
+                    <div class="rs-right">
+                        <div class="rating-bar">
+                            <span>5 ★</span>
+                            <div class="progress-bg"><div class="progress-fill" style="width: 80%"></div></div>
+                            <span>80%</span>
+                        </div>
+                        <div class="rating-bar">
+                            <span>4 ★</span>
+                            <div class="progress-bg"><div class="progress-fill" style="width: 15%"></div></div>
+                            <span>15%</span>
+                        </div>
+                        <div class="rating-bar">
+                            <span>3 ★</span>
+                            <div class="progress-bg"><div class="progress-fill" style="width: 5%"></div></div>
+                            <span>5%</span>
+                        </div>
+                        <div class="rating-bar">
+                            <span>2 ★</span>
+                            <div class="progress-bg"><div class="progress-fill" style="width: 0%"></div></div>
+                            <span>0%</span>
+                        </div>
+                        <div class="rating-bar">
+                            <span>1 ★</span>
+                            <div class="progress-bg"><div class="progress-fill" style="width: 0%"></div></div>
+                            <span>0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="api-reviews-container">
+                    <p style="color:rgba(0,0,0,0.5); font-size:14px;">Đang tải danh sách phản hồi...</p>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- [COMPONENTS: src/components/Footer.html] -->
+    <!-- Footer Components -->
     <footer class="main-footer">
-
-        <!-- Newsletter Strip -->
         <div class="footer-newsletter">
             <div class="container newsletter-inner">
                 <div class="newsletter-text">
@@ -201,10 +816,8 @@
             </div>
         </div>
 
-        <!-- Main Footer Body -->
         <div class="footer-body">
             <div class="container footer-grid">
-
                 <!-- Col 1: Brand -->
                 <div class="footer-col footer-brand">
                     <div class="footer-logo">OX</div>
@@ -276,11 +889,9 @@
                         <div class="cert-badge"><i class="fas fa-undo-alt"></i><span>Hoàn tiền 30 ngày</span></div>
                     </div>
                 </div>
-
             </div>
         </div>
 
-        <!-- Bottom Bar -->
         <div class="footer-bottom-bar">
             <div class="container footer-bottom-inner">
                 <p>&copy; 2026 <span class="footer-brand-inline">OX</span>. Tất cả quyền được bảo lưu.</p>
@@ -293,7 +904,6 @@
                 </div>
             </div>
         </div>
-
     </footer>
 
     <!-- Floating Actions -->
@@ -302,7 +912,279 @@
         <button class="fab-btn top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Lên đầu trang"><i class="fas fa-chevron-up"></i></button>
     </div>
 
+    <!-- Auth Overlay -->
+    <div class="auth-overlay" id="authOverlay">
+        <div class="overlay-backdrop" id="authBackdrop"></div>
+        <div class="auth-overlay-panel">
+            <button class="auth-overlay-close" id="authCloseBtn"><i class="fas fa-times"></i></button>
+            <div class="auth-overlay-inner">
+                <div class="auth-overlay-logo">OX<span>EN PROVENCE</span></div>
+                <p class="auth-overlay-tagline">Mỹ phẩm chính hãng — Vẻ đẹp đích thực</p>
+                <div class="auth-tabs">
+                    <div class="auth-tab active" onclick="switchAuthTab('login')" id="tab-login">Đăng nhập</div>
+                    <div class="auth-tab" onclick="switchAuthTab('register')" id="tab-register">Đăng ký</div>
+                </div>
+                
+                <!-- Login Form -->
+                <form class="auth-form" id="form-login" onsubmit="event.preventDefault(); closeAuthOverlay();" style="display:flex;">
+                    <div class="form-group">
+                        <label for="ov-login-email">Email / Số điện thoại</label>
+                        <input type="text" id="ov-login-email" placeholder="Nhập email hoặc số điện thoại" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ov-login-pw">Mật khẩu</label>
+                        <input type="password" id="ov-login-pw" placeholder="Nhập mật khẩu" required>
+                    </div>
+                    <div class="form-options">
+                        <label><input type="checkbox" checked> Ghi nhớ đăng nhập</label>
+                        <a href="#" class="forgot-pw">Quên mật khẩu?</a>
+                    </div>
+                    <button type="submit" class="auth-btn">Đăng nhập</button>
+                    <div class="auth-social">
+                        <p>Hoặc đăng nhập bằng</p>
+                        <div class="social-btns">
+                            <button type="button" class="social-btn"><i class="fab fa-google" style="color:#DB4437;"></i> Google</button>
+                            <button type="button" class="social-btn"><i class="fab fa-facebook-f" style="color:#4267B2;"></i> Facebook</button>
+                        </div>
+                    </div>
+                </form>
+                
+                <!-- Register Form -->
+                <form class="auth-form" id="form-register" onsubmit="event.preventDefault(); closeAuthOverlay();" style="display:none;">
+                    <div class="form-group">
+                        <label for="ov-reg-name">Họ và tên</label>
+                        <input type="text" id="ov-reg-name" placeholder="Nhập họ và tên của bạn" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ov-reg-email">Email</label>
+                        <input type="email" id="ov-reg-email" placeholder="Nhập địa chỉ email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ov-reg-pw">Mật khẩu</label>
+                        <input type="password" id="ov-reg-pw" placeholder="Tạo mật khẩu (ít nhất 8 ký tự)" required>
+                    </div>
+                    <div class="form-options">
+                        <label><input type="checkbox" required> Tôi đồng ý với <a href="#" class="forgot-pw">Điều khoản &amp; Bảo mật</a></label>
+                    </div>
+                    <button type="submit" class="auth-btn">Tạo tài khoản mới</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Overlay -->
+    <div class="cart-overlay" id="cartOverlay">
+        <div class="overlay-backdrop" id="cartBackdrop"></div>
+        <div class="cart-overlay-panel">
+            <div class="cart-overlay-header">
+                <h3>Giỏ Hàng</h3>
+                <button class="cart-overlay-close-btn" id="cartCloseBtn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="cart-overlay-body" id="cartOverlayBody">
+                <div class="cart-ov-empty">
+                    <i class="fas fa-shopping-bag"></i>
+                    <p>Giỏ hàng của bạn đang trống</p>
+                    <span>Hãy khám phá bộ sưu tập của chúng tôi</span>
+                </div>
+            </div>
+            <div class="cart-overlay-footer">
+                <div class="cart-ov-summary-line">
+                    <span>Tạm tính:</span><span id="cartOverlaySubtotal">0đ</span>
+                </div>
+                <div class="cart-ov-summary-line">
+                    <span>Vận chuyển:</span><span>Miễn phí</span>
+                </div>
+                <div class="cart-ov-summary-line total">
+                    <span>Tổng cộng:</span><span id="cartOverlayTotal">0đ</span>
+                </div>
+                <a href="../Cart/cart.html" class="cart-ov-checkout-btn">Xem giỏ hàng &amp; Thanh toán <i class="fas fa-arrow-right"></i></a>
+                <span class="cart-ov-continue" onclick="closeCartOverlay()">Tiếp tục mua sắm</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Overlay -->
+    <div class="search-overlay" id="searchOverlay">
+        <div class="search-overlay-backdrop" id="searchBackdrop"></div>
+        <div class="search-overlay-panel">
+            <div class="search-overlay-top">
+                <div class="search-overlay-input-wrap">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchOverlayInput" placeholder="Tìm kiếm sản phẩm, thương hiệu..." autocomplete="off">
+                    <button class="search-clear-btn" id="searchClearBtn"><i class="fas fa-times"></i></button>
+                </div>
+                <button class="search-close-btn" id="searchCloseBtn">Đóng <i class="fas fa-times" style="font-size:11px"></i></button>
+            </div>
+            <div class="search-overlay-body">
+                <div class="search-filter-group">
+                    <span class="search-filter-label">Danh mục</span>
+                    <div class="filter-chips-row">
+                        <button class="filter-chip active">Tất cả</button>
+                        <button class="filter-chip"><i class="fas fa-leaf"></i> Skincare</button>
+                        <button class="filter-chip"><i class="fas fa-soap"></i> Body &amp; Bath</button>
+                        <button class="filter-chip"><i class="fas fa-wind"></i> Hair</button>
+                        <button class="filter-chip"><i class="fas fa-cut"></i> Shaving</button>
+                        <button class="filter-chip"><i class="fas fa-spray-can"></i> Fragrance</button>
+                        <button class="filter-chip"><i class="fas fa-star"></i> Grooming</button>
+                    </div>
+                </div>
+                <div class="search-filter-group">
+                    <span class="search-filter-label">Khoảng giá</span>
+                    <div class="filter-chips-row">
+                        <button class="filter-chip active">Tất cả</button>
+                        <button class="filter-chip">Dưới 200k</button>
+                        <button class="filter-chip">200k – 500k</button>
+                        <button class="filter-chip">500k – 1 triệu</button>
+                        <button class="filter-chip">Trên 1 triệu</button>
+                    </div>
+                </div>
+                <div class="search-filter-group">
+                    <span class="search-filter-label">Sắp xếp theo</span>
+                    <div class="filter-chips-row">
+                        <button class="filter-chip active"><i class="fas fa-fire"></i> Phổ biến nhất</button>
+                        <button class="filter-chip"><i class="fas fa-sort-amount-up"></i> Giá tăng dần</button>
+                        <button class="filter-chip"><i class="fas fa-sort-amount-down"></i> Giá giảm dần</button>
+                        <button class="filter-chip"><i class="fas fa-clock"></i> Mới nhất</button>
+                    </div>
+                </div>
+                <div class="search-trending">
+                    <h4><i class="fas fa-chart-line" style="margin-right:6px;color:#EBC351"></i>Tìm kiếm phổ biến</h4>
+                    <div class="trending-tags">
+                        <a href="#" class="trending-tag"><i class="fas fa-fire"></i> Kem chống nắng</a>
+                        <a href="#" class="trending-tag"><i class="fas fa-fire"></i> Serum dưỡng da</a>
+                        <a href="#" class="trending-tag"><i class="fas fa-fire"></i> La Roche-Posay</a>
+                        <a href="#" class="trending-tag"><i class="fas fa-fire"></i> Sữa rửa mặt</a>
+                        <a href="#" class="trending-tag"><i class="fas fa-fire"></i> Nước hoa nam</a>
+                        <a href="#" class="trending-tag"><i class="fas fa-fire"></i> Dầu gội đầu</a>
+                        <a href="#" class="trending-tag"><i class="fas fa-fire"></i> Kem dưỡng ẩm</a>
+                        <a href="#" class="trending-tag"><i class="fas fa-fire"></i> Tẩy tế bào chết</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="../../utils/api.js"></script>
     <script src="../../utils/script.js"></script>
+    <script>
+        // MUA NGAY: Thêm sản phẩm vào giỏ hàng và chuyển hướng tới giỏ hàng trực tiếp
+        document.getElementById('btnBuyNowPremium').addEventListener('click', async function() {
+            const qty = parseInt(document.getElementById('quantity')?.value || 1);
+            
+            // Lấy ID sản phẩm từ URL query string
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = parseInt(urlParams.get('id') || 1);
+            
+            try {
+                this.textContent = 'ĐANG XỬ LÝ...';
+                this.disabled = true;
+                await Cart.addItem(productId, qty);
+                window.location.href = '../Cart/cart.html';
+            } catch (err) {
+                alert('❌ Lỗi khi mua ngay: ' + err.message);
+                this.innerHTML = 'Mua ngay';
+                this.disabled = false;
+            }
+        });
+
+        // Tính toán Giá gốc và Mức Tiết kiệm động sau khi thông tin sản phẩm từ API nạp xong
+        // Ta dùng cơ chế MutationObserver hoặc check định kỳ cho đơn giản, tự nhiên
+        const priceChecker = setInterval(() => {
+            const currentPriceText = document.getElementById('api-product-price').textContent;
+            if (currentPriceText && currentPriceText !== '0đ') {
+                clearInterval(priceChecker);
+                
+                // Trích xuất số từ "395.000đ" -> 395000
+                const numPrice = parseInt(currentPriceText.replace(/\D/g, ''));
+                if (!isNaN(numPrice)) {
+                    updateOriginalPrices(numPrice);
+                }
+            }
+        }, 150);
+
+        function updateOriginalPrices(currentPrice) {
+            // Tính toán giá gốc giả định (cao hơn 15%)
+            const originalPrice = Math.round((currentPrice / 0.85) / 1000) * 1000;
+            const savingAmount = originalPrice - currentPrice;
+            const discountPercent = 15;
+            
+            const fmt = (n) => new Intl.NumberFormat('vi-VN').format(n) + 'đ';
+            
+            document.getElementById('api-original-price').textContent = fmt(originalPrice);
+            document.getElementById('api-discount-tag').textContent = `-${discountPercent}%`;
+            document.getElementById('api-saving-amount').textContent = `Tiết kiệm ${fmt(savingAmount)} (${discountPercent}%)`;
+            
+            // Cập nhật rating summary từ reviews database
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id') || 1;
+            Reviews.getByProduct(productId).then(reviews => {
+                const count = reviews.length;
+                const totalRating = reviews.reduce((sum, r) => sum + (r.rating || 0), 0);
+                const average = count > 0 ? (totalRating / count).toFixed(1) : '4.8';
+                
+                document.getElementById('summaryRatingValue').textContent = average;
+                document.getElementById('summaryRatingCount').textContent = `${count} đánh giá thực tế`;
+                
+                // Phân bổ sao ngẫu nhiên/hợp lý dựa trên rating
+                const fillBars = document.querySelectorAll('.progress-fill');
+                if (fillBars.length === 5) {
+                    if (count === 0) {
+                        fillBars[0].style.width = '80%';
+                        fillBars[1].style.width = '15%';
+                        fillBars[2].style.width = '5%';
+                        fillBars[3].style.width = '0%';
+                        fillBars[4].style.width = '0%';
+                    } else {
+                        // Tính toán phân bổ thực tế từ reviews
+                        const ratingsCount = [0, 0, 0, 0, 0]; // 5, 4, 3, 2, 1 sao
+                        reviews.forEach(r => {
+                            const stars = r.rating || 5;
+                            if (stars >= 1 && stars <= 5) {
+                                ratingsCount[5 - stars]++;
+                            }
+                        });
+                        ratingsCount.forEach((c, idx) => {
+                            const pct = count > 0 ? Math.round((c / count) * 100) : 0;
+                            fillBars[idx].style.width = `${pct}%`;
+                            fillBars[idx].parentElement.nextElementSibling.textContent = `${pct}%`;
+                        });
+                    }
+                }
+            }).catch(err => console.log('Error rating summary:', err));
+        }
+
+        // Lắng nghe sự kiện đổi variant để cập nhật lại giá gốc tương ứng
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('variant-btn')) {
+                setTimeout(() => {
+                    const priceText = document.getElementById('api-product-price').textContent;
+                    const numPrice = parseInt(priceText.replace(/\D/g, ''));
+                    if (!isNaN(numPrice)) {
+                        updateOriginalPrices(numPrice);
+                    }
+                }, 50);
+            }
+        });
+
+        // ── ADMIN ACCESS (Ctrl+Shift+A trên desktop hoặc long-press menu hamburger 2s trên mobile)
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+                e.preventDefault();
+                window.location.href = '../Admin/admin.html';
+            }
+        });
+        const hbtn = document.querySelector('.hamburger-btn');
+        let lpTimer = null;
+        if (hbtn) {
+            hbtn.addEventListener('touchstart', function(e) {
+                lpTimer = setTimeout(function() {
+                    e.preventDefault();
+                    window.location.href = '../Admin/admin.html';
+                }, 2000);
+            });
+            hbtn.addEventListener('touchend', function() { clearTimeout(lpTimer); });
+            hbtn.addEventListener('touchmove', function() { clearTimeout(lpTimer); });
+        }
+    </script>
 </body>
 </html>

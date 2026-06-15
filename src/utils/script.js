@@ -439,6 +439,17 @@ async function fetchProductData() {
         const data = await Products.getById(productId);
 
         titleEl.textContent = data.name;
+        
+        // Cập nhật Breadcrumb động
+        const breadcrumbCat = document.getElementById('api-breadcrumb-cat');
+        const breadcrumbName = document.getElementById('api-breadcrumb-name');
+        if (breadcrumbCat && data.categories) {
+            breadcrumbCat.textContent = data.categories.name;
+        }
+        if (breadcrumbName) {
+            breadcrumbName.textContent = data.name;
+        }
+
         if (document.getElementById('api-product-brand'))
             document.getElementById('api-product-brand').textContent = data.brands ? data.brands.name : '';
         if (document.getElementById('api-product-desc'))
@@ -523,18 +534,18 @@ async function renderProductReviews(productId) {
             ).join('');
             const date = r.created_at ? new Date(r.created_at).toLocaleDateString('vi-VN') : '';
             return `
-                <div style="padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
+                <div style="padding:16px 0;border-bottom:1px solid var(--border-color, #EAEAEA);">
                     <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
                         <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#EBC351,#D8AD30);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#000;">
                             <i class="fas fa-user" style="font-size:14px;"></i>
                         </div>
                         <div>
-                            <div style="font-size:13px;font-weight:600;color:#fff;">Khách hàng OX</div>
-                            <div style="font-size:11px;color:rgba(255,255,255,0.3);">${date}</div>
+                            <div style="font-size:13px;font-weight:600;color:var(--text-color, #333);">Khách hàng OX</div>
+                            <div style="font-size:11px;color:var(--text-light, #666);">${date}</div>
                         </div>
                         <div style="margin-left:auto;">${stars}</div>
                     </div>
-                    <p style="font-size:13.5px;color:rgba(255,255,255,0.65);line-height:1.6;">${r.comment || ''}</p>
+                    <p style="font-size:13.5px;color:var(--text-color, #333);opacity:0.85;line-height:1.6;margin-top:6px;">${r.comment || ''}</p>
                 </div>
             `;
         }).join('');
