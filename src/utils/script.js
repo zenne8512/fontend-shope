@@ -227,7 +227,7 @@ async function renderCartOverlay() {
 
             const imgUrl = getImageUrl(item.products && item.products.product_images && item.products.product_images.length > 0
                 ? item.products.product_images[0].image_url
-                : '/src/assets/images/main.png');
+                : 'src/assets/images/main.png');
 
             const div = document.createElement('div');
             div.className = 'cart-ov-item';
@@ -235,7 +235,7 @@ async function renderCartOverlay() {
             div.innerHTML = `
                 <img src="${imgUrl}" alt="${item.products ? item.products.name : ''}"
                     style="width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,0.08);"
-                    onerror="this.src='/src/assets/images/main.png'">
+                    onerror="this.src='src/assets/images/main.png'">
                 <div style="flex:1;min-width:0;">
                     <div style="font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.products ? item.products.name : 'Sản phẩm'}</div>
                     <div style="font-size:12px;color:#EBC351;margin-top:4px;">${UI.formatCurrency(price)}</div>
@@ -327,7 +327,16 @@ async function fetchProductsList(categorySlug = '') {
     const gridEl = document.getElementById('api-products-grid');
     if (!gridEl) return;
 
-    gridEl.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px;color:rgba(255,255,255,0.4);"><i class="fas fa-spinner fa-spin" style="font-size:24px;"></i></div>`;
+    gridEl.innerHTML = Array.from({length: 8}, () => `
+        <div class="product-card" style="pointer-events:none;">
+            <div class="card-img" style="background:rgba(255,255,255,0.05); min-height: 250px; animation: pulse 1.5s infinite;"></div>
+            <div class="card-info">
+                <div style="height:20px; background:rgba(255,255,255,0.05); margin-bottom:10px; width:80%; animation: pulse 1.5s infinite;"></div>
+                <div style="height:15px; background:rgba(255,255,255,0.05); margin-bottom:10px; width:50%; animation: pulse 1.5s infinite;"></div>
+                <div style="height:15px; background:rgba(255,255,255,0.05); width:30%; animation: pulse 1.5s infinite;"></div>
+            </div>
+        </div>
+    `).join('') + `<style>@keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 0.2; } 100% { opacity: 0.6; } }</style>`;
 
     try {
         let params = { page: 1, limit: 50 }; // Đặt limit là 50 sản phẩm để tải được nhiều
@@ -359,7 +368,7 @@ async function fetchProductsList(categorySlug = '') {
                 ? parseFloat(product.product_variants[0].price) : 0;
             const imageUrl = getImageUrl(product.product_images && product.product_images.length > 0
                 ? product.product_images[0].image_url
-                : '/src/assets/images/main.png');
+                : 'src/assets/images/main.png');
             const stars = Math.round(product.averageRating || 0);
             const starsHtml = Array.from({length: 5}, (_, i) =>
                 `<i class="fa${i < stars ? 's' : 'r'} fa-star" style="color:#EBC351;font-size:12px;"></i>`
@@ -368,7 +377,7 @@ async function fetchProductsList(categorySlug = '') {
             gridEl.insertAdjacentHTML('beforeend', `
                 <a href="src/views/Product/product.html?id=${product.id}" class="product-card">
                     <div class="card-img">
-                        <img src="${imageUrl}" alt="${product.name}" loading="lazy" onerror="this.src='/src/assets/images/main.png'">
+                        <img src="${imageUrl}" alt="${product.name}" loading="lazy" onerror="this.src='src/assets/images/main.png'">
                         ${product.status !== 'active' ? '<div class="discount">Hết hàng</div>' : ''}
                     </div>
                     <div class="card-info">
@@ -453,7 +462,7 @@ async function fetchProductData() {
         if (document.getElementById('api-product-image')) {
             const mainImg = getImageUrl(data.product_images && data.product_images.length > 0
                 ? data.product_images[0].image_url
-                : '/src/assets/images/main.png');
+                : 'src/assets/images/main.png');
             document.getElementById('api-product-image').src = mainImg;
 
             // Thumbnail List
@@ -574,14 +583,59 @@ function setupSearchOverlay() {
     closeBtn && closeBtn.addEventListener('click', closeSearch);
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSearch(); });
 
+    let searchTimeout;
+    const originalBodyHTML = document.querySelector('.search-overlay-body') ? document.querySelector('.search-overlay-body').innerHTML : '';
+
     if (searchInput && clearBtn) {
         searchInput.addEventListener('input', () => {
-            clearBtn.classList.toggle('visible', searchInput.value.length > 0);
+            const query = searchInput.value.trim();
+            clearBtn.classList.toggle('visible', query.length > 0);
+            
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(async () => {
+                const body = document.querySelector('.search-overlay-body');
+                if (!body) return;
+                
+                if (query.length === 0) {
+                    body.innerHTML = originalBodyHTML; // Khôi phục giao diện mặc định
+                    return;
+                }
+
+                body.innerHTML = '<div style="text-align:center;padding:48px;color:#fff;"><i class="fas fa-spinner fa-spin" style="font-size:24px; color:#EBC351;"></i><div style="margin-top:12px;font-size:13px;">Đang tìm kiếm...</div></div>';
+                try {
+                    const res = await Products.getAll({ search: query, limit: 10 });
+                    const products = res.products || res;
+                    if (products.length === 0) {
+                        body.innerHTML = '<div style="text-align:center;padding:48px;color:rgba(255,255,255,0.6);font-size:14px;">Không tìm thấy sản phẩm nào phù hợp.</div>';
+                    } else {
+                        let html = '<div class="search-results-list" style="padding: 16px; display:flex; flex-direction:column; gap:12px;">';
+                        html += `<h4 style="color:#EBC351; font-size:13px; text-transform:uppercase; margin-bottom:8px;">Kết quả tìm kiếm cho "${query}"</h4>`;
+                        products.forEach(p => {
+                            const price = p.product_variants && p.product_variants.length > 0 ? parseFloat(p.product_variants[0].price) : 0;
+                            const imgUrl = p.product_images && p.product_images.length > 0 ? getImageUrl(p.product_images[0].image_url) : 'src/assets/images/main.png';
+                            html += `
+                                <a href="src/views/Product/product.html?id=${p.id}" style="display:flex; gap:16px; padding:12px; background:rgba(255,255,255,0.03); border-radius:8px; border:1px solid rgba(255,255,255,0.05); color:#fff; text-decoration:none; transition: background 0.2s;">
+                                    <img src="${imgUrl}" style="width:48px; height:48px; object-fit:cover; border-radius:6px;" onerror="this.src='src/assets/images/main.png'">
+                                    <div style="flex:1;">
+                                        <div style="font-size:14px; font-weight:600; margin-bottom:4px;">${p.name}</div>
+                                        <div style="font-size:13px; color:#EBC351;">${UI.formatCurrency(price)}</div>
+                                    </div>
+                                </a>`;
+                        });
+                        html += '</div>';
+                        body.innerHTML = html;
+                    }
+                } catch (e) {
+                    body.innerHTML = '<div style="text-align:center;padding:48px;color:#e74c3c;font-size:14px;">Đã có lỗi xảy ra khi tìm kiếm.</div>';
+                }
+            }, 400); // 400ms debounce
         });
         clearBtn.addEventListener('click', () => {
             searchInput.value = '';
             clearBtn.classList.remove('visible');
             searchInput.focus();
+            const body = document.querySelector('.search-overlay-body');
+            if(body) body.innerHTML = originalBodyHTML;
         });
 
         // Enter để tìm kiếm
@@ -595,106 +649,18 @@ function setupSearchOverlay() {
         });
     }
 
-    // Filter chip single-select per group
-    document.querySelectorAll('.search-filter-group').forEach(group => {
-        group.querySelectorAll('.filter-chip').forEach(chip => {
-            chip.addEventListener('click', () => {
+    // Lắng nghe click event uỷ quyền (event delegation) vì nội dung body có thể bị thay thế
+    document.querySelector('.search-overlay-panel').addEventListener('click', (e) => {
+        const chip = e.target.closest('.filter-chip');
+        if (chip) {
+            const group = chip.closest('.search-filter-group');
+            if (group) {
                 group.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
                 chip.classList.add('active');
-            });
-        });
+            }
+        }
     });
 }
 
 
-// Quantity Selector
-function changeQuantity(change) {
-    const quantityInput = document.getElementById('quantity');
-    let currentValue = parseInt(quantityInput.value);
-    
-    let newValue = currentValue + change;
-    if (newValue < 1) newValue = 1; // Minimum quantity is 1
-    
-    quantityInput.value = newValue;
-}
 
-// Add to Cart
-function addToCart() {
-    const cartCount = document.querySelector('.cart-count');
-    const quantity = parseInt(document.getElementById('quantity').value);
-    let currentCount = parseInt(cartCount.innerText);
-    
-    cartCount.innerText = currentCount + quantity;
-    
-    // Optional: Show a subtle feedback animation or toast
-    const btn = document.querySelector('.btn-add-cart');
-    const originalText = btn.innerHTML;
-    btn.innerHTML = '<i class="fas fa-check"></i> ĐÃ THÊM';
-    btn.style.backgroundColor = '#d4edda';
-    btn.style.color = '#155724';
-    btn.style.borderColor = '#c3e6cb';
-    
-    setTimeout(() => {
-        btn.innerHTML = originalText;
-        btn.style = ''; // Reset inline styles
-    }, 2000);
-}
-
-// Tabs
-function openTab(evt, tabId) {
-    // Hide all tab contents
-    const tabContents = document.querySelectorAll('.tab-content');
-    tabContents.forEach(content => {
-        content.classList.remove('active');
-    });
-
-    // Remove active class from all tab buttons
-    const tabBtns = document.querySelectorAll('.tab-btn');
-    tabBtns.forEach(btn => {
-        btn.classList.remove('active');
-    });
-
-    // Show the current tab and add active class to the button
-    document.getElementById(tabId).classList.add('active');
-    evt.currentTarget.classList.add('active');
-}
-
-window.onload = function () {
-    fetchProductData();
-    fetchProductsList();
-    setupSideMenu();
-    setupAuthOverlay();
-    setupCartOverlay();
-    setupSearchOverlay();
-};
-
-// ── Auth Overlay ──────────────────────────────────
-function setupAuthOverlay() {
-    const userBtn = document.getElementById('user-icon-btn');
-    const overlay = document.getElementById('authOverlay');
-    const closeBtn = document.getElementById('authCloseBtn');
-    const backdrop = document.getElementById('authBackdrop');
-    if (!userBtn || !overlay) return;
-
-    userBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        openAuthOverlay();
-    });
-    closeBtn && closeBtn.addEventListener('click', closeAuthOverlay);
-    backdrop && backdrop.addEventListener('click', closeAuthOverlay);
-
-    // ESC key closes overlay
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') { closeAuthOverlay(); closeCartOverlay(); }
-    });
-}
-
-function openAuthOverlay() {
-    const overlay = document.getElementById('authOverlay');
-    if (overlay) { overlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
-}
-
-function closeAuthOverlay() {
-    const overlay = document.getElementById('authOverlay');
-    if (overlay) { overlay.classList.remove('active'); document.body.style.overflow = ''; }
-}

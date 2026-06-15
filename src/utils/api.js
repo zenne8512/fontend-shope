@@ -6,7 +6,7 @@ const API_BASE_URL = 'http://localhost:5000/api';
 const BACKEND_URL = 'http://localhost:5000';
 
 function getImageUrl(url) {
-    if (!url) return '/src/assets/images/main.png';
+    if (!url) return 'src/assets/images/main.png';
     if (url.startsWith('http://') || url.startsWith('https://')) {
         return url;
     }
@@ -33,6 +33,17 @@ function authHeaders() {
 
 // ── Helper: Xử lý response chung ──
 async function handleResponse(res) {
+    if (res.status === 401) {
+        Auth.logout();
+        if (typeof UI !== 'undefined') {
+            UI.showToast('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.', 'error');
+        } else {
+            alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+        }
+        const authOverlay = document.getElementById('authOverlay');
+        if (authOverlay) authOverlay.classList.add('active');
+        throw new Error('Phiên đăng nhập đã hết hạn');
+    }
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || 'Đã có lỗi xảy ra');
     return data;
@@ -205,6 +216,20 @@ const Orders = {
         const res = await fetch(`${API_BASE_URL}/orders/${id}/cancel`, {
             method: 'PUT',
             headers: authHeaders()
+        });
+        return handleResponse(res);
+    },
+
+    async getAll() {
+        const res = await fetch(`${API_BASE_URL}/orders`, { headers: authHeaders() });
+        return handleResponse(res);
+    },
+
+    async updateStatus(id, status) {
+        const res = await fetch(`${API_BASE_URL}/orders/${id}/status`, {
+            method: 'PUT',
+            headers: authHeaders(),
+            body: JSON.stringify({ status })
         });
         return handleResponse(res);
     }

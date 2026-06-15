@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>OX Admin — Quan tri he thong</title>
+<title>OX Admin — Quản trị hệ thống</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -282,27 +282,7 @@ tbody td{padding:13px 16px;font-size:13px;color:var(--text2)}
   <p class="pin-hint">PIN mặc định: 2026</p>
 </div>
 
-<!-- BACKEND LOGIN SCREEN -->
-<div id="backendLoginScreen" style="display:none">
-  <div class="login-box">
-    <div class="pin-logo">OX</div>
-    <span class="pin-logo-sub">Backend Database Authentication</span>
-    <div class="login-title">Đăng nhập Database</div>
-    <div class="login-sub">Nhập tài khoản Admin của hệ thống để thực hiện các thao tác dữ liệu thực tế.</div>
-    <div class="login-form">
-      <div class="fg">
-        <label>Email Admin *</label>
-        <input type="email" id="bEmail" placeholder="admin@shoppi.com" value="admin@shoppi.com">
-      </div>
-      <div class="fg">
-        <label>Mật khẩu *</label>
-        <input type="password" id="bPassword" placeholder="••••••••" value="admin123">
-      </div>
-      <button class="btn btn-gold" onclick="loginBackend()" style="margin-top:8px;justify-content:center"><i class="fas fa-right-to-bracket"></i> Đăng nhập hệ thống</button>
-    </div>
-    <a href="#" onclick="showPinScreen()" class="login-back"><i class="fas fa-arrow-left"></i> Quay lại nhập PIN</a>
-  </div>
-</div>
+
 
 <!-- ADMIN APP -->
 <div id="adminApp">
@@ -459,13 +439,39 @@ tbody td{padding:13px 16px;font-size:13px;color:var(--text2)}
         </div>
       </div>
 
-      <!-- ORDERS (UI only) -->
+      <!-- ORDERS -->
       <div class="section" id="sectionOrders">
-        <div class="sec-header"><div><div class="sec-title">Đơn hàng</div><div class="sec-sub">Quản lý đơn hàng</div></div></div>
-        <div style="text-align:center;padding:60px;color:var(--text3)">
-          <i class="fas fa-receipt" style="font-size:48px;margin-bottom:16px;display:block;opacity:.3"></i>
-          <p style="font-size:14px">Chức năng đang phát triển — cần kết nối backend</p>
+        <div class="sec-header">
+          <div><div class="sec-title">Đơn hàng</div><div class="sec-sub">Quản lý và cập nhật trạng thái đơn hàng</div></div>
+          <button class="btn btn-gold" onclick="loadOrders()"><i class="fas fa-sync"></i> Tải lại</button>
         </div>
+        <div class="table-toolbar">
+          <div class="search-box"><i class="fas fa-search"></i><input type="text" id="searchOrderInput" placeholder="Tìm mã đơn, email..." oninput="renderOrdersTable()"></div>
+          <select class="filter-select" id="filterOrderStatus" onchange="renderOrdersTable()">
+            <option value="">Tất cả trạng thái</option>
+            <option value="PENDING">Chờ xử lý</option>
+            <option value="PROCESSING">Đang xử lý</option>
+            <option value="SHIPPED">Đang giao</option>
+            <option value="DELIVERED">Đã giao</option>
+            <option value="CANCELLED">Đã hủy</option>
+          </select>
+        </div>
+        <div class="tbl-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Mã đơn</th>
+                <th>Khách hàng</th>
+                <th>Ngày đặt</th>
+                <th>Tổng tiền</th>
+                <th>Trạng thái</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTbody"></tbody>
+          </table>
+        </div>
+        <p style="font-size:12px;color:var(--text3)" id="ordersCount"></p>
       </div>
 
       <!-- SETTINGS -->
@@ -690,15 +696,15 @@ async function loadData(){
 }
 function saveData(){localStorage.setItem(DATA_KEY,JSON.stringify(products))}
 function getExpStatus(dateStr){
-  if(!dateStr)return{level:'safe',label:'Chua co HSD',color:'--text3',days:9999};
+  if(!dateStr)return{level:'safe',label:'Chưa có HSD',color:'--text3',days:9999};
   const t=getThresh();
   const now=new Date();now.setHours(0,0,0,0);
   const exp=new Date(dateStr);exp.setHours(0,0,0,0);
   const days=Math.round((exp-now)/(1000*60*60*24));
-  if(days<0)return{level:'expired',label:'Da het han',color:'var(--text3)',days};
-  if(days<=t.red)return{level:'critical',label:'Con '+days+' ngay',color:'var(--red)',days};
-  if(days<=t.yellow)return{level:'warn',label:'Con '+days+' ngay',color:'var(--orange)',days};
-  return{level:'safe',label:'Con '+days+' ngay',color:'var(--green)',days};
+  if(days<0)return{level:'expired',label:'Đã hết hạn',color:'var(--text3)',days};
+  if(days<=t.red)return{level:'critical',label:'Còn '+days+' ngày',color:'var(--red)',days};
+  if(days<=t.yellow)return{level:'warn',label:'Còn '+days+' ngày',color:'var(--orange)',days};
+  return{level:'safe',label:'Còn '+days+' ngày',color:'var(--green)',days};
 }
 function expBadgeHtml(dateStr){
   const s=getExpStatus(dateStr);
@@ -744,51 +750,14 @@ async function verifyBackendAuth() {
   if (Auth.isAdmin()) {
     await showAdmin();
   } else {
-    showBackendLogin();
-  }
-}
-
-function showBackendLogin() {
-  document.getElementById('backendLoginScreen').style.display = 'flex';
-  document.getElementById('backendLoginScreen').classList.remove('hide');
-  document.getElementById('adminApp').classList.remove('on');
-}
-
-function showPinScreen() {
-  document.getElementById('backendLoginScreen').classList.add('hide');
-  setTimeout(() => {
-    document.getElementById('backendLoginScreen').style.display = 'none';
-    document.getElementById('pinScreen').style.display = 'flex';
-    document.getElementById('pinScreen').classList.remove('hide');
-    pinVal = '';
-    updateDots();
-  }, 500);
-}
-
-async function loginBackend() {
-  const email = document.getElementById('bEmail').value.trim();
-  const password = document.getElementById('bPassword').value;
-  if (!email || !password) {
-    toast('Vui lòng điền đầy đủ email và mật khẩu!', 'error');
-    return;
-  }
-  
-  try {
-    toast('Đang xác thực với Backend...', 'info');
-    const data = await Auth.login(email, password);
-    if (data.role === 'ADMIN') {
-      toast('Đăng nhập Backend thành công!', 'success');
-      document.getElementById('backendLoginScreen').classList.add('hide');
-      setTimeout(async () => {
-        document.getElementById('backendLoginScreen').style.display = 'none';
-        await showAdmin();
-      }, 500);
-    } else {
-      toast('Tài khoản không phải ADMIN!', 'error');
-      Auth.logout();
+    try {
+      // Đăng nhập ngầm để lấy Token cho các thao tác Backend
+      await Auth.login('admin@shoppi.com', 'admin123');
+      await showAdmin();
+    } catch (err) {
+      toast('Lỗi kết nối Backend. Dùng dữ liệu nội bộ.', 'warn');
+      await showAdmin();
     }
-  } catch (err) {
-    toast(err.message || 'Đăng nhập thất bại!', 'error');
   }
 }
 
@@ -863,8 +832,8 @@ function renderAlerts(){
   const t=getThresh();
   const critical=products.filter(p=>getExpStatus(p.expiryDate).level==='critical');
   const expired=products.filter(p=>getExpStatus(p.expiryDate).level==='expired');
-  if(expired.length>0){z.innerHTML+=`<div class="alert-banner danger"><i class="fas fa-skull-crossbones"></i><span><strong>${expired.length} san pham</strong> da het han — can thu hoi va xu ly ngay!</span><span class="ab-action" onclick="goTo('expiry',document.getElementById('nav-expiry'))">Xem ngay</span></div>`;}
-  if(critical.length>0){z.innerHTML+=`<div class="alert-banner warn"><i class="fas fa-fire"></i><span><strong>${critical.length} san pham</strong> con duoi ${t.red} ngay — nen giam gia de giai phong hang!</span><span class="ab-action" onclick="goTo('expiry',document.getElementById('nav-expiry'))">Xem ngay</span></div>`;}
+  if(expired.length>0){z.innerHTML+=`<div class="alert-banner danger"><i class="fas fa-skull-crossbones"></i><span><strong>${expired.length} sản phẩm</strong> đã hết hạn — cần thu hồi và xử lý ngay!</span><span class="ab-action" onclick="goTo('expiry',document.getElementById('nav-expiry'))">Xem ngay</span></div>`;}
+  if(critical.length>0){z.innerHTML+=`<div class="alert-banner warn"><i class="fas fa-fire"></i><span><strong>${critical.length} sản phẩm</strong> còn dưới ${t.red} ngày — nên giảm giá để giải phóng hàng!</span><span class="ab-action" onclick="goTo('expiry',document.getElementById('nav-expiry'))">Xem ngay</span></div>`;}
 }
 function updateExpiryBadge(){
   const n=products.filter(p=>{const s=getExpStatus(p.expiryDate).level;return s==='critical'||s==='expired'}).length;
@@ -898,13 +867,13 @@ function renderTable(){
       </div></td>
     </tr>`;
   }).join('');
-  document.getElementById('tableCount').textContent=`Hien thi ${filtered.length} / ${products.length} san pham`;
+  document.getElementById('tableCount').textContent=`Hiển thị ${filtered.length} / ${products.length} sản phẩm`;
 }
 
 /* SLIDE OVER */
 function openSlideOver(id){
   editingId=id||null;
-  document.getElementById('soTitle').textContent=id?'Chinh sua san pham':'Them san pham moi';
+  document.getElementById('soTitle').textContent=id?'Chỉnh sửa sản phẩm':'Thêm sản phẩm mới';
   document.getElementById('editId').value=id||'';
   if(id){
     const p=products.find(x=>x.id===id);
@@ -944,7 +913,7 @@ function previewExpiry(){
   prev.style.background=colors[s.level];
   prev.style.border='1px solid '+borders[s.level];
   prev.style.color=s.color;
-  const msgs={safe:`San pham an toan — ${s.label}`,warn:`San pham sap het han — ${s.label} — Theo doi`,critical:`Khan cap! ${s.label} — De xuat giam gia ngay`,expired:'San pham da het han — Ngung ban va xu ly'};
+  const msgs={safe:`Sản phẩm an toàn — ${s.label}`,warn:`Sản phẩm sắp hết hạn — ${s.label} — Theo dõi`,critical:`Khẩn cấp! ${s.label} — Đề xuất giảm giá ngay`,expired:'Sản phẩm đã hết hạn — Ngừng bán và xử lý'};
   prev.textContent=icons[s.level]+' '+msgs[s.level];
 }
 async function saveProduct(){
@@ -1041,7 +1010,7 @@ async function saveProduct(){
 /* DELETE */
 function openDeleteModal(id,name){
   deleteId=id;
-  document.getElementById('deleteModalSub').textContent=`Ban co chac muon xoa "${name}"? Hanh dong nay khong the hoan tac.`;
+  document.getElementById('deleteModalSub').textContent=`Bạn có chắc muốn xóa "${name}"? Hành động này không thể hoàn tác.`;
   document.getElementById('deleteModal').classList.add('on');
 }
 function closeDeleteModal(){document.getElementById('deleteModal').classList.remove('on');deleteId=null;}
@@ -1084,14 +1053,14 @@ function renderExpirySection(){
   document.getElementById('tabExpCount').textContent=groups.expired.length;
   const list=groups[currentTab];
   const wrap=document.getElementById('expListWrap');
-  if(!list.length){wrap.innerHTML=`<div style="text-align:center;padding:40px;color:var(--text3)"><i class="fas fa-check-circle" style="font-size:32px;margin-bottom:12px;display:block;color:var(--green)"></i>Khong co san pham nao trong muc nay</div>`;return;}
+  if(!list.length){wrap.innerHTML=`<div style="text-align:center;padding:40px;color:var(--text3)"><i class="fas fa-check-circle" style="font-size:32px;margin-bottom:12px;display:block;color:var(--green)"></i>Không có sản phẩm nào trong mục này</div>`;return;}
   const dayColor={critical:'d-red',warn:'d-orange',safe:'d-green',expired:'d-gray'};
   const itemClass={critical:'critical',warn:'warn-item',safe:'',expired:'expired-item'};
   wrap.innerHTML=list.map(p=>{
     const s=p._status;
     const daysDisp=s.days<0?`${Math.abs(s.days)}n qua`:`${s.days}n`;
-    const suggest=s.level==='critical'?`<span class="exp-suggest">💡 De xuat giam ${Math.min(50,Math.round((30-s.days)/30*50))}%</span>`:'';
-    const expiredNote=s.level==='expired'?`<span class="exp-suggest" style="background:rgba(231,76,60,.1);color:var(--red);border-color:rgba(231,76,60,.3)">🚫 Ngung ban</span>`:'';
+    const suggest=s.level==='critical'?`<span class="exp-suggest">💡 Đề xuất giảm ${Math.min(50,Math.round((30-s.days)/30*50))}%</span>`:'';
+    const expiredNote=s.level==='expired'?`<span class="exp-suggest" style="background:rgba(231,76,60,.1);color:var(--red);border-color:rgba(231,76,60,.3)">🚫 Ngừng bán</span>`:'';
     return`<div class="exp-item ${itemClass[s.level]}">
       <div class="exp-days ${dayColor[s.level]}">${daysDisp}</div>
       <div class="exp-item-info">
@@ -1109,29 +1078,29 @@ function saveSettings(){
   const yellow=parseInt(document.getElementById('threshYellow').value)||90;
   localStorage.setItem(THRESH_KEY,JSON.stringify({red,yellow}));
   renderTable();renderDashboard();renderAlerts();renderExpirySection();updateExpiryBadge();
-  toast('Da luu cai dat!','success');
+  toast('Đã lưu cài đặt!','success');
 }
 function changePin(){
   const old=document.getElementById('oldPin').value;
   const n=document.getElementById('newPin').value;
   const c=document.getElementById('confirmPin').value;
-  if(old!==getPin()){toast('PIN hien tai khong dung!','error');return;}
-  if(n.length!==4||!/^\d{4}$/.test(n)){toast('PIN moi phai la 4 chu so!','error');return;}
-  if(n!==c){toast('PIN xac nhan khong khop!','error');return;}
+  if(old!==getPin()){toast('PIN hiện tại không đúng!','error');return;}
+  if(n.length!==4||!/^\d{4}$/.test(n)){toast('PIN mới phải là 4 chữ số!','error');return;}
+  if(n!==c){toast('PIN xác nhận không khớp!','error');return;}
   localStorage.setItem(ADMIN_PIN_KEY,n);
   ['oldPin','newPin','confirmPin'].forEach(id=>document.getElementById(id).value='');
-  toast('Da doi PIN thanh cong!','success');
+  toast('Đã đổi PIN thành công!','success');
 }
 function exportData(){
   const blob=new Blob([JSON.stringify(products,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='ox_products.json';a.click();
-  toast('Da xuat du lieu!','success');
+  toast('Đã xuất dữ liệu!','success');
 }
 async function resetData(){
-  if(!confirm('Khoi phuc du lieu mau? Du lieu hien tai se bi xoa!'))return;
+  if(!confirm('Khôi phục dữ liệu mẫu? Dữ liệu hiện tại sẽ bị xóa!'))return;
   localStorage.setItem(DATA_KEY,JSON.stringify(SAMPLE_PRODUCTS));
   await loadData();renderDashboard();renderTable();renderExpirySection();renderAlerts();updateExpiryBadge();
-  toast('Da khoi phuc du lieu mau!','info');
+  toast('Đã khôi phục dữ liệu mẫu!','info');
 }
 
 async function syncFromBackend() {
@@ -1149,18 +1118,105 @@ async function syncFromBackend() {
 
 /* TOAST */
 function toast(msg,type='info'){
-  const icons={success:'fa-check-circle',error:'fa-circle-xmark',info:'fa-circle-info'};
+  const icons={success:'fa-check-circle',error:'fa-circle-xmark',info:'fa-circle-info',warn:'fa-triangle-exclamation'};
   const div=document.createElement('div');div.className=`toast ${type}`;
   div.innerHTML=`<i class="fas ${icons[type]}"></i><span>${msg}</span>`;
   document.getElementById('toastZone').appendChild(div);
   setTimeout(()=>{div.style.animation='toastOut .4s ease forwards';setTimeout(()=>div.remove(),400)},3000);
 }
 
+/* ORDERS */
+let adminOrders = [];
+
+async function loadOrders() {
+  try {
+    toast('Đang tải danh sách đơn hàng...', 'info');
+    adminOrders = await Orders.getAll();
+    renderOrdersTable();
+  } catch (err) {
+    toast('Lỗi tải danh sách đơn hàng', 'error');
+    console.error(err);
+  }
+}
+
+function getStatusBadge(status) {
+  const map = {
+    'PENDING': { label: 'Chờ xử lý', color: 'var(--orange)', bg: 'rgba(243,156,18,0.1)' },
+    'PROCESSING': { label: 'Đang xử lý', color: '#5dade2', bg: 'rgba(52,152,219,0.1)' },
+    'SHIPPED': { label: 'Đang giao', color: 'var(--gold)', bg: 'rgba(235,195,81,0.1)' },
+    'DELIVERED': { label: 'Đã giao', color: 'var(--green)', bg: 'rgba(39,174,96,0.1)' },
+    'CANCELLED': { label: 'Đã hủy', color: 'var(--red)', bg: 'rgba(231,76,60,0.1)' }
+  };
+  const s = map[status] || { label: status, color: '#fff', bg: 'rgba(255,255,255,0.1)' };
+  return `<span style="font-size:11px; font-weight:600; padding:4px 8px; border-radius:6px; color:${s.color}; background:${s.bg};">${s.label}</span>`;
+}
+
+function renderOrdersTable() {
+  const q = (document.getElementById('searchOrderInput').value || '').toLowerCase();
+  const statusFilter = document.getElementById('filterOrderStatus').value;
+
+  const filtered = adminOrders.filter(o => {
+    const searchStr = `${o.id} ${o.users?.name || ''} ${o.users?.email || ''}`.toLowerCase();
+    if (q && !searchStr.includes(q)) return false;
+    if (statusFilter && o.status !== statusFilter) return false;
+    return true;
+  });
+
+  const tbody = document.getElementById('ordersTbody');
+  tbody.innerHTML = filtered.map(o => {
+    return `<tr>
+      <td style="font-weight:600; color:var(--text)">#${o.id}</td>
+      <td>
+        <div style="font-weight:500; color:var(--text)">${o.users?.name || 'Khách'}</div>
+        <div style="font-size:11px; color:var(--text3)">${o.users?.email || ''}</div>
+      </td>
+      <td style="font-size:12px; color:var(--text2)">${new Date(o.created_at).toLocaleString('vi-VN')}</td>
+      <td class="td-price">${fmtPrice(o.total_amount)}</td>
+      <td>${getStatusBadge(o.status)}</td>
+      <td>
+        <select class="filter-select" style="padding:4px 8px; font-size:12px;" onchange="changeOrderStatus(${o.id}, this.value)" ${o.status === 'CANCELLED' ? 'disabled' : ''}>
+          <option value="">Đổi trạng thái</option>
+          <option value="PENDING" ${o.status === 'PENDING' ? 'disabled' : ''}>Chờ xử lý</option>
+          <option value="PROCESSING" ${o.status === 'PROCESSING' ? 'disabled' : ''}>Đang xử lý</option>
+          <option value="SHIPPED" ${o.status === 'SHIPPED' ? 'disabled' : ''}>Đang giao</option>
+          <option value="DELIVERED" ${o.status === 'DELIVERED' ? 'disabled' : ''}>Đã giao</option>
+          <option value="CANCELLED" ${o.status === 'CANCELLED' ? 'disabled' : ''}>Hủy đơn</option>
+        </select>
+      </td>
+    </tr>`;
+  }).join('');
+  
+  document.getElementById('ordersCount').textContent = `Hiển thị ${filtered.length} / ${adminOrders.length} đơn hàng`;
+}
+
+async function changeOrderStatus(id, newStatus) {
+  if (!newStatus) return;
+  if (newStatus === 'CANCELLED') {
+    if (!confirm('Bạn có chắc chắn muốn hủy đơn hàng này? Hệ thống sẽ hoàn lại số lượng sản phẩm vào kho.')) {
+      renderOrdersTable(); // reset select
+      return;
+    }
+  }
+
+  try {
+    toast('Đang cập nhật trạng thái...', 'info');
+    await Orders.updateStatus(id, newStatus);
+    toast('Đã cập nhật trạng thái đơn hàng!', 'success');
+    await loadOrders(); // reload
+  } catch (err) {
+    toast('Lỗi cập nhật trạng thái', 'error');
+    console.error(err);
+    renderOrdersTable(); // reset select
+  }
+}
+
 /* INIT */
 window.addEventListener('DOMContentLoaded',()=>{
   if(sessionStorage.getItem(AUTH_KEY)==='1'){
     document.getElementById('pinScreen').style.display='none';
-    verifyBackendAuth();
+    verifyBackendAuth().then(() => {
+      loadOrders(); // Load orders when admin starts
+    });
   }
   if(window.innerWidth<768)document.getElementById('mobMenuBtn').style.display='flex';
   document.getElementById('threshRed').value=getThresh().red;
