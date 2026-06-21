@@ -3216,26 +3216,39 @@ body:has(.hero-video-section) .ox-header-wrapper.scrolled .ox-top-link i {
 
 /* Detail heart button */
 .cta-btn-premium-wishlist {
-    background: rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 4px;
-    width: 60px;
-    height: 50px;
+    background: #ffffff;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    color: #fff;
-    transition: all 0.3s;
+    color: #555;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    outline: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+}
+.cta-btn-premium-wishlist i {
+    font-size: 18px;
+    transition: transform 0.3s ease, color 0.3s ease;
 }
 .cta-btn-premium-wishlist:hover {
-    background: rgba(255,255,255,0.1);
-    border-color: rgba(255,255,255,0.3);
+    border-color: #ff4d4d;
+    background: rgba(255,77,77,0.02);
+    color: #ff4d4d;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(255,77,77,0.1);
+}
+.cta-btn-premium-wishlist:hover i {
+    transform: scale(1.15);
 }
 .cta-btn-premium-wishlist.active {
-    color: #ff4d4d;
-    background: rgba(255,77,77,0.1);
-    border-color: rgba(255,77,77,0.3);
+    color: #ff4d4d !important;
+    background: rgba(255,77,77,0.08) !important;
+    border-color: rgba(255,77,77,0.3) !important;
+    box-shadow: 0 4px 12px rgba(255,77,77,0.15) !important;
 }
 
 /* Pulse animation on click */
@@ -3248,4 +3261,19 @@ body:has(.hero-video-section) .ox-header-wrapper.scrolled .ox-top-link i {
 }
 .heart-beat {
     animation: heartBeat 0.5s ease-in-out;
+}
+
+/* Header wishlist icon custom design */
+.ox-top-link i {
+    font-size: 20px !important;
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), color 0.3s ease !important;
+}
+.ox-top-link:hover i {
+    transform: scale(1.2);
+}
+#wishlist-icon-btn:hover i {
+    color: #ff4d4d !important;
+}
+.ox-cart-trigger:hover i {
+    color: #EBC351 !important;
 }
