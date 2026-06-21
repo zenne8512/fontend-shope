@@ -416,17 +416,13 @@ async function fetchProductsList(categorySlug = '') {
             const inWishlist = isProductInWishlist(product.id);
             const heartClass = inWishlist ? 'fas fa-heart' : 'far fa-heart';
             const heartColor = inWishlist ? '#ff4d4d' : '#fff';
-            const productEscaped = JSON.stringify({
-                id: product.id,
-                name: product.name,
-                price: price,
-                image_url: product.image_url
-            }).replace(/"/g, '&quot;');
+            const safeName = (product.name || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            const safeImg = (product.image_url || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
             gridEl.insertAdjacentHTML('beforeend', `
                 <a href="src/views/Product/product.html?id=${product.id}" class="product-card">
                     <div class="card-img" style="position: relative;">
-                        <button class="wishlist-btn-card" data-product-id="${product.id}" onclick="toggleWishlistGlobal(event, ${productEscaped})" style="position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.5); border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; z-index: 10; color: ${heartColor};">
+                        <button class="wishlist-btn-card" data-product-id="${product.id}" data-product-name="${safeName}" data-product-price="${price}" data-product-img="${safeImg}" style="position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.5); border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; z-index: 10; color: ${heartColor}; font-size: 16px;">
                             <i class="${heartClass}"></i>
                         </button>
                         <img src="${imageUrl}" alt="${product.name}" loading="lazy" onerror="this.src='src/assets/images/main.png'">
@@ -456,6 +452,22 @@ async function fetchProductsList(categorySlug = '') {
             Không thể kết nối tới máy chủ. Vui lòng kiểm tra Backend đang chạy trên cổng 5000.
         </div>`;
     }
+
+    // Event delegation cho nút tim trên tất cả thẻ sản phẩm
+    gridEl.addEventListener('click', function(e) {
+        const btn = e.target.closest('.wishlist-btn-card');
+        if (!btn) return;
+        e.preventDefault();
+        e.stopPropagation();
+
+        const product = {
+            id: parseInt(btn.dataset.productId),
+            name: btn.dataset.productName || 'Sản phẩm',
+            price: parseFloat(btn.dataset.productPrice) || 0,
+            image_url: btn.dataset.productImg || ''
+        };
+        toggleWishlistGlobal(null, product);
+    });
 }
 
 // Hàm toàn cục lọc sản phẩm trên trang chủ và cuộn mượt xuống section sản phẩm
