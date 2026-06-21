@@ -878,7 +878,7 @@ function updateWishlistBadge() {
     badges.forEach(b => {
         b.textContent = count;
         if (count > 0) {
-            b.style.display = 'inline-block';
+            b.style.display = 'flex';
         } else {
             b.textContent = '0';
         }
