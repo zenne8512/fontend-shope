@@ -602,15 +602,10 @@ function mapBackendProductToAdmin(p) {
   const mfgDate = existingLocal ? existingLocal.mfgDate : new Date(now.getTime() - 150 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
   const expiryDate = existingLocal ? existingLocal.expiryDate : new Date(now.getTime() + 180 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
-  const price = p.product_variants && p.product_variants.length > 0 ? parseFloat(p.product_variants[0].price) : p.price || 300000;
-  const stock = p.product_variants && p.product_variants.length > 0 ? p.product_variants[0].stock : 50;
+  const price = p.price !== undefined ? parseFloat(p.price) : 300000;
+  const stock = p.stock !== undefined ? p.stock : 50;
   
-  let rawImg = '';
-  if (p.product_images && p.product_images.length > 0) {
-    rawImg = p.product_images[0].image_url;
-  } else if (p.image) {
-    rawImg = p.image;
-  }
+  let rawImg = p.image_url || p.image || '';
   const imgUrl = getImageUrl(rawImg);
   
   let category = 'Skincare';

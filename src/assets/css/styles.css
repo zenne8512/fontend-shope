@@ -3049,3 +3049,57 @@ ul {
     .search-overlay-body { padding: 20px 16px 28px; }
     .search-overlay-input-wrap input { font-size: 15px; }
 }
+
+/* ── FIX HEADER OVERLAP AND COLOR FOR SUBPAGES ── */
+.ox-header-wrapper {
+    position: sticky !important;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+    background: #ffffff !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+.ox-main-header {
+    background: #ffffff !important;
+    border-bottom: 1px solid #e0e0e0 !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important;
+}
+.ox-header-wrapper .ox-logo a,
+.ox-header-wrapper .hamburger-btn,
+.ox-header-wrapper .ox-top-link i {
+    color: #333 !important;
+}
+
+/* Chỉ khi ở trang chủ (có .hero-video-section) mới áp dụng transparent fixed header */
+body:has(.hero-video-section) .ox-header-wrapper {
+    position: fixed !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+body:has(.hero-video-section) .ox-main-header {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+body:has(.hero-video-section) .ox-header-wrapper .ox-logo a,
+body:has(.hero-video-section) .ox-header-wrapper .hamburger-btn,
+body:has(.hero-video-section) .ox-header-wrapper .ox-top-link i {
+    color: #fff !important;
+}
+
+/* Khi cuộn trên trang chủ, chuyển sang nền trắng */
+body:has(.hero-video-section) .ox-header-wrapper.scrolled {
+    background: #ffffff !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important;
+}
+body:has(.hero-video-section) .ox-header-wrapper.scrolled .ox-main-header {
+    background: #ffffff !important;
+    border-bottom: 1px solid #e0e0e0 !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important;
+}
+body:has(.hero-video-section) .ox-header-wrapper.scrolled .ox-logo a,
+body:has(.hero-video-section) .ox-header-wrapper.scrolled .hamburger-btn,
+body:has(.hero-video-section) .ox-header-wrapper.scrolled .ox-top-link i {
+    color: #333 !important;
+}

@@ -210,13 +210,12 @@ async function renderCartOverlay() {
         let subtotal = 0;
         body.innerHTML = '';
         items.forEach(item => {
-            const price = item.products && item.products.product_variants && item.products.product_variants.length > 0
-                ? parseFloat(item.products.product_variants[0].price) : 0;
+            const price = item.products && item.products.price ? parseFloat(item.products.price) : 0;
             const lineTotal = price * item.quantity;
             subtotal += lineTotal;
 
-            const imgUrl = getImageUrl(item.products && item.products.product_images && item.products.product_images.length > 0
-                ? item.products.product_images[0].image_url
+            const imgUrl = getImageUrl(item.products && item.products.image_url
+                ? item.products.image_url
                 : 'src/assets/images/main.png');
 
             const div = document.createElement('div');
@@ -301,8 +300,28 @@ function setupSideMenu() {
 
     const headerWrapper = document.querySelector('.ox-header-wrapper');
     if (headerWrapper) {
-        window.addEventListener('scroll', () => {
+        const hasHero = !!document.querySelector('.hero-video-section');
+        if (!hasHero) {
+            headerWrapper.classList.add('scrolled');
+            headerWrapper.style.position = 'sticky';
+        } else {
+            window.addEventListener('scroll', () => {
+                headerWrapper.classList.toggle('scrolled', window.scrollY > 50);
+            });
             headerWrapper.classList.toggle('scrolled', window.scrollY > 50);
+        }
+    }
+
+    const logoLink = document.querySelector('.ox-logo a');
+    if (logoLink) {
+        logoLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const path = window.location.pathname;
+            if (path.includes('/src/views/')) {
+                window.location.href = '../../index.html';
+            } else {
+                window.location.href = 'index.html';
+            }
         });
     }
 }
@@ -349,11 +368,8 @@ async function fetchProductsList(categorySlug = '') {
         }
 
         products.forEach(product => {
-            const price = product.product_variants && product.product_variants.length > 0
-                ? parseFloat(product.product_variants[0].price) : 0;
-            const imageUrl = getImageUrl(product.product_images && product.product_images.length > 0
-                ? product.product_images[0].image_url
-                : 'src/assets/images/main.png');
+            const price = product.price ? parseFloat(product.price) : 0;
+            const imageUrl = getImageUrl(product.image_url ? product.image_url : 'src/assets/images/main.png');
             const stars = Math.round(product.averageRating || 0);
             const starsHtml = Array.from({length: 5}, (_, i) =>
                 `<i class="fa${i < stars ? 's' : 'r'} fa-star" style="color:#EBC351;font-size:12px;"></i>`
@@ -456,16 +472,15 @@ async function fetchProductData() {
             document.getElementById('api-product-desc').innerHTML = `<p>${data.description || 'Chưa có mô tả.'}</p>`;
 
         if (document.getElementById('api-product-image')) {
-            const mainImg = getImageUrl(data.product_images && data.product_images.length > 0
-                ? data.product_images[0].image_url
-                : 'src/assets/images/main.png');
+            const mainImg = getImageUrl(data.image_url ? data.image_url : 'src/assets/images/main.png');
             document.getElementById('api-product-image').src = mainImg;
 
             // Thumbnail List
             const thumbList = document.querySelector('.thumbnail-list');
-            if (thumbList && data.product_images && data.product_images.length > 0) {
-                thumbList.innerHTML = data.product_images.map((img, idx) => {
-                    const thumbUrl = getImageUrl(img.image_url);
+            const images = [data.image_url, data.image_url_2].filter(Boolean);
+            if (thumbList && images.length > 0) {
+                thumbList.innerHTML = images.map((img, idx) => {
+                    const thumbUrl = getImageUrl(img);
                     return `<img src="${thumbUrl}" alt="Thumbnail ${idx + 1}" class="thumbnail${idx === 0 ? ' active' : ''}" onclick="changeImage('${thumbUrl}', this)">`;
                 }).join('');
             }
@@ -482,24 +497,11 @@ async function fetchProductData() {
         // Variants & Price
         const variantContainer = document.getElementById('api-product-variants');
         const priceEl = document.getElementById('api-product-price');
-        if (data.product_variants && data.product_variants.length > 0 && variantContainer) {
-            variantContainer.style.display = 'block';
-            const variantList = variantContainer.querySelector('.variant-list');
-            if (variantList) {
-                variantList.innerHTML = '';
-                data.product_variants.forEach((variant, index) => {
-                    const btn = document.createElement('button');
-                    btn.className = `variant-btn${index === 0 ? ' active' : ''}`;
-                    btn.textContent = variant.name || `Loại ${index + 1}`;
-                    btn.onclick = () => {
-                        document.querySelectorAll('.variant-btn').forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                        if (priceEl) priceEl.textContent = UI.formatCurrency(variant.price);
-                    };
-                    variantList.appendChild(btn);
-                });
-            }
-            if (priceEl) priceEl.textContent = UI.formatCurrency(data.product_variants[0].price);
+        if (variantContainer) {
+            variantContainer.style.display = 'none';
+        }
+        if (priceEl) {
+            priceEl.textContent = UI.formatCurrency(data.price || 0);
         }
 
         // Gắn nút Add to Cart
@@ -607,8 +609,8 @@ function setupSearchOverlay() {
                         let html = '<div class="search-results-list" style="padding: 16px; display:flex; flex-direction:column; gap:12px;">';
                         html += `<h4 style="color:#EBC351; font-size:13px; text-transform:uppercase; margin-bottom:8px;">Kết quả tìm kiếm cho "${query}"</h4>`;
                         products.forEach(p => {
-                            const price = p.product_variants && p.product_variants.length > 0 ? parseFloat(p.product_variants[0].price) : 0;
-                            const imgUrl = p.product_images && p.product_images.length > 0 ? getImageUrl(p.product_images[0].image_url) : 'src/assets/images/main.png';
+                            const price = p.price ? parseFloat(p.price) : 0;
+                            const imgUrl = p.image_url ? getImageUrl(p.image_url) : 'src/assets/images/main.png';
                             html += `
                                 <a href="src/views/Product/product.html?id=${p.id}" style="display:flex; gap:16px; padding:12px; background:rgba(255,255,255,0.03); border-radius:8px; border:1px solid rgba(255,255,255,0.05); color:#fff; text-decoration:none; transition: background 0.2s;">
                                     <img src="${imgUrl}" style="width:48px; height:48px; object-fit:cover; border-radius:6px;" onerror="this.src='src/assets/images/main.png'">

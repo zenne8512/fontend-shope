@@ -332,10 +332,10 @@ async function loadCart() {
 
         let subtotal = 0;
         items.forEach(item => {
-            const price = item.products?.product_variants?.[0]?.price ? parseFloat(item.products.product_variants[0].price) : 0;
+            const price = item.products?.price ? parseFloat(item.products.price) : 0;
             const lineTotal = price * item.quantity;
             subtotal += lineTotal;
-            const imgUrl = getImageUrl(item.products?.product_images?.[0]?.image_url || '/src/assets/images/main.png');
+            const imgUrl = getImageUrl(item.products?.image_url || '/src/assets/images/main.png');
             const brand = item.products?.brands?.name || '';
 
             const div = document.createElement('div');
