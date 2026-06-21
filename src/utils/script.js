@@ -25,15 +25,33 @@ function openTab(evt, tabId) {
 
 // ── On Page Load ──────────────────────────────────
 window.onload = function () {
+    // 1. Setup UI components first
     setupSideMenu();
     setupAuthOverlay();
     setupCartOverlay();
     setupSearchOverlay();
-    UI.updateHeaderAuthUI();
-    UI.updateCartBadge();
-    fetchProductsList();
-    fetchProductData();
     setupHeroBtn();
+    
+    // 2. Fetch auth and badges
+    try {
+        UI.updateHeaderAuthUI();
+        UI.updateCartBadge();
+    } catch (e) {
+        console.error("Lỗi update UI:", e);
+    }
+    
+    // 3. Fetch backend data (wrapped in try-catch to prevent script crash)
+    try {
+        fetchProductsList();
+    } catch (e) {
+        console.error("Lỗi fetchProductsList:", e);
+    }
+    
+    try {
+        fetchProductData();
+    } catch (e) {
+        console.error("Lỗi fetchProductData:", e);
+    }
 };
 
 function setupHeroBtn() {
