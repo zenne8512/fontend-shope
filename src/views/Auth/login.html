@@ -11,10 +11,11 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             min-height: 100vh;
-            background: #0a0a0a;
+            background: linear-gradient(180deg,#070707,#0f0f0f);
             display: flex;
             flex-direction: column;
             font-family: 'Montserrat', sans-serif;
+            color: #f3e9d6;
         }
 
         /* ── Simple top bar ── */
@@ -29,9 +30,9 @@
             font-size: 28px;
             font-weight: 700;
             letter-spacing: 4px;
-            color: #fff;
+            color: var(--primary-color, #EBC351);
             text-decoration: none;
-            background: linear-gradient(90deg, #fff 0%, #EBC351 40%, #fff 70%);
+            background: linear-gradient(90deg, #f7e9cf 0%, var(--primary-color, #EBC351) 45%, #f7e9cf 85%);
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -48,15 +49,16 @@
             -webkit-text-fill-color: rgba(255,255,255,0.5);
         }
         .auth-topbar-back a {
-            color: rgba(255,255,255,0.5);
+            color: rgba(255,255,255,0.55);
             font-size: 13px;
             text-decoration: none;
             display: flex;
             align-items: center;
             gap: 8px;
-            transition: color 0.3s;
+            transition: all 0.18s ease;
+            transform-origin: left center;
         }
-        .auth-topbar-back a:hover { color: #EBC351; }
+        .auth-topbar-back a:hover { color: var(--primary-color, #EBC351); transform: translateX(-4px); }
 
         /* ── Main layout ── */
         .auth-main {
@@ -68,12 +70,12 @@
         }
         .auth-card-new {
             width: 100%;
-            max-width: 480px;
-            background: #111;
-            border: 1px solid rgba(235,195,81,0.15);
+            max-width: 520px;
+            background: linear-gradient(180deg,#0b0b0b,#121212);
+            border: 1px solid rgba(235,195,81,0.08);
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+            box-shadow: 0 40px 120px rgba(0,0,0,0.7);
         }
 
         /* ── Card header ── */
@@ -83,15 +85,15 @@
         }
         .auth-card-title {
             font-family: 'Playfair Display', serif;
-            font-size: 26px;
+            font-size: 28px;
             font-weight: 700;
-            color: #fff;
+            color: #f7e9cf;
             margin-bottom: 8px;
         }
         .auth-card-sub {
             font-size: 13px;
-            color: rgba(255,255,255,0.4);
-            margin-bottom: 32px;
+            color: rgba(255,255,255,0.45);
+            margin-bottom: 28px;
         }
 
         /* ── Tabs ── */
@@ -112,14 +114,15 @@
             transition: color 0.3s;
             letter-spacing: 0.5px;
         }
-        .auth-tab-new.active { color: #EBC351; }
+        .auth-tab-new.active { color: var(--primary-color, #EBC351); }
         .auth-tab-new.active::after {
             content: '';
             position: absolute;
-            bottom: -1px; left: 0;
-            width: 100%; height: 2px;
-            background: #EBC351;
+            bottom: -1px; left: 20%;
+            width: 60%; height: 3px;
+            background: linear-gradient(90deg,var(--primary-color, #EBC351), #D8AD30);
             border-radius: 2px;
+            box-shadow: 0 6px 18px rgba(235,195,81,0.12);
         }
 
         /* ── Form ── */
@@ -166,9 +169,9 @@
         }
         .form-field input::placeholder { color: rgba(255,255,255,0.25); }
         .form-field input:focus {
-            border-color: #EBC351;
-            background: rgba(235,195,81,0.06);
-            box-shadow: 0 0 0 3px rgba(235,195,81,0.1);
+            border-color: var(--primary-color, #EBC351);
+            background: rgba(235,195,81,0.04);
+            box-shadow: 0 8px 30px rgba(235,195,81,0.06);
         }
 
         /* ── Options row ── */
@@ -201,22 +204,22 @@
         .auth-submit-btn {
             width: 100%;
             padding: 15px;
-            background: linear-gradient(135deg, #EBC351, #D8AD30);
-            color: #000;
+            background: linear-gradient(135deg, var(--primary-color, #EBC351), var(--primary-hover, #D8AD30));
+            color: #0a0a0a;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 14px;
-            font-weight: 700;
+            font-weight: 800;
             letter-spacing: 1.5px;
             text-transform: uppercase;
             cursor: pointer;
             margin-top: 6px;
-            transition: all 0.3s;
+            transition: all 0.22s ease;
             font-family: 'Montserrat', sans-serif;
         }
         .auth-submit-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(235,195,81,0.35);
+            transform: translateY(-3px);
+            box-shadow: 0 18px 48px rgba(235,195,81,0.2);
         }
 
         /* ── Divider ── */
@@ -262,9 +265,11 @@
             font-family: 'Montserrat', sans-serif;
         }
         .social-btn-new:hover {
-            background: rgba(255,255,255,0.1);
-            border-color: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.06);
+            border-color: rgba(255,255,255,0.18);
             color: #fff;
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.6);
         }
 
         /* ── Footer note ── */
@@ -286,20 +291,22 @@
             position: fixed;
             top: -30%;
             right: -10%;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(235,195,81,0.06) 0%, transparent 65%);
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(235,195,81,0.06) 0%, transparent 60%);
             pointer-events: none;
+            filter: blur(18px);
         }
         body::after {
             content: '';
             position: fixed;
-            bottom: -20%;
-            left: -10%;
-            width: 500px;
-            height: 500px;
+            bottom: -18%;
+            left: -8%;
+            width: 520px;
+            height: 520px;
             background: radial-gradient(circle, rgba(235,195,81,0.04) 0%, transparent 65%);
             pointer-events: none;
+            filter: blur(12px);
         }
 
         @keyframes logoTextShimmer {
