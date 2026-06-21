@@ -155,7 +155,7 @@ function showProfileMenu(anchor) {
             <div style="font-size:12px;color:rgba(255,255,255,0.4);">Đăng nhập với</div>
             <div style="font-size:13px;color:#EBC351;font-weight:600;margin-top:2px;">${user ? user.email : ''}</div>
         </div>
-        <a href="src/views/Cart/cart.html" style="display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,0.7);text-decoration:none;border-radius:8px;font-size:13px;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='transparent'">
+        <a href="${getRootPathPrefix()}src/views/Cart/cart.html" style="display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,0.7);text-decoration:none;border-radius:8px;font-size:13px;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='transparent'">
             <i class="fas fa-shopping-bag" style="width:16px;color:#EBC351;"></i> Giỏ hàng & Đơn hàng
         </a>
         <div onclick="Auth.logout(); location.reload();" style="display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,100,100,0.8);cursor:pointer;border-radius:8px;font-size:13px;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,100,100,0.08)'" onmouseout="this.style.background='transparent'">
@@ -262,7 +262,7 @@ async function renderCartOverlay() {
             div.innerHTML = `
                 <img src="${imgUrl}" alt="${item.products ? item.products.name : ''}"
                     style="width:64px;height:64px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,0.08);"
-                    onerror="this.src='src/assets/images/main.png'">
+                    onerror="this.src='${getRootPathPrefix()}src/assets/images/main.png'">
                 <div style="flex:1;min-width:0;">
                     <div style="font-size:13px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${item.products ? item.products.name : 'Sản phẩm'}</div>
                     <div style="font-size:12px;color:#EBC351;margin-top:4px;">${UI.formatCurrency(price)}</div>
@@ -354,12 +354,7 @@ function setupSideMenu() {
     if (logoLink) {
         logoLink.addEventListener('click', (e) => {
             e.preventDefault();
-            const path = window.location.pathname;
-            if (path.includes('/src/views/')) {
-                window.location.href = '../../index.html';
-            } else {
-                window.location.href = 'index.html';
-            }
+            window.location.href = getRootPathPrefix() + 'index.html';
         });
     }
 }
@@ -420,12 +415,12 @@ async function fetchProductsList(categorySlug = '') {
             const safeImg = (product.image_url || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
             gridEl.insertAdjacentHTML('beforeend', `
-                <a href="src/views/Product/product.html?id=${product.id}" class="product-card">
+                <a href="${getRootPathPrefix()}src/views/Product/product.html?id=${product.id}" class="product-card">
                     <div class="card-img" style="position: relative;">
                         <button class="wishlist-btn-card" data-product-id="${product.id}" data-product-name="${safeName}" data-product-price="${price}" data-product-img="${safeImg}" style="position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.5); border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; z-index: 10; color: ${heartColor}; font-size: 16px;">
                             <i class="${heartClass}"></i>
                         </button>
-                        <img src="${imageUrl}" alt="${product.name}" loading="lazy" onerror="this.src='src/assets/images/main.png'">
+                        <img src="${imageUrl}" alt="${product.name}" loading="lazy" onerror="this.src='${getRootPathPrefix()}src/assets/images/main.png'">
                         ${product.status !== 'active' ? '<div class="discount">Hết hàng</div>' : ''}
                     </div>
                     <div class="card-info">
@@ -699,8 +694,8 @@ function setupSearchOverlay() {
                             const price = p.price ? parseFloat(p.price) : 0;
                             const imgUrl = p.image_url ? getImageUrl(p.image_url) : 'src/assets/images/main.png';
                             html += `
-                                <a href="src/views/Product/product.html?id=${p.id}" style="display:flex; gap:16px; padding:12px; background:rgba(255,255,255,0.03); border-radius:8px; border:1px solid rgba(255,255,255,0.05); color:#fff; text-decoration:none; transition: background 0.2s;">
-                                    <img src="${imgUrl}" style="width:48px; height:48px; object-fit:cover; border-radius:6px;" onerror="this.src='src/assets/images/main.png'">
+                                <a href="${getRootPathPrefix()}src/views/Product/product.html?id=${p.id}" style="display:flex; gap:16px; padding:12px; background:rgba(255,255,255,0.03); border-radius:8px; border:1px solid rgba(255,255,255,0.05); color:#fff; text-decoration:none; transition: background 0.2s;">
+                                    <img src="${imgUrl}" style="width:48px; height:48px; object-fit:cover; border-radius:6px;" onerror="this.src='${getRootPathPrefix()}src/assets/images/main.png'">
                                     <div style="flex:1;">
                                         <div style="font-size:14px; font-weight:600; margin-bottom:4px;">${p.name}</div>
                                         <div style="font-size:13px; color:#EBC351;">${UI.formatCurrency(price)}</div>
@@ -729,7 +724,7 @@ function setupSearchOverlay() {
                 const keyword = searchInput.value.trim();
                 closeSearch();
                 // Chuyển sang trang sản phẩm với query tìm kiếm
-                window.location.href = `src/views/Product/product.html?search=${encodeURIComponent(keyword)}`;
+                window.location.href = `${getRootPathPrefix()}src/views/Product/product.html?search=${encodeURIComponent(keyword)}`;
             }
         });
     }
@@ -912,7 +907,7 @@ function renderWishlistPanel() {
         const imageUrl = getImageUrl(item.image_url ? item.image_url : 'src/assets/images/main.png');
         html += `
             <div class="wishlist-ov-item">
-                <img class="wishlist-ov-img" src="${imageUrl}" onerror="this.src='src/assets/images/main.png'" alt="${item.name}">
+                <img class="wishlist-ov-img" src="${imageUrl}" onerror="this.src='${getRootPathPrefix()}src/assets/images/main.png'" alt="${item.name}">
                 <div class="wishlist-ov-info">
                     <h4 class="wishlist-ov-title">${item.name}</h4>
                     <div class="wishlist-ov-price">${UI.formatCurrency(price)}</div>

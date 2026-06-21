@@ -5,14 +5,28 @@
 const API_BASE_URL = 'http://localhost:5000/api';
 const BACKEND_URL = 'http://localhost:5000';
 
+function getRootPathPrefix() {
+    const path = window.location.pathname;
+    if (path.includes('/src/views/')) {
+        return '../../../';
+    }
+    return '';
+}
+
 function getImageUrl(url) {
-    if (!url) return 'src/assets/images/main.png';
+    if (!url) return getRootPathPrefix() + 'src/assets/images/main.png';
     if (url.startsWith('http://') || url.startsWith('https://')) {
         return url;
     }
     if (url.startsWith('/uploads/') || url.startsWith('uploads/')) {
         const formattedUrl = url.startsWith('/') ? url : '/' + url;
         return `${BACKEND_URL}${formattedUrl}`;
+    }
+    if (url.startsWith('src/')) {
+        return getRootPathPrefix() + url;
+    }
+    if (url.startsWith('/src/')) {
+        return getRootPathPrefix() + url.slice(1);
     }
     return url;
 }
