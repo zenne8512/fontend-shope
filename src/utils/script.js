@@ -33,7 +33,21 @@ window.onload = function () {
     UI.updateCartBadge();
     fetchProductsList();
     fetchProductData();
+    setupHeroBtn();
 };
+
+function setupHeroBtn() {
+    const btnHero = document.querySelector('.btn-hero');
+    if (btnHero) {
+        btnHero.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = document.getElementById('our-products');
+            if (target) {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    }
+}
 
 // ── Auth Overlay ──────────────────────────────────
 function setupAuthOverlay() {
