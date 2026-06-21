@@ -31,11 +31,17 @@ window.onload = function () {
     setupCartOverlay();
     setupSearchOverlay();
     setupHeroBtn();
+    try {
+        setupWishlistOverlay();
+    } catch (e) {
+        console.error("Lỗi setupWishlistOverlay:", e);
+    }
     
     // 2. Fetch auth and badges
     try {
         UI.updateHeaderAuthUI();
         UI.updateCartBadge();
+        updateWishlistBadge();
     } catch (e) {
         console.error("Lỗi update UI:", e);
     }
@@ -407,9 +413,22 @@ async function fetchProductsList(categorySlug = '') {
                 `<i class="fa${i < stars ? 's' : 'r'} fa-star" style="color:#EBC351;font-size:12px;"></i>`
             ).join('');
 
+            const inWishlist = isProductInWishlist(product.id);
+            const heartClass = inWishlist ? 'fas fa-heart' : 'far fa-heart';
+            const heartColor = inWishlist ? '#ff4d4d' : '#fff';
+            const productEscaped = JSON.stringify({
+                id: product.id,
+                name: product.name,
+                price: price,
+                image_url: product.image_url
+            }).replace(/"/g, '&quot;');
+
             gridEl.insertAdjacentHTML('beforeend', `
                 <a href="src/views/Product/product.html?id=${product.id}" class="product-card">
-                    <div class="card-img">
+                    <div class="card-img" style="position: relative;">
+                        <button class="wishlist-btn-card" data-product-id="${product.id}" onclick="toggleWishlistGlobal(event, ${productEscaped})" style="position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.5); border: none; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; z-index: 10; color: ${heartColor};">
+                            <i class="${heartClass}"></i>
+                        </button>
                         <img src="${imageUrl}" alt="${product.name}" loading="lazy" onerror="this.src='src/assets/images/main.png'">
                         ${product.status !== 'active' ? '<div class="discount">Hết hàng</div>' : ''}
                     </div>
@@ -542,6 +561,30 @@ async function fetchProductData() {
             addCartBtn.onclick = async () => {
                 const qty = parseInt(document.getElementById('quantity')?.value || 1);
                 await addToCartGlobal(data.id, qty);
+            };
+        }
+
+        // Gắn nút Wishlist Premium
+        const wishlistBtn = document.getElementById('btnWishlistPremium');
+        if (wishlistBtn) {
+            const inWishlist = isProductInWishlist(data.id);
+            const icon = wishlistBtn.querySelector('i');
+            if (inWishlist) {
+                wishlistBtn.classList.add('active');
+                if (icon) icon.className = 'fas fa-heart';
+            } else {
+                wishlistBtn.classList.remove('active');
+                if (icon) icon.className = 'far fa-heart';
+            }
+
+            wishlistBtn.onclick = () => {
+                const productToSave = {
+                    id: data.id,
+                    name: data.name,
+                    price: parseFloat(data.price || 0),
+                    image_url: data.image_url
+                };
+                toggleWishlistGlobal(null, productToSave);
             };
         }
 
@@ -690,6 +733,226 @@ function setupSearchOverlay() {
             }
         }
     });
+}
+
+// ── WISHLIST (SẢN PHẨM YÊU THÍCH) LOGIC ──────────────────────────────────
+function getWishlist() {
+    try {
+        const list = localStorage.getItem('ox_wishlist');
+        return list ? JSON.parse(list) : [];
+    } catch (e) {
+        console.error("Error reading wishlist:", e);
+        return [];
+    }
+}
+
+function saveWishlist(list) {
+    try {
+        localStorage.setItem('ox_wishlist', JSON.stringify(list));
+        updateWishlistBadge();
+    } catch (e) {
+        console.error("Error saving wishlist:", e);
+    }
+}
+
+function isProductInWishlist(id) {
+    const list = getWishlist();
+    return list.some(item => item.id === parseInt(id));
+}
+
+// Hàm toggle yêu thích sản phẩm toàn cục
+function toggleWishlistGlobal(event, product) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+
+    const productId = typeof product === 'object' ? parseInt(product.id) : parseInt(product);
+    let list = getWishlist();
+    const index = list.findIndex(item => item.id === productId);
+
+    let isAdded = false;
+    
+    if (index > -1) {
+        list.splice(index, 1);
+    } else {
+        if (typeof product === 'object') {
+            list.push({
+                id: product.id,
+                name: product.name,
+                price: product.price,
+                image_url: product.image_url
+            });
+        } else {
+            // Lấy thông tin từ thẻ sản phẩm
+            const card = document.querySelector(`.product-card[href*="id=${productId}"]`) || document.querySelector(`.product-card[data-product-id="${productId}"]`);
+            let name = "Sản phẩm";
+            let price = 0;
+            let image_url = "";
+            if (card) {
+                const titleEl = card.querySelector('.card-title');
+                if (titleEl) name = titleEl.textContent;
+                const priceEl = card.querySelector('.card-price .current');
+                if (priceEl) {
+                    const cleanPrice = priceEl.textContent.replace(/[^\d]/g, '');
+                    price = parseFloat(cleanPrice) || 0;
+                }
+                const imgEl = card.querySelector('.card-img img');
+                if (imgEl) image_url = imgEl.getAttribute('src');
+            } else {
+                const nameEl = document.querySelector('.product-title-premium') || document.querySelector('.product-info-premium h1');
+                if (nameEl) name = nameEl.textContent;
+                const priceEl = document.querySelector('.price-current-premium') || document.querySelector('.price-new');
+                if (priceEl) {
+                    const cleanPrice = priceEl.textContent.replace(/[^\d]/g, '');
+                    price = parseFloat(cleanPrice) || 0;
+                }
+                const imgEl = document.getElementById('api-product-image');
+                if (imgEl) image_url = imgEl.getAttribute('src');
+            }
+
+            list.push({
+                id: productId,
+                name: name,
+                price: price,
+                image_url: image_url
+            });
+        }
+        isAdded = true;
+    }
+
+    saveWishlist(list);
+
+    // Cập nhật hoạt ảnh và biểu tượng trên tất cả các thẻ sản phẩm tương ứng ngoài trang chủ
+    const cardBtns = document.querySelectorAll(`.wishlist-btn-card[data-product-id="${productId}"]`);
+    cardBtns.forEach(btn => {
+        const icon = btn.querySelector('i');
+        if (icon) {
+            if (isAdded) {
+                icon.className = 'fas fa-heart';
+                btn.style.color = '#ff4d4d';
+                btn.classList.add('heart-beat');
+                setTimeout(() => btn.classList.remove('heart-beat'), 500);
+            } else {
+                icon.className = 'far fa-heart';
+                btn.style.color = '#fff';
+            }
+        }
+    });
+
+    // Cập nhật nút trên trang chi tiết sản phẩm nếu có
+    const detailBtn = document.getElementById('btnWishlistPremium');
+    if (detailBtn) {
+        const icon = detailBtn.querySelector('i');
+        if (icon) {
+            if (isAdded) {
+                detailBtn.classList.add('active');
+                icon.className = 'fas fa-heart';
+                icon.classList.add('heart-beat');
+                setTimeout(() => icon.classList.remove('heart-beat'), 500);
+            } else {
+                detailBtn.classList.remove('active');
+                icon.className = 'far fa-heart';
+            }
+        }
+    }
+
+    // Render lại panel nếu nó đang mở
+    const overlay = document.getElementById('wishlistOverlay');
+    if (overlay && overlay.classList.contains('active')) {
+        renderWishlistPanel();
+    }
+}
+
+function updateWishlistBadge() {
+    const list = getWishlist();
+    const count = list.length;
+    const badges = document.querySelectorAll('.wishlist-count');
+    badges.forEach(b => {
+        b.textContent = count;
+        if (count > 0) {
+            b.style.display = 'inline-block';
+        } else {
+            b.textContent = '0';
+        }
+    });
+}
+
+function renderWishlistPanel() {
+    const body = document.getElementById('wishlistOverlayBody');
+    if (!body) return;
+
+    const list = getWishlist();
+    if (list.length === 0) {
+        body.innerHTML = `
+            <div class="wishlist-ov-empty">
+                <i class="far fa-heart"></i>
+                <p>Danh sách yêu thích của bạn đang trống</p>
+                <span>Hãy khám phá bộ sưu tập của chúng tôi</span>
+            </div>
+        `;
+        return;
+    }
+
+    let html = '<div class="wishlist-ov-items" style="display:flex; flex-direction:column; gap:10px;">';
+    list.forEach(item => {
+        const price = item.price ? parseFloat(item.price) : 0;
+        const imageUrl = getImageUrl(item.image_url ? item.image_url : 'src/assets/images/main.png');
+        html += `
+            <div class="wishlist-ov-item">
+                <img class="wishlist-ov-img" src="${imageUrl}" onerror="this.src='src/assets/images/main.png'" alt="${item.name}">
+                <div class="wishlist-ov-info">
+                    <h4 class="wishlist-ov-title">${item.name}</h4>
+                    <div class="wishlist-ov-price">${UI.formatCurrency(price)}</div>
+                </div>
+                <div class="wishlist-ov-actions">
+                    <button class="wishlist-ov-add-cart-btn" onclick="addToCartFromWishlist(${item.id})">Thêm giỏ</button>
+                    <button class="wishlist-ov-remove-btn" onclick="toggleWishlistGlobal(null, ${item.id})"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            </div>
+        `;
+    });
+    html += '</div>';
+    body.innerHTML = html;
+}
+
+function addToCartFromWishlist(productId) {
+    addToCartGlobal(productId);
+    closeWishlistOverlay();
+    setTimeout(() => {
+        openCartOverlay();
+    }, 450);
+}
+
+// Thiết lập Overlay Yêu Thích
+function setupWishlistOverlay() {
+    const trigger = document.getElementById('wishlist-icon-btn');
+    const overlay = document.getElementById('wishlistOverlay');
+    const backdrop = document.getElementById('wishlistBackdrop');
+    const closeBtn = document.getElementById('wishlistCloseBtn');
+    if (!overlay) return;
+
+    function openWishlist() {
+        try { closeCartOverlay(); } catch(e){}
+        try { closeSearch(); } catch(e){}
+        try { closeAuthOverlay(); } catch(e){}
+
+        overlay.classList.add('active');
+        renderWishlistPanel();
+    }
+
+    window.closeWishlistOverlay = function() {
+        overlay.classList.remove('active');
+    }
+
+    if (trigger) {
+        trigger.addEventListener('click', (e) => {
+            e.preventDefault();
+            openWishlist();
+        });
+    }
+    if (backdrop) backdrop.addEventListener('click', closeWishlistOverlay);
+    if (closeBtn) closeBtn.addEventListener('click', closeWishlistOverlay);
 }
 
 

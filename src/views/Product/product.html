@@ -574,10 +574,8 @@
 
                 <!-- Right: Icons -->
                 <div class="header-right">
-                    <a href="#" class="ox-top-link flag-link"><img src="https://upload.wikimedia.org/wikipedia/commons/2/21/Flag_of_Vietnam.svg" width="20" height="14" alt="VN"> <i class="fas fa-chevron-down" style="font-size: 10px; margin-left:4px;"></i></a>
                     <a href="#" class="ox-top-link" id="user-icon-btn"><i class="far fa-user"></i></a>
-                    <a href="#" class="ox-top-link hide-mobile"><i class="fas fa-map-marker-alt"></i></a>
-                    <a href="#" class="ox-top-link"><i class="far fa-heart"></i> <span class="badge yellow-badge">0</span></a>
+                    <a href="#" class="ox-top-link" id="wishlist-icon-btn"><i class="far fa-heart"></i> <span class="badge yellow-badge wishlist-count">0</span></a>
                     <a href="#" class="ox-top-link ox-cart-trigger" id="cart-icon-btn">
                         <i class="fas fa-shopping-bag"></i> <span class="badge yellow-badge cart-count">0</span>
                     </a>
@@ -688,6 +686,9 @@
                     <div class="cta-action-grid">
                         <button class="cta-btn-premium btn-premium-cart btn-add-cart"><i class="fas fa-shopping-cart"></i> Thêm vào giỏ</button>
                         <button class="cta-btn-premium btn-premium-buy" id="btnBuyNowPremium">Mua ngay</button>
+                        <button class="cta-btn-premium-wishlist" id="btnWishlistPremium">
+                            <i class="far fa-heart"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -999,6 +1000,24 @@
                 </div>
                 <a href="../Cart/cart.html" class="cart-ov-checkout-btn">Xem giỏ hàng &amp; Thanh toán <i class="fas fa-arrow-right"></i></a>
                 <span class="cart-ov-continue" onclick="closeCartOverlay()">Tiếp tục mua sắm</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wishlist Overlay -->
+    <div class="wishlist-overlay" id="wishlistOverlay">
+        <div class="overlay-backdrop" id="wishlistBackdrop"></div>
+        <div class="wishlist-overlay-panel">
+            <div class="wishlist-overlay-header">
+                <h3>Sản phẩm yêu thích</h3>
+                <button class="wishlist-overlay-close-btn" id="wishlistCloseBtn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="wishlist-overlay-body" id="wishlistOverlayBody">
+                <div class="wishlist-ov-empty">
+                    <i class="far fa-heart"></i>
+                    <p>Danh sách yêu thích của bạn đang trống</p>
+                    <span>Hãy khám phá bộ sưu tập của chúng tôi</span>
+                </div>
             </div>
         </div>
     </div>
