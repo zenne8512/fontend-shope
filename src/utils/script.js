@@ -687,17 +687,17 @@ function setupSearchOverlay() {
                     if (products.length === 0) {
                         body.innerHTML = '<div style="text-align:center;padding:48px;color:rgba(255,255,255,0.6);font-size:14px;">Không tìm thấy sản phẩm nào phù hợp.</div>';
                     } else {
-                        let html = '<div class="search-results-list" style="padding: 16px; display:flex; flex-direction:column; gap:12px;">';
-                        html += `<h4 style="color:#EBC351; font-size:13px; text-transform:uppercase; margin-bottom:8px;">Kết quả tìm kiếm cho "${query}"</h4>`;
+                        let html = '<div class="search-results-list">';
+                        html += `<h4 style="color:#B88E2F; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:12px;">Kết quả tìm kiếm cho "${query}"</h4>`;
                         products.forEach(p => {
                             const price = p.price ? parseFloat(p.price) : 0;
                             const imgUrl = p.image_url ? getImageUrl(p.image_url) : 'src/assets/images/main.png';
                             html += `
-                                <a href="${getRootPathPrefix()}src/views/Product/product.html?id=${p.id}" style="display:flex; gap:16px; padding:12px; background:rgba(255,255,255,0.03); border-radius:8px; border:1px solid rgba(255,255,255,0.05); color:#fff; text-decoration:none; transition: background 0.2s;">
-                                    <img src="${imgUrl}" style="width:48px; height:48px; object-fit:cover; border-radius:6px;" onerror="this.src='${getRootPathPrefix()}src/assets/images/main.png'">
-                                    <div style="flex:1;">
-                                        <div style="font-size:14px; font-weight:600; margin-bottom:4px;">${p.name}</div>
-                                        <div style="font-size:13px; color:#EBC351;">${UI.formatCurrency(price)}</div>
+                                <a href="${getRootPathPrefix()}src/views/Product/product.html?id=${p.id}" class="search-result-item">
+                                    <img src="${imgUrl}" class="search-result-img" onerror="this.src='${getRootPathPrefix()}src/assets/images/main.png'">
+                                    <div class="search-result-info">
+                                        <div class="search-result-name">${p.name}</div>
+                                        <div class="search-result-price">${UI.formatCurrency(price)}</div>
                                     </div>
                                 </a>`;
                         });
