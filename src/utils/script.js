@@ -174,8 +174,7 @@ function showProfileMenu(anchor) {
 }
 
 function openAuthOverlay() {
-    const overlay = document.getElementById('authOverlay');
-    if (overlay) { overlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
+    window.location.href = getRootPathPrefix() + 'src/views/Auth/login.html';
 }
 
 function closeAuthOverlay() {

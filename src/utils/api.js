@@ -54,8 +54,7 @@ async function handleResponse(res) {
         } else {
             alert('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
         }
-        const authOverlay = document.getElementById('authOverlay');
-        if (authOverlay) authOverlay.classList.add('active');
+        window.location.href = getRootPathPrefix() + 'src/views/Auth/login.html';
         throw new Error('Phiên đăng nhập đã hết hạn');
     }
     const data = await res.json();
