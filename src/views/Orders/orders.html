@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đơn hàng của tôi – OX EN PROVENCE</title>
+    <meta name="description" content="Xem và quản lý đơn hàng của bạn tại OX EN PROVENCE." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        /* ── Mini Header ── */
+        .orders-header-bar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+            background: linear-gradient(180deg, #0b0b0b, #0f0f0f);
+            border-bottom: 1px solid rgba(235,195,81,0.1);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 32px; height: 60px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .orders-header-logo a {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px; font-weight: 700;
+            letter-spacing: 4px; color: #EBC351;
+            text-decoration: none; line-height: 1;
+        }
+        .orders-header-logo span {
+            display: block; font-size: 7px; letter-spacing: 3px;
+            color: rgba(255,255,255,0.35);
+            font-family: 'Montserrat', sans-serif; font-weight: 400;
+            margin-top: 2px;
+        }
+        .orders-header-nav {
+            display: flex; align-items: center; gap: 24px;
+        }
+        .orders-header-nav a {
+            color: rgba(255,255,255,0.55); font-size: 13px;
+            text-decoration: none; display: flex; align-items: center;
+            gap: 6px; transition: color 0.2s; font-weight: 500;
+        }
+        .orders-header-nav a:hover { color: #EBC351; }
+        .orders-header-nav a.active-link { color: #EBC351; font-weight: 600; }
+        @media (max-width: 480px) {
+            .orders-header-bar { padding: 0 16px; }
+            .orders-header-nav a span { display: none; }
+        }
+    </style>
+    <link rel="stylesheet" href="../../css/styles.css" />
+    <style>
+        /* ── Page Layout ── */
+        body { background: #0d0d0d; color: #f0ede8; }
+        .orders-page { max-width: 900px; margin: 0 auto; padding: 100px 20px 60px; }
+
+        /* ── Page Title ── */
+        .orders-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(22px, 4vw, 34px);
+            font-weight: 400;
+            color: #f0ede8;
+            margin-bottom: 8px;
+        }
+        .orders-subtitle { font-size: 13px; color: rgba(255,255,255,0.4); margin-bottom: 36px; }
+
+        /* ── Filter Tabs ── */
+        .order-tabs {
+            display: flex; gap: 8px; margin-bottom: 28px;
+            overflow-x: auto; padding-bottom: 4px;
+        }
+        .order-tab {
+            padding: 8px 20px; border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.12);
+            background: transparent; color: rgba(255,255,255,0.5);
+            font-family: 'Montserrat', sans-serif; font-size: 12px;
+            font-weight: 600; cursor: pointer; white-space: nowrap;
+            transition: all 0.25s;
+        }
+        .order-tab:hover { border-color: rgba(235,195,81,0.4); color: #EBC351; }
+        .order-tab.active {
+            background: #EBC351; border-color: #EBC351;
+            color: #0d0d0d;
+        }
+
+        /* ── Empty State ── */
+        .orders-empty {
+            text-align: center; padding: 80px 20px;
+            color: rgba(255,255,255,0.3);
+        }
+        .orders-empty i { font-size: 56px; margin-bottom: 20px; display: block; opacity: 0.3; }
+        .orders-empty h3 { font-size: 18px; margin-bottom: 8px; color: rgba(255,255,255,0.5); }
+        .orders-empty p { font-size: 13px; margin-bottom: 24px; }
+        .btn-shop {
+            display: inline-block; padding: 12px 32px;
+            background: #EBC351; color: #0d0d0d;
+            text-decoration: none; border-radius: 50px;
+            font-family: 'Montserrat', sans-serif; font-size: 12px; font-weight: 700;
+            letter-spacing: 1px; transition: all 0.25s;
+        }
+        .btn-shop:hover { background: #d4a93a; transform: translateY(-2px); }
+
+        /* ── Order Card ── */
+        .order-card {
+            background: #141414; border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px; margin-bottom: 20px;
+            overflow: hidden; transition: border-color 0.25s;
+        }
+        .order-card:hover { border-color: rgba(235,195,81,0.2); }
+
+        /* ── Order Header ── */
+        .order-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.05);
+            flex-wrap: wrap; gap: 10px;
+        }
+        .order-id {
+            font-size: 13px; font-weight: 700; color: #EBC351; letter-spacing: 0.5px;
+        }
+        .order-date { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+        .order-status {
+            padding: 5px 14px; border-radius: 50px;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+        }
+        .status-PENDING    { background: rgba(235,195,81,0.15); color: #EBC351; border: 1px solid rgba(235,195,81,0.3); }
+        .status-CONFIRMED  { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+        .status-SHIPPING   { background: rgba(139,92,246,0.15); color: #a78bfa; border: 1px solid rgba(139,92,246,0.3); }
+        .status-DELIVERED  { background: rgba(34,197,94,0.15);  color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+        .status-CANCELLED  { background: rgba(239,68,68,0.15);  color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+
+        /* ── Order Items ── */
+        .order-items { padding: 16px 20px; }
+        .order-item {
+            display: flex; align-items: center; gap: 14px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .order-item:last-child { border-bottom: none; }
+        .order-item-img {
+            width: 56px; height: 56px; object-fit: cover;
+            border-radius: 8px; background: #1e1e1e; flex-shrink: 0;
+        }
+        .order-item-info { flex: 1; min-width: 0; }
+        .order-item-name {
+            font-size: 13px; font-weight: 600; color: #f0ede8;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .order-item-qty { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 3px; }
+        .order-item-price { font-size: 14px; font-weight: 700; color: #EBC351; flex-shrink: 0; }
+
+        /* ── Collapsed Items ── */
+        .items-toggle {
+            font-size: 12px; color: rgba(255,255,255,0.4);
+            cursor: pointer; padding: 6px 0 2px;
+            display: none; align-items: center; gap: 6px;
+        }
+        .items-toggle:hover { color: #EBC351; }
+        .items-toggle.visible { display: flex; }
+
+        /* ── Order Footer ── */
+        .order-footer {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 20px; background: rgba(0,0,0,0.2);
+            flex-wrap: wrap; gap: 12px;
+        }
+        .order-total-label { font-size: 12px; color: rgba(255,255,255,0.4); }
+        .order-total-amount { font-size: 18px; font-weight: 700; color: #EBC351; }
+        .order-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+        .btn-cancel {
+            padding: 8px 20px; border-radius: 50px;
+            border: 1px solid rgba(239,68,68,0.4); background: transparent;
+            color: #f87171; font-size: 12px; font-weight: 600;
+            font-family: 'Montserrat', sans-serif; cursor: pointer;
+            transition: all 0.25s;
+        }
+        .btn-cancel:hover { background: rgba(239,68,68,0.1); border-color: #f87171; }
+        .btn-reorder {
+            padding: 8px 20px; border-radius: 50px;
+            border: 1px solid rgba(235,195,81,0.4); background: transparent;
+            color: #EBC351; font-size: 12px; font-weight: 600;
+            font-family: 'Montserrat', sans-serif; cursor: pointer;
+            transition: all 0.25s;
+        }
+        .btn-reorder:hover { background: rgba(235,195,81,0.1); border-color: #EBC351; }
+
+        /* ── Loading skeleton ── */
+        .skeleton-card {
+            background: #141414; border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 16px; margin-bottom: 20px; overflow: hidden;
+        }
+        .skeleton-line {
+            height: 14px; background: linear-gradient(90deg, #1e1e1e 25%, #2a2a2a 50%, #1e1e1e 75%);
+            background-size: 200% 100%; border-radius: 4px; margin: 8px 0;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+        .skeleton-header { padding: 16px 20px; }
+        .skeleton-body { padding: 16px 20px; }
+
+        /* ── Order Detail Modal ── */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+            z-index: 9998; opacity: 0; pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: all; }
+        .modal-box {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -54%);
+            background: #141414; border: 1px solid rgba(235,195,81,0.2);
+            border-radius: 20px; z-index: 9999; width: min(94vw, 600px);
+            max-height: 85vh; overflow-y: auto;
+            transition: transform 0.3s; padding: 28px;
+            scrollbar-width: thin; scrollbar-color: rgba(235,195,81,0.3) transparent;
+        }
+        .modal-overlay.active .modal-box { transform: translate(-50%, -50%); }
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 24px;
+        }
+        .modal-title { font-size: 16px; font-weight: 700; color: #EBC351; }
+        .modal-close {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: rgba(255,255,255,0.06); border: none;
+            color: rgba(255,255,255,0.6); cursor: pointer; font-size: 16px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .modal-close:hover { background: rgba(239,68,68,0.2); color: #f87171; }
+
+        /* Timeline */
+        .order-timeline { margin: 20px 0; }
+        .timeline-step {
+            display: flex; align-items: flex-start; gap: 16px;
+            padding-bottom: 20px; position: relative;
+        }
+        .timeline-step:last-child { padding-bottom: 0; }
+        .timeline-step::before {
+            content: ''; position: absolute; left: 15px; top: 32px;
+            width: 2px; height: calc(100% - 8px);
+            background: rgba(255,255,255,0.08);
+        }
+        .timeline-step:last-child::before { display: none; }
+        .timeline-dot {
+            width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px; z-index: 1;
+        }
+        .timeline-dot.done { background: rgba(34,197,94,0.2); color: #4ade80; border: 1.5px solid #4ade80; }
+        .timeline-dot.active { background: rgba(235,195,81,0.2); color: #EBC351; border: 1.5px solid #EBC351; }
+        .timeline-dot.pending { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.3); border: 1.5px solid rgba(255,255,255,0.1); }
+        .timeline-info h4 { font-size: 13px; font-weight: 600; color: #f0ede8; }
+        .timeline-info p { font-size: 12px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+
+        /* Toast */
+        .orders-toast {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+            background: #141414; border: 1px solid rgba(235,195,81,0.3);
+            color: #f0ede8; padding: 12px 24px; border-radius: 50px;
+            font-size: 13px; font-weight: 600; z-index: 10000;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+            animation: slideUp 0.3s ease;
+        }
+        .orders-toast.error { border-color: rgba(239,68,68,0.4); color: #f87171; }
+        @keyframes slideUp { from{transform:translateX(-50%) translateY(20px);opacity:0} to{transform:translateX(-50%) translateY(0);opacity:1} }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="orders-header-bar">
+    <div class="orders-header-logo">
+        <a href="../../../index.html">OX EN PROVENCE<span>BEAUTY · SKINCARE · WELLNESS</span></a>
+    </div>
+    <nav class="orders-header-nav">
+        <a href="../../../index.html"><i class="fas fa-home"></i><span>Trang chủ</span></a>
+        <a href="../Cart/cart.html"><i class="fas fa-shopping-bag"></i><span>Giỏ hàng</span></a>
+        <a href="orders.html" class="active-link"><i class="fas fa-receipt"></i><span>Đơn hàng</span></a>
+    </nav>
+</header>
+
+<!-- Page -->
+<main class="orders-page">
+    <h1 class="orders-title">Đơn hàng của tôi</h1>
+    <p class="orders-subtitle" id="orders-count-label">Đang tải...</p>
+
+    <!-- Filter Tabs -->
+    <div class="order-tabs" id="order-tabs">
+        <button class="order-tab active" data-status="ALL">Tất cả</button>
+        <button class="order-tab" data-status="PENDING">Chờ xác nhận</button>
+        <button class="order-tab" data-status="CONFIRMED">Đã xác nhận</button>
+        <button class="order-tab" data-status="SHIPPING">Đang giao</button>
+        <button class="order-tab" data-status="DELIVERED">Đã nhận</button>
+        <button class="order-tab" data-status="CANCELLED">Đã huỷ</button>
+    </div>
+
+    <!-- Orders List -->
+    <div id="orders-list"></div>
+</main>
+
+<!-- Order Detail Modal -->
+<div class="modal-overlay" id="order-modal" onclick="closeModal(event)">
+    <div class="modal-box" id="order-modal-box">
+        <div class="modal-header">
+            <div class="modal-title" id="modal-title">Chi tiết đơn hàng</div>
+            <button class="modal-close" onclick="document.getElementById('order-modal').classList.remove('active')">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="modal-body"></div>
+    </div>
+</div>
+
+<script src="../../utils/api.js"></script>
+<script src="../../utils/script.js"></script>
+<script>
+// ── State ──────────────────────────────────────────────────────
+let allOrders = [];
+let currentFilter = 'ALL';
+
+const STATUS_LABELS = {
+    PENDING:   'Chờ xác nhận',
+    CONFIRMED: 'Đã xác nhận',
+    SHIPPING:  'Đang giao hàng',
+    DELIVERED: 'Đã giao thành công',
+    CANCELLED: 'Đã huỷ'
+};
+
+const STATUS_ICONS = {
+    PENDING:   'fa-clock',
+    CONFIRMED: 'fa-check-circle',
+    SHIPPING:  'fa-truck',
+    DELIVERED: 'fa-box-check',
+    CANCELLED: 'fa-times-circle'
+};
+
+// ── Init ───────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+    // Auth guard
+    if (!Auth.isLoggedIn()) {
+        window.location.href = getRootPathPrefix() + 'src/views/Auth/login.html';
+        return;
+    }
+
+    showSkeletons();
+    await loadOrders();
+    setupTabs();
+});
+
+// ── Load Orders ────────────────────────────────────────────────
+async function loadOrders() {
+    try {
+        allOrders = await Orders.getMyOrders();
+        renderOrders();
+    } catch (err) {
+        document.getElementById('orders-list').innerHTML = `
+            <div class="orders-empty">
+                <i class="fas fa-exclamation-circle"></i>
+                <h3>Không thể tải đơn hàng</h3>
+                <p>${err.message || 'Vui lòng thử lại sau.'}</p>
+                <a href="javascript:location.reload()" class="btn-shop" style="text-decoration:none;cursor:pointer;">Thử lại</a>
+            </div>`;
+        document.getElementById('orders-count-label').textContent = '';
+    }
+}
+
+// ── Render ─────────────────────────────────────────────────────
+function renderOrders() {
+    const list = document.getElementById('orders-list');
+    const filtered = currentFilter === 'ALL'
+        ? allOrders
+        : allOrders.filter(o => o.status === currentFilter);
+
+    const total = allOrders.length;
+    document.getElementById('orders-count-label').textContent =
+        total === 0 ? 'Bạn chưa có đơn hàng nào.' : `Tổng cộng ${total} đơn hàng`;
+
+    if (filtered.length === 0) {
+        list.innerHTML = `
+            <div class="orders-empty">
+                <i class="fas fa-shopping-bag"></i>
+                <h3>${currentFilter === 'ALL' ? 'Bạn chưa có đơn hàng nào' : 'Không có đơn hàng nào ở trạng thái này'}</h3>
+                <p>Hãy khám phá các sản phẩm của OX EN PROVENCE</p>
+                <a href="${getRootPathPrefix()}index.html" class="btn-shop">Mua sắm ngay</a>
+            </div>`;
+        return;
+    }
+
+    list.innerHTML = filtered.map(order => renderOrderCard(order)).join('');
+
+    // Bind events
+    list.querySelectorAll('.btn-cancel').forEach(btn => {
+        btn.addEventListener('click', () => cancelOrder(parseInt(btn.dataset.id)));
+    });
+    list.querySelectorAll('.btn-detail').forEach(btn => {
+        btn.addEventListener('click', () => showDetail(parseInt(btn.dataset.id)));
+    });
+    list.querySelectorAll('.items-toggle').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const id = btn.dataset.id;
+            const extra = document.getElementById('extra-items-' + id);
+            if (extra) {
+                const hidden = extra.style.display === 'none';
+                extra.style.display = hidden ? 'block' : 'none';
+                btn.innerHTML = hidden
+                    ? '<i class="fas fa-chevron-up"></i> Thu gọn'
+                    : `<i class="fas fa-chevron-down"></i> Xem thêm ${extra.querySelectorAll('.order-item').length} sản phẩm`;
+            }
+        });
+    });
+}
+
+function renderOrderCard(order) {
+    const items = order.order_items || [];
+    const previewItems = items.slice(0, 2);
+    const extraItems = items.slice(2);
+    const dateStr = new Date(order.created_at).toLocaleDateString('vi-VN', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+    });
+    const canCancel = order.status === 'PENDING';
+
+    return `
+    <div class="order-card" id="order-card-${order.id}">
+        <div class="order-header">
+            <div>
+                <div class="order-id">Đơn #${order.id}</div>
+                <div class="order-date">${dateStr}</div>
+            </div>
+            <span class="order-status status-${order.status}">${STATUS_LABELS[order.status] || order.status}</span>
+        </div>
+
+        <div class="order-items">
+            ${previewItems.map(item => renderItem(item)).join('')}
+            ${extraItems.length > 0 ? `
+                <div id="extra-items-${order.id}" style="display:none">
+                    ${extraItems.map(item => renderItem(item)).join('')}
+                </div>
+                <div class="items-toggle visible" data-id="${order.id}">
+                    <i class="fas fa-chevron-down"></i> Xem thêm ${extraItems.length} sản phẩm
+                </div>
+            ` : ''}
+        </div>
+
+        <div class="order-footer">
+            <div>
+                <div class="order-total-label">Tổng cộng</div>
+                <div class="order-total-amount">${formatVND(order.total_amount)}</div>
+            </div>
+            <div class="order-actions">
+                <button class="btn-reorder btn-detail" data-id="${order.id}">
+                    <i class="fas fa-eye"></i> Chi tiết
+                </button>
+                ${canCancel ? `<button class="btn-cancel" data-id="${order.id}">
+                    <i class="fas fa-times"></i> Huỷ đơn
+                </button>` : ''}
+            </div>
+        </div>
+    </div>`;
+}
+
+function renderItem(item) {
+    const product = item.products || {};
+    const imgUrl = getImageUrl(product.image_url);
+    const name = product.name || 'Sản phẩm';
+    return `
+    <div class="order-item">
+        <img class="order-item-img" src="${imgUrl}" alt="${name}" onerror="this.src='${getRootPathPrefix()}src/assets/images/main.png'">
+        <div class="order-item-info">
+            <div class="order-item-name">${name}</div>
+            <div class="order-item-qty">x${item.quantity}</div>
+        </div>
+        <div class="order-item-price">${formatVND(item.price * item.quantity)}</div>
+    </div>`;
+}
+
+// ── Cancel Order ───────────────────────────────────────────────
+async function cancelOrder(orderId) {
+    if (!confirm('Bạn có chắc muốn huỷ đơn hàng #' + orderId + '?')) return;
+    try {
+        await Orders.cancel(orderId);
+        showToast('✔ Đã huỷ đơn hàng #' + orderId);
+        // Update local state
+        const order = allOrders.find(o => o.id === orderId);
+        if (order) order.status = 'CANCELLED';
+        renderOrders();
+    } catch (err) {
+        showToast(err.message || 'Không thể huỷ đơn hàng', 'error');
+    }
+}
+
+// ── Detail Modal ───────────────────────────────────────────────
+async function showDetail(orderId) {
+    const modal = document.getElementById('order-modal');
+    const body = document.getElementById('modal-body');
+    const title = document.getElementById('modal-title');
+    title.textContent = 'Đơn hàng #' + orderId;
+    body.innerHTML = '<div style="text-align:center;padding:40px;color:rgba(255,255,255,0.3)"><i class="fas fa-spinner fa-spin fa-2x"></i></div>';
+    modal.classList.add('active');
+
+    try {
+        const order = await Orders.getById(orderId);
+        const items = order.order_items || [];
+        const dateStr = new Date(order.created_at).toLocaleDateString('vi-VN', {
+            weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric',
+            hour: '2-digit', minute: '2-digit'
+        });
+
+        // Build timeline
+        const steps = [
+            { key: 'PENDING',   label: 'Đặt hàng thành công',  icon: 'fa-check', desc: 'Đơn hàng đã được ghi nhận' },
+            { key: 'CONFIRMED', label: 'Đã xác nhận',           icon: 'fa-box',   desc: 'Cửa hàng đang chuẩn bị hàng' },
+            { key: 'SHIPPING',  label: 'Đang giao hàng',        icon: 'fa-truck', desc: 'Đơn hàng đang trên đường đến bạn' },
+            { key: 'DELIVERED', label: 'Giao hàng thành công',  icon: 'fa-home',  desc: 'Bạn đã nhận được hàng' },
+        ];
+        const ORDER = ['PENDING','CONFIRMED','SHIPPING','DELIVERED','CANCELLED'];
+        const currentIdx = ORDER.indexOf(order.status);
+        const isCancelled = order.status === 'CANCELLED';
+
+        const timelineHTML = isCancelled
+            ? `<div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:12px;padding:14px 18px;color:#f87171;font-size:13px;margin-bottom:16px;">
+                <i class="fas fa-times-circle"></i> Đơn hàng đã bị huỷ
+               </div>`
+            : `<div class="order-timeline">
+                ${steps.map((s, i) => {
+                    const stepIdx = ORDER.indexOf(s.key);
+                    const cls = stepIdx < currentIdx ? 'done' : stepIdx === currentIdx ? 'active' : 'pending';
+                    const icon = stepIdx < currentIdx ? 'fa-check' : s.icon;
+                    return `<div class="timeline-step">
+                        <div class="timeline-dot ${cls}"><i class="fas ${icon}"></i></div>
+                        <div class="timeline-info">
+                            <h4>${s.label}</h4>
+                            <p>${cls !== 'pending' ? s.desc : 'Chưa thực hiện'}</p>
+                        </div>
+                    </div>`;
+                }).join('')}
+               </div>`;
+
+        body.innerHTML = `
+            <div style="font-size:12px;color:rgba(255,255,255,0.35);margin-bottom:20px">${dateStr}</div>
+
+            ${timelineHTML}
+
+            <div style="border-top:1px solid rgba(255,255,255,0.07);padding-top:20px;margin-top:4px">
+                <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:1px;margin-bottom:14px">SẢN PHẨM</div>
+                ${items.map(item => renderItem(item)).join('')}
+            </div>
+
+            <div style="border-top:1px solid rgba(255,255,255,0.07);margin-top:16px;padding-top:16px">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <span style="font-size:13px;color:rgba(255,255,255,0.5)">Tổng tiền hàng</span>
+                    <span style="font-size:13px;color:#f0ede8">${formatVND(order.total_amount)}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+                    <span style="font-size:13px;color:rgba(255,255,255,0.5)">Phí vận chuyển</span>
+                    <span style="font-size:13px;color:#4ade80">Miễn phí</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;border-top:1px solid rgba(255,255,255,0.07);padding-top:14px">
+                    <span style="font-size:15px;font-weight:700;color:#f0ede8">Tổng thanh toán</span>
+                    <span style="font-size:18px;font-weight:700;color:#EBC351">${formatVND(order.total_amount)}</span>
+                </div>
+            </div>
+        `;
+    } catch (err) {
+        body.innerHTML = `<div style="text-align:center;padding:40px;color:#f87171">${err.message || 'Không thể tải chi tiết đơn hàng'}</div>`;
+    }
+}
+
+function closeModal(e) {
+    if (e.target === document.getElementById('order-modal')) {
+        document.getElementById('order-modal').classList.remove('active');
+    }
+}
+
+// ── Tabs ───────────────────────────────────────────────────────
+function setupTabs() {
+    document.querySelectorAll('.order-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            document.querySelectorAll('.order-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            currentFilter = tab.dataset.status;
+            renderOrders();
+        });
+    });
+}
+
+// ── Skeletons ──────────────────────────────────────────────────
+function showSkeletons() {
+    document.getElementById('orders-list').innerHTML = Array(3).fill(`
+        <div class="skeleton-card">
+            <div class="skeleton-header">
+                <div class="skeleton-line" style="width:120px"></div>
+                <div class="skeleton-line" style="width:80px"></div>
+            </div>
+            <div class="skeleton-body">
+                <div class="skeleton-line"></div>
+                <div class="skeleton-line" style="width:70%"></div>
+            </div>
+        </div>`).join('');
+}
+
+// ── Helpers ────────────────────────────────────────────────────
+function formatVND(n) {
+    const num = parseFloat(n) || 0;
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(num);
+}
+
+function showToast(msg, type = 'success') {
+    const t = document.createElement('div');
+    t.className = 'orders-toast' + (type === 'error' ? ' error' : '');
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3000);
+}
+</script>
+</body>
+</html>

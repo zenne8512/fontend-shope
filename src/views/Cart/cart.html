@@ -17,9 +17,21 @@ a{text-decoration:none;color:inherit}
 .cart-header-logo a{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;letter-spacing:4px;color:#f7e9cf}
 .cart-header-logo span{font-size:8px;letter-spacing:3px;color:rgba(255,255,255,0.35);font-family:'Montserrat',sans-serif;display:block}
 .cart-header-right{display:flex;align-items:center;gap:24px}
-.cart-header-right a{color:rgba(255,255,255,0.65);font-size:13px;display:flex;align-items:center;gap:6px;transition:color .25s}
-.cart-header-right a:hover{color:#EBC351}
+.cart-header-right a,.cart-header-right button.cart-user-btn{color:rgba(255,255,255,0.65);font-size:13px;display:flex;align-items:center;gap:6px;transition:color .25s;background:none;border:none;cursor:pointer;font-family:'Montserrat',sans-serif;padding:0}
+.cart-header-right a:hover,.cart-header-right button.cart-user-btn:hover{color:#EBC351}
 .cart-header-right a.active-link{color:#f7e9cf;font-weight:600}
+/* Account dropdown */
+#cart-account-dropdown{position:fixed;top:70px;right:16px;background:#1a1a1a;border:1px solid rgba(235,195,81,0.2);border-radius:12px;padding:8px;z-index:9999;box-shadow:0 16px 40px rgba(0,0,0,0.6);min-width:200px;font-family:'Montserrat',sans-serif;display:none}
+#cart-account-dropdown.open{display:block}
+#cart-account-dropdown .dd-header{padding:12px 16px 10px;border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:6px}
+#cart-account-dropdown .dd-name{font-size:13px;color:#EBC351;font-weight:600;margin-top:2px}
+#cart-account-dropdown .dd-email{font-size:11px;color:rgba(255,255,255,0.3);margin-top:1px}
+#cart-account-dropdown .dd-item{display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,0.7);text-decoration:none;border-radius:8px;font-size:13px;transition:background .2s;cursor:pointer;background:transparent;border:none;width:100%;font-family:'Montserrat',sans-serif}
+#cart-account-dropdown .dd-item:hover{background:rgba(255,255,255,0.06)}
+#cart-account-dropdown .dd-item i{width:16px;color:#EBC351}
+#cart-account-dropdown .dd-item.logout{color:rgba(255,100,100,0.8)}
+#cart-account-dropdown .dd-item.logout:hover{background:rgba(255,100,100,0.08)}
+#cart-account-dropdown .dd-item.logout i{color:rgba(255,100,100,0.8)}
 
 /* ─ STEPS ─ */
 .cart-steps{background:transparent;border-bottom:1px solid rgba(255,255,255,0.02);padding:18px 40px}
@@ -139,8 +151,18 @@ a{text-decoration:none;color:inherit}
     </div>
     <div class="cart-header-right">
         <a href="../../../index.html"><i class="fas fa-home"></i> Trang chủ</a>
-        <a href="../Auth/login.html"><i class="far fa-user"></i> Tài khoản</a>
-        <a href="cart.html" class="active-link"><i class="fas fa-shopping-bag"></i> Giỏ hàng (2)</a>
+        <button class="cart-user-btn" id="cart-user-btn" onclick="toggleCartAccountDropdown()"><i class="far fa-user"></i> <span id="cart-user-label">Tài khoản</span></button>
+        <a href="cart.html" class="active-link"><i class="fas fa-shopping-bag"></i> Giỏ hàng (<span id="cart-header-count">0</span>)</a>
+    </div>
+    <!-- Account Dropdown -->
+    <div id="cart-account-dropdown">
+        <div class="dd-header">
+            <div style="font-size:12px;color:rgba(255,255,255,0.4);">Đăng nhập với</div>
+            <div class="dd-name" id="cart-dd-name"></div>
+            <div class="dd-email" id="cart-dd-email"></div>
+        </div>
+        <a href="src/views/Orders/orders.html" class="dd-item" id="cart-dd-orders-link"><i class="fas fa-box"></i> Đơn hàng của tôi</a>
+        <div class="dd-item logout" onclick="doCartLogout()"><i class="fas fa-sign-out-alt"></i> Đăng xuất</div>
     </div>
 </div>
 
@@ -300,6 +322,60 @@ a{text-decoration:none;color:inherit}
 
 <script src="../../utils/api.js"></script>
 <script>
+// ── Account Dropdown ──────────────────────────────────────────────
+function initCartAccountUI() {
+    const user = (typeof Auth !== 'undefined') ? Auth.getUser() : null;
+    const label = document.getElementById('cart-user-label');
+    const ddName = document.getElementById('cart-dd-name');
+    const ddEmail = document.getElementById('cart-dd-email');
+    const ordersLink = document.getElementById('cart-dd-orders-link');
+
+    if (user) {
+        if (label) label.textContent = user.name || user.email.split('@')[0];
+        if (ddName) ddName.textContent = user.name || user.email.split('@')[0];
+        if (ddEmail) ddEmail.textContent = user.email || '';
+    } else {
+        if (label) label.textContent = 'Tài khoản';
+    }
+
+    // Fix orders link path relative to cart page
+    if (ordersLink) ordersLink.href = '../Orders/orders.html';
+}
+
+function toggleCartAccountDropdown() {
+    if (typeof Auth !== 'undefined' && Auth.isLoggedIn()) {
+        const dd = document.getElementById('cart-account-dropdown');
+        if (!dd) return;
+        dd.classList.toggle('open');
+        // Close on outside click
+        if (dd.classList.contains('open')) {
+            setTimeout(() => {
+                document.addEventListener('click', function closeDD(e) {
+                    if (!dd.contains(e.target) && e.target.id !== 'cart-user-btn') {
+                        dd.classList.remove('open');
+                        document.removeEventListener('click', closeDD);
+                    }
+                });
+            }, 50);
+        }
+    } else {
+        // Not logged in → go to login page
+        window.location.href = '../Auth/login.html';
+    }
+}
+
+function doCartLogout() {
+    if (typeof Auth !== 'undefined') Auth.logout();
+    window.location.href = '../../../index.html';
+}
+
+// Update header cart count badge
+function updateCartHeaderCount(count) {
+    const el = document.getElementById('cart-header-count');
+    if (el) el.textContent = count;
+}
+</script>
+<script>
 const formatCurrency = (n) => new Intl.NumberFormat('vi-VN').format(n) + 'đ';
 let currentStep = 1;
 
@@ -385,6 +461,9 @@ function updateSummary(subtotal, count) {
     // Update heading
     const countEl = document.querySelector('.cart-items-header span');
     if (countEl) countEl.textContent = `${count} sản phẩm`;
+
+    // Update header badge
+    updateCartHeaderCount(count);
 
     // Disable checkout button if count is 0
     const checkoutBtn = document.querySelector('.checkout-btn-new');
@@ -579,6 +658,7 @@ document.querySelector('.checkout-btn-new').addEventListener('click', async func
 });
 
 // Load khi trang mở
+initCartAccountUI();
 loadCart();
 </script>
 </body>

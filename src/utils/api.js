@@ -75,7 +75,7 @@ const Auth = {
         const data = await handleResponse(res);
         // Lưu token & thông tin user
         localStorage.setItem('ox_token', data.token);
-        localStorage.setItem('ox_user', JSON.stringify({ id: data.id, email: data.email, role: data.role }));
+        localStorage.setItem('ox_user', JSON.stringify({ id: data.id, email: data.email, name: data.name, role: data.role }));
         return data;
     },
 
@@ -87,7 +87,7 @@ const Auth = {
         });
         const data = await handleResponse(res);
         localStorage.setItem('ox_token', data.token);
-        localStorage.setItem('ox_user', JSON.stringify({ id: data.id, email: data.email, role: data.role }));
+        localStorage.setItem('ox_user', JSON.stringify({ id: data.id, email: data.email, name: data.name, role: data.role }));
         return data;
     },
 

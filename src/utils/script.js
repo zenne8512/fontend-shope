@@ -153,10 +153,14 @@ function showProfileMenu(anchor) {
     dropdown.innerHTML = `
         <div style="padding:12px 16px 10px;border-bottom:1px solid rgba(255,255,255,0.06);margin-bottom:6px;">
             <div style="font-size:12px;color:rgba(255,255,255,0.4);">Đăng nhập với</div>
-            <div style="font-size:13px;color:#EBC351;font-weight:600;margin-top:2px;">${user ? user.email : ''}</div>
+            <div style="font-size:13px;color:#EBC351;font-weight:600;margin-top:2px;">${user ? (user.name || user.email) : ''}</div>
+            ${user && user.name ? `<div style="font-size:11px;color:rgba(255,255,255,0.3);margin-top:1px;">${user.email}</div>` : ''}
         </div>
         <a href="${getRootPathPrefix()}src/views/Cart/cart.html" style="display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,0.7);text-decoration:none;border-radius:8px;font-size:13px;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='transparent'">
-            <i class="fas fa-shopping-bag" style="width:16px;color:#EBC351;"></i> Giỏ hàng & Đơn hàng
+            <i class="fas fa-shopping-bag" style="width:16px;color:#EBC351;"></i> Giỏ hàng
+        </a>
+        <a href="${getRootPathPrefix()}src/views/Orders/orders.html" style="display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,255,255,0.7);text-decoration:none;border-radius:8px;font-size:13px;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.06)'" onmouseout="this.style.background='transparent'">
+            <i class="fas fa-box" style="width:16px;color:#EBC351;"></i> Đơn hàng của tôi
         </a>
         <div onclick="Auth.logout(); location.reload();" style="display:flex;align-items:center;gap:10px;padding:10px 16px;color:rgba(255,100,100,0.8);cursor:pointer;border-radius:8px;font-size:13px;transition:background 0.2s;" onmouseover="this.style.background='rgba(255,100,100,0.08)'" onmouseout="this.style.background='transparent'">
             <i class="fas fa-sign-out-alt" style="width:16px;"></i> Đăng xuất

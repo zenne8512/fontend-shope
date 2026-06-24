@@ -349,7 +349,7 @@
             </div>
 
             <!-- Login Form -->
-            <form class="auth-form-new" id="form-login" onsubmit="event.preventDefault(); window.location.href='../../../index.html';">
+            <form class="auth-form-new" id="form-login">
                 <div class="form-field">
                     <label for="login-email">Email / Số điện thoại</label>
                     <div class="form-field-input">
@@ -381,7 +381,7 @@
             </form>
 
             <!-- Register Form -->
-            <form class="auth-form-new" id="form-register" style="display:none;" onsubmit="event.preventDefault(); window.location.href='../../../index.html';">
+            <form class="auth-form-new" id="form-register" style="display:none;">
                 <div class="form-field">
                     <label for="reg-name">Họ và tên</label>
                     <div class="form-field-input">
@@ -453,15 +453,17 @@
         document.getElementById('form-login').addEventListener('submit', async function(e) {
             e.preventDefault();
             const btn = this.querySelector('.auth-submit-btn');
-            const email = document.getElementById('login-email').value;
+            const email = document.getElementById('login-email').value.trim();
             const password = document.getElementById('login-password').value;
-            btn.textContent = 'Đang đăng nhập...';
+            if (!email || !password) { showMsg('Vui lòng nhập đầy đủ email và mật khẩu.', 'error'); return; }
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang đăng nhập...';
             btn.disabled = true;
             try {
                 await Auth.login(email, password);
-                window.location.href = '../../../index.html';
+                showMsg('✔ Đăng nhập thành công! Đang chuyển hướng...', 'success');
+                setTimeout(() => { window.location.href = '../../../index.html'; }, 1000);
             } catch (err) {
-                showMsg(err.message, 'error');
+                showMsg(err.message || 'Email hoặc mật khẩu không đúng.', 'error');
                 btn.textContent = 'ĐĂNG NHẬP';
                 btn.disabled = false;
             }
@@ -471,16 +473,20 @@
         document.getElementById('form-register').addEventListener('submit', async function(e) {
             e.preventDefault();
             const btn = this.querySelector('.auth-submit-btn');
-            const name = document.getElementById('reg-name').value;
-            const email = document.getElementById('reg-email').value;
+            const name = document.getElementById('reg-name').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
             const password = document.getElementById('reg-password').value;
-            btn.textContent = 'Đang tạo tài khoản...';
+            if (!name) { showMsg('Vui lòng nhập họ và tên.', 'error'); return; }
+            if (!email) { showMsg('Vui lòng nhập địa chỉ email.', 'error'); return; }
+            if (password.length < 6) { showMsg('Mật khẩu phải có ít nhất 6 ký tự.', 'error'); return; }
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang tạo tài khoản...';
             btn.disabled = true;
             try {
                 await Auth.register(email, password, name);
-                window.location.href = '../../../index.html';
+                showMsg('✔ Tạo tài khoản thành công! Đang chuyển hướng...', 'success');
+                setTimeout(() => { window.location.href = '../../../index.html'; }, 1200);
             } catch (err) {
-                showMsg(err.message, 'error');
+                showMsg(err.message || 'Đăng ký thất bại, vui lòng thử lại.', 'error');
                 btn.textContent = 'TẠO TÀI KHOẢN';
                 btn.disabled = false;
             }
